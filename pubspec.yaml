@@ -1,0 +1,37 @@
+name: sleeping_beauty_app
+description: "A new Flutter project."
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.7.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # iOS style icons
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_easyloading: ^3.0.5
+
+flutter:
+  uses-material-design: true
+
+  # Assets for splash screen and other images
+  assets:
+    - assets/splash.png
+    - assets/intro.png
+    - assets/logo.png
+    - assets/rightSideArrow.png
+    - assets/bottomView.png
+    - assets/home.png
+    - assets/journey.png
+    - assets/rewards.png
+    - assets/events.png
+

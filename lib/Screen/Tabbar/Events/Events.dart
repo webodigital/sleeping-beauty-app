@@ -1,0 +1,24 @@
+import 'package:flutter/material.dart';
+import 'package:sleeping_beauty_app/Core/Color.dart';
+
+
+class EventsScreen extends StatefulWidget {
+  const EventsScreen({Key? key}) : super(key: key);
+
+  @override
+  State<EventsScreen> createState() => _EventsScreenState();
+}
+
+class _EventsScreenState extends State<EventsScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('EventsScreen'),
+      ),
+      body: const Center(
+        child: Text('Welcome to EventsScreen!'),
+      ),
+    );
+  }
+}
