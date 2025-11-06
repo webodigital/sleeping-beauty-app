@@ -1,9 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:sleeping_beauty_app/Core/Color.dart';
 
-final Color App_ThemeColor = Color(0xFF4849A1);
+final Color App_ThemeColor = Color(0xFFEFECEC);
 final Color App_BlackColor = Color(0xFF000000);
 final Color App_WhiteColor = Color(0xFFFFFFFF);
 final Color App_Warm_Gray = Color(0xFFCAC4BC);
 final Color App_Light_Gray_Text = Color(0xFF9B9B9B);
 const Color App_DarkGray = Color(0xFF666666);
 const Color App_DeepIndigo = Color(0xFF120D26);
+final Color App_Text_BlackColor = Color(0xFF000000);
+final Color App_Light_Olive = Color(0xFFCACE6F);
+final Color App_Cool_Slate = Color(0xFF6A778B);
+final Color App_Off_White = Color(0xFFF6F6F6);
+final Color App_Card_View = Color(0xFFEEEDEB);
+final Color App_Start_Now = Color(0xFFDEDBD7);
+final Color App_PtnView = Color(0xFFD6B66D);
+final Color App_Location = Color(0xFF606060);
+final Color App_DescText = Color(0xFF232323);
+final Color App_CointText = Color(0xFF5F5F5F);
+final Color App_UnLockView = Color(0xFFB47E84);
+final Color App_LockView = Color(0xFFBFBFC0);
+final Color App_TextLockView = Color(0xFF717171);
+final Color App_TextProfile = Color(0xFF9A9A9A);
+final Color App_LangBiew = Color(0xFFEFEEE5);
+final Color App_SignOut = Color(0xFFBCB7B0);
+final Color App_ProfileBorder = Color(0xFF7F7F7F);
+final Color App_Devider = Color(0xFF787878);
+final Color App_SearchBoarder = Color(0xFFD2D2D2);
+final Color App_SearchText = Color(0xFF919191);
+final Color App_UsedView = const Color(0xFFBCB7B0);
+
+

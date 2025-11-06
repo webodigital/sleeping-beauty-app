@@ -1,345 +1,203 @@
 // import 'package:flutter/material.dart';
 // import 'package:sleeping_beauty_app/Core/Color.dart';
-// import 'package:flutter_easyloading/flutter_easyloading.dart';
-// import 'package:flutter/services.dart';
 //
-//
-// class LoginScreen extends StatefulWidget {
-//   const LoginScreen({super.key});
+// class RewardhistoryScreen extends StatefulWidget {
+//   const RewardhistoryScreen({Key? key}) : super(key: key);
 //
 //   @override
-//   State<LoginScreen> createState() => _LoginScreenState();
+//   State<RewardhistoryScreen> createState() => _RewardhistoryScreenState();
 // }
 //
-// class _LoginScreenState extends State<LoginScreen> {
-//   bool isPasswordVisible = false;
-//
-//   // Add controllers
-//   final TextEditingController _emailController = TextEditingController();
-//   final TextEditingController _passwordController = TextEditingController();
-//
-//   String otpCode = '';
-//
-//   @override
-//   void dispose() {
-//     _emailController.dispose();
-//     _passwordController.dispose();
-//     super.dispose();
-//   }
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     EasyLoading.dismiss();
-//
-//     Future.delayed(const Duration(seconds: 5), () {
-//       EasyLoading.dismiss();
-//     });
-//   }
+// class _RewardhistoryScreenState extends State<RewardhistoryScreen> {
+//   final Color App_BlackColor = const Color(0xFF1C1C1C);
+//   final Color App_Card_View = Colors.white;
 //
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
-//       backgroundColor: Colors.white,
-//       resizeToAvoidBottomInset: true,
-//       body: Column(
-//         crossAxisAlignment: CrossAxisAlignment.stretch,
-//         children: [
-//           // Content area inside SafeArea + Scrollable
-//           Expanded(
-//             child: SafeArea(
-//               top: true, // don't push image down, protect rest only
-//               child: SingleChildScrollView(
-//                 padding: const EdgeInsets.only(bottom: 20),
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.stretch,
-//                   children: [
-//                     Padding(
-//                       padding: const EdgeInsets.only(top: 40),
-//                       child: SizedBox(
-//                         child: Image.asset(
-//                           'assets/logo.png',
-//                           fit: BoxFit.fitHeight,
-//                           width: 96,
-//                           height: 92,
-//                         ),
-//                       ),
-//                     ),
-//
-//                     const SizedBox(height: 34),
-//
-//                     Padding(
-//                       padding: const EdgeInsets.symmetric(horizontal: 32),
-//                       child: Text(
-//                         "Login",
-//                         style: const TextStyle(
-//                           fontSize: 30,
-//                           fontWeight: FontWeight.bold,
-//                         ),
-//                       ),
-//                     ),
-//                     const SizedBox(height: 0), // space between texts
-//                     Padding(
-//                       padding: const EdgeInsets.symmetric(horizontal: 32),
-//                       child: Text(
-//                         "Please enter your details",
-//                         style:  TextStyle(
+//       backgroundColor: const Color(0xFFF8F8F8),
+//       body: SafeArea(
+//         child: SingleChildScrollView(
+//           padding: const EdgeInsets.only(bottom: 20),
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               // 🔹 Header
+//               Padding(
+//                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+//                 child: GestureDetector(
+//                   onTap: () => Navigator.pop(context),
+//                   child: Row(
+//                     children: [
+//                       Image.asset("assets/backArrow.png", height: 26, width: 26),
+//                       const SizedBox(width: 10),
+//                       Text(
+//                         'Reward History',
+//                         style: TextStyle(
 //                           fontSize: 16,
-//                           fontWeight: FontWeight.w500,
-//                           color: App_Light_Gray_Text,
-//                         ),
-//                         textAlign: TextAlign.left, // optional: align text to left
-//                       ),
-//                     ),
-//
-//                     const SizedBox(height: 30),
-//
-//                     // Email Field
-//                     Padding(
-//                       padding: const EdgeInsets.symmetric(horizontal: 25.0),
-//                       child: Column(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: [
-//                           Text(
-//                             "Email",
-//                             style: TextStyle(
-//                               fontSize: 14,
-//                               color: App_DarkGray,
-//                               fontWeight: FontWeight.w600,
-//                             ),
-//                           ),
-//                           const SizedBox(height: 10),
-//                           Container(
-//                             height: 50,
-//                             decoration: BoxDecoration(
-//                               color: const Color(0xFFF8F8F8),
-//                               borderRadius: BorderRadius.circular(10),
-//                               border: Border.all(color: Color(0xFFD5D5D5)),
-//                             ),
-//                             child: Row(
-//                               children: [
-//                                 Expanded(
-//                                   child: TextField(
-//                                     controller: _emailController,
-//                                     style: TextStyle(
-//                                       fontSize: 14,
-//                                       fontWeight: FontWeight.w600,
-//                                       color: App_BlackColor,
-//                                     ),
-//                                     decoration: const InputDecoration(
-//                                       border: InputBorder.none,
-//                                       contentPadding: EdgeInsets.symmetric(horizontal: 12),
-//                                       hintText: "Enter",
-//                                       hintStyle: TextStyle(
-//                                         color: Colors.grey,
-//                                       ),
-//                                     ),
-//                                   ),
-//                                 ),
-//                               ],
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                     ),
-//
-//                     const SizedBox(height: 24),
-//
-//                     // Password Field
-//                     Padding(
-//                       padding: const EdgeInsets.symmetric(horizontal: 25.0),
-//                       child: Column(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: [
-//                           Text(
-//                             "Password",
-//                             style: TextStyle(
-//                               fontSize: 14,
-//                               color: App_DarkGray,
-//                               fontWeight: FontWeight.w600,
-//                             ),
-//                           ),
-//                           const SizedBox(height: 8),
-//                           Container(
-//                             height: 50,
-//                             decoration: BoxDecoration(
-//                               color: const Color(0xFFF8F8F8),
-//                               borderRadius: BorderRadius.circular(10),
-//                               border: Border.all(color: Color(0xFFD5D5D5)),
-//                             ),
-//                             child: Row(
-//                               children: [
-//                                 Expanded(
-//                                   child: TextField(
-//                                     controller: _passwordController,
-//                                     obscureText: !isPasswordVisible,
-//                                     style: TextStyle(
-//                                       fontSize: 14,
-//                                       fontWeight: FontWeight.w600,
-//                                       color: App_BlackColor,
-//                                     ),
-//                                     decoration: const InputDecoration(
-//                                       border: InputBorder.none,
-//                                       contentPadding: EdgeInsets.symmetric(horizontal: 12),
-//                                       hintText: "Password",
-//                                       hintStyle: TextStyle(
-//                                         color: Colors.grey,
-//                                       ),
-//                                     ),
-//                                   ),
-//                                 ),
-//                                 IconButton(
-//                                   icon: Icon(
-//                                     isPasswordVisible
-//                                         ? Icons.visibility
-//                                         : Icons.visibility_off,
-//                                     color: Color(0xFF60778C),
-//                                   ),
-//                                   onPressed: () {
-//                                     setState(() {
-//                                       isPasswordVisible = !isPasswordVisible;
-//                                     });
-//                                   },
-//                                 ),
-//                               ],
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                     ),
-//
-//                     const SizedBox(height: 0),
-//
-//                     // Forgot Password
-//                     Padding(
-//                       padding: const EdgeInsets.symmetric(horizontal: 17.0),
-//                       child: Align(
-//                         alignment: Alignment.centerRight,
-//                         child: InkWell(
-//                           borderRadius: BorderRadius.circular(6), // ripple shape
-//                           onTap: () {
-//                             print("Forgot Password tapped");
-//                           },
-//                           child: Container(
-//                             padding: const EdgeInsets.symmetric(
-//                               horizontal: 8,
-//                               vertical: 12,
-//                             ),
-//                             child: Text(
-//                               "Forgot Password ?",
-//                               style: TextStyle(
-//                                   fontSize: 13,
-//                                   fontWeight: FontWeight.w400,
-//                                   color: Color(0xFF1783A8)
-//                               ),
-//                             ),
-//                           ),
+//                           fontWeight: FontWeight.w600,
+//                           color: App_BlackColor,
 //                         ),
 //                       ),
-//                     ),
-//                     const SizedBox(height: 80),
-//                     // Login Button
-//                     Padding(
-//                       padding: const EdgeInsets.symmetric(horizontal: 40.0),
-//                       child: SizedBox(
-//                         height: 50,
-//                         child: ElevatedButton(
-//                           style: ElevatedButton.styleFrom(
-//                             backgroundColor: App_Warm_Gray,
-//                             shape: RoundedRectangleBorder(
-//                               borderRadius: BorderRadius.circular(6),
-//                             ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//
+//               // 🔹 Reward Card
+//               Padding(
+//                 padding: const EdgeInsets.symmetric(horizontal: 16),
+//                 child: Container(
+//                   margin: const EdgeInsets.symmetric(vertical: 10),
+//                   decoration: BoxDecoration(
+//                     color: App_Card_View,
+//                     borderRadius: BorderRadius.circular(18),
+//                     boxShadow: [
+//                       BoxShadow(
+//                         color: Colors.black12.withOpacity(0.08),
+//                         blurRadius: 6,
+//                         offset: const Offset(0, 3),
+//                       ),
+//                     ],
+//                   ),
+//                   child: Padding(
+//                     padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+//                     child: Row(
+//                       crossAxisAlignment: CrossAxisAlignment.center,
+//                       children: [
+//                         ClipRRect(
+//                           borderRadius: BorderRadius.circular(10),
+//                           child: Image.asset(
+//                             "assets/rose.png",
+//                             width: 70,
+//                             height: 90,
+//                             fit: BoxFit.cover,
 //                           ),
-//                           onPressed: () async {
-//                             await validate();
-//                           },
-//                           child: Row(
-//                             mainAxisAlignment: MainAxisAlignment.center, // center text + image
+//                         ),
+//
+//                         const SizedBox(width: 12),
+//
+//                         Expanded(
+//                           child: Column(
+//                             crossAxisAlignment: CrossAxisAlignment.start,
 //                             children: [
-//                               Text(
-//                                 "Login",
-//                                 style: TextStyle(
-//                                   color: App_BlackColor,
-//                                   fontSize: 16,
-//                                   fontWeight: FontWeight.w500,
-//                                 ),
+//                               Row(
+//                                 children: [
+//                                   Expanded(
+//                                     child: Text(
+//                                       "Rose Tea Refill",
+//                                       style: TextStyle(
+//                                         fontSize: 14,
+//                                         fontWeight: FontWeight.w600,
+//                                         color: App_BlackColor,
+//                                       ),
+//                                     ),
+//                                   )
+//                                 ],
 //                               ),
-//                               const SizedBox(width: 8), // space between text and image
-//                               Image.asset(
-//                                 'assets/rightSideArrow.png', // replace with your image path
-//                                 width: 26,
-//                                 height: 26,
+//                               const SizedBox(height: 6),
+//                               Row(
+//                                 children: [
+//                                   Image.asset("assets/date.png", height: 13, width: 13),
+//                                   const SizedBox(width: 5),
+//                                   Text(
+//                                     "12 Aug 2025",
+//                                     style: TextStyle(
+//                                       fontSize: 12,
+//                                       fontWeight: FontWeight.w500,
+//                                       color: App_BlackColor,
+//                                     ),
+//                                   ),
+//                                   const Spacer(),
+//                                   Image.asset("assets/pointDisable.png", height: 16, width: 16),
+//                                   const SizedBox(width: 5),
+//                                   Text(
+//                                     "Points Spent: -50",
+//                                     style: TextStyle(
+//                                       fontSize: 12,
+//                                       fontWeight: FontWeight.w500,
+//                                       color: App_BlackColor,
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                               const SizedBox(height: 6),
+//                               Row(
+//                                 children: [
+//                                   Image.asset("assets/locationGray.png", height: 13, width: 13),
+//                                   const SizedBox(width: 5),
+//                                   Expanded(
+//                                     child: Text(
+//                                       "Bäckerei Herzstück",
+//                                       style: TextStyle(
+//                                         fontSize: 12,
+//                                         fontWeight: FontWeight.w500,
+//                                         color: App_BlackColor,
+//                                       ),
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                               const SizedBox(height: 8),
+//                               Row(
+//                                 children: [
+//                                   _buildButton("Used on 15 Aug 2025", App_UsedView),
+//                                   const Spacer(),
+//                                   Container(
+//                                     decoration: BoxDecoration(
+//                                       color: const Color(0xFFD4C07A),
+//                                       borderRadius: BorderRadius.circular(6),
+//                                     ),
+//                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+//                                     child: Row(
+//                                       children: [
+//                                         Image.asset("assets/gift.png", height: 14, width: 14),
+//                                         const SizedBox(width: 4),
+//                                         const Text(
+//                                           "+150 Pts",
+//                                           style: TextStyle(
+//                                             fontSize: 11,
+//                                             fontWeight: FontWeight.w600,
+//                                           ),
+//                                         ),
+//                                       ],
+//                                     ),
+//                                   ),
+//                                 ],
 //                               ),
 //                             ],
 //                           ),
 //                         ),
-//                       ),
-//                     ),
 //
-//                     const SizedBox(height: 28),
-//                     // Sign Up
-//                     Center(
-//                       child: Row(
-//                         mainAxisAlignment: MainAxisAlignment.center,
-//                         children: [
-//                           const Text(
-//                             "Don't have an account?",
-//                             style: TextStyle(
-//                               color: App_DeepIndigo,
-//                               fontWeight: FontWeight.w400,
-//                               fontSize: 13,
-//                             ),
-//                           ),
-//                           const SizedBox(width: 6),
-//                           GestureDetector(
-//                             onTap: () {
-//                               print("SignUP");
-//                             },
-//                             child: Text(
-//                               "Signup",
-//                               style: TextStyle(
-//                                 color: Color(0xFF5669FF),
-//                                 fontWeight: FontWeight.w400,
-//                                 decoration: TextDecoration.underline,
-//                                 decorationColor: Color(0xFF5669FF),  // same as text color
-//                                 decorationThickness: 0.75,              // thickness of the underline
-//                               ),
-//                             ),
-//                           ),
-//                         ],
-//                       ),
+//                       ],
 //                     ),
-//                     const SizedBox(height: 30),
-//                   ],
+//                   ),
 //                 ),
 //               ),
-//             ),
+//             ],
 //           ),
-//         ],
+//         ),
 //       ),
 //     );
 //   }
 //
-//   // Validation function
-//   Future<void> validate() async {
-//     String email = _emailController.text.trim();
-//     String password = _passwordController.text.trim();
-//
-//     // Basic email validation regex
-//     final emailRegex = RegExp(
-//         r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-//
-//     if (email.isEmpty) {
-//       EasyLoading.showError("Please enter your email");
-//       return;
-//     } else if (!emailRegex.hasMatch(email)) {
-//       EasyLoading.showError("Please enter a valid email address");
-//       return;
-//     } else if (password.isEmpty) {
-//       EasyLoading.showError("Please enter your password");
-//       return;
-//     } else {
-//       print("Login API");
-//     }
+//   Widget _buildButton(String text, Color color) {
+//     return Container(
+//       height: 24,
+//       alignment: Alignment.center,
+//       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+//       decoration: BoxDecoration(
+//         color: color,
+//         borderRadius: BorderRadius.circular(4),
+//       ),
+//       child: Text(
+//         text,
+//         style: TextStyle(
+//           fontSize: 11,
+//           fontWeight: FontWeight.w500,
+//           color: App_BlackColor,
+//         ),
+//       ),
+//     );
 //   }
 // }

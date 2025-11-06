@@ -19,11 +19,23 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
   flutter_easyloading: ^3.0.5
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.1
+  geolocator: ^11.0.0
+  flutter_map_marker_popup: ^6.1.2
+  google_maps_flutter: ^2.6.1
+  flutter_polyline_points: ^2.0.0
+  image_picker: ^1.1.2
+  flutter_launcher_icons: ^0.14.4
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/appIcon.jpg"
 
 flutter:
   uses-material-design: true
 
-  # Assets for splash screen and other images
   assets:
     - assets/splash.png
     - assets/intro.png
@@ -32,6 +44,81 @@ flutter:
     - assets/bottomView.png
     - assets/home.png
     - assets/journey.png
-    - assets/rewards.png
     - assets/events.png
+    - assets/home_selected.png
+    - assets/journeySelected.png
+    - assets/rewardsSelected.png
+    - assets/eventsSelected.png
+    - assets/dummyProfile.png
+    - assets/currentLocation.png
+    - assets/wallet.png
+    - assets/notification.png
+    - assets/bannerImage.png
+    - assets/hotelViewCard.png
+    - assets/mapViewCard.png
+    - assets/roseViewCard.png
+    - assets/calanderViewCard.png
+    - assets/wellness.png
+    - assets/familyJourney.png
+    - assets/romanticJourney.png
+    - assets/culturalJourney.png
+    - assets/inclusionJourney.png
+    - assets/camperVanJourney.png
+    - assets/backArrow.png
+    - assets/nature.png
+    - assets/pinStr.png
+    - assets/castle.png
+    - assets/gift.png
+    - assets/heartUnfill.png
+    - assets/start.png
+    - assets/shop.png
+    - assets/locationPin.png
+    - assets/disableLocation.png
+    - assets/discount.png
+    - assets/coin.png
+    - assets/sweet.png
+    - assets/unlocked.png
+    - assets/profile.png
+    - assets/myEvent.png
+    - assets/myJourney.png
+    - assets/myFavourites.png
+    - assets/aboutApp.png
+    - assets/rewardHistory.png
+    - assets/helps.png
+    - assets/lng.png
+    - assets/changeLanguage.png
+    - assets/editCamera.png
+    - assets/scaner.png
+    - assets/date.png
+    - assets/time.png
+    - assets/locationGray.png
+    - assets/selectedHeart.png
+    - assets/search.png
+    - assets/pointDisable.png
+    - assets/rose.png
+    - assets/newMapView.png
+    - assets/appIcon.jpg
+    - assets/rewordTab.png
 
+
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: assets/Helper/Fonts/Montserrat-Thin.ttf
+          weight: 100
+        - asset: assets/Helper/Fonts/Montserrat-ExtraLight.ttf
+          weight: 200
+        - asset: assets/Helper/Fonts/Montserrat-Light.ttf
+          weight: 300
+        - asset: assets/Helper/Fonts/Montserrat-Regular.ttf
+          weight: 400
+        - asset: assets/Helper/Fonts/Montserrat-Medium.ttf
+          weight: 500
+        - asset: assets/Helper/Fonts/Montserrat-SemiBold.ttf
+          weight: 600
+        - asset: assets/Helper/Fonts/Montserrat-Bold.ttf
+          weight: 700
+        - asset: assets/Helper/Fonts/Montserrat-ExtraBold.ttf
+          weight: 800
+        - asset: assets/Helper/Fonts/Montserrat-Black.ttf
+          weight: 900

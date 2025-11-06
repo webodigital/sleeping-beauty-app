@@ -96,9 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             textAlign: TextAlign.left,
                           ),
                         ),
-
                         const SizedBox(height: 40),
-
                         //Email Field (Floating Label)
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 25.0),

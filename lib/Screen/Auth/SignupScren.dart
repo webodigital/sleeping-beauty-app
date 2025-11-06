@@ -96,9 +96,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             textAlign: TextAlign.left,
                           ),
                         ),
-
                         const SizedBox(height: 40),
-
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 25.0),
                           child: TextFormField(
