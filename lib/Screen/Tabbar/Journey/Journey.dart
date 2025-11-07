@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sleeping_beauty_app/Core/Color.dart';
 import 'package:sleeping_beauty_app/Screen/Tabbar/Journey/StartJourney.dart';
+import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:sleeping_beauty_app/Network/ConstantString.dart';
+import 'package:sleeping_beauty_app/Model/JourneyList.dart';
 
 class JourneyScreen extends StatefulWidget {
   const JourneyScreen({Key? key}) : super(key: key);
@@ -10,6 +14,15 @@ class JourneyScreen extends StatefulWidget {
 }
 
 class _JourneyScreenState extends State<JourneyScreen> {
+
+  List<Journey> journeyList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getJourneyList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -175,87 +188,34 @@ class _JourneyScreenState extends State<JourneyScreen> {
               ),
             ),
             const SizedBox(height: 10),
-            // 🔹 Journey List
+
             Expanded(
-              child: ListView(
+              child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                children: [
-                  _buildJourneyCard(
-                    'assets/wellness.png', 'Wellness Journey',
+                itemCount: journeyList.length,
+                itemBuilder: (context, index) {
+                  final journey = journeyList[index];
+
+                  String imagePath = journey.iconUrl ?? 'assets/romanticJourney.png';
+
+                  return _buildJourneyCard(
+                    imagePath,
+                    journey.name,
                     onTap: () {
-                      print('Wellness Journey tapped');
+                      print('${journey.name} tapped');
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const StartJourneyScreen(title: 'Wellness Journey', imagePath: 'assets/wellness.png'),
-                        ),
-                      );
-                      // Navigator.push(context, MaterialPageRoute(builder: (_) => WellnessScreen()));
-                    },
-                  ),
-                  _buildJourneyCard(
-                    'assets/familyJourney.png', 'Family Journey',
-                    onTap: () {
-                      print('Family Journey tapped');
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const StartJourneyScreen(title: 'Family Journey', imagePath: 'assets/familyJourney.png'),
+                          builder: (_) => StartJourneyScreen(
+                            journey: journey,
+                          ),
                         ),
                       );
                     },
-                  ),
-                  _buildJourneyCard(
-                    'assets/romanticJourney.png', 'Romantic Journey',
-                    onTap: () {
-                      print('Romantic Journey tapped');
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const StartJourneyScreen(title: 'Romantic Journey', imagePath: 'assets/romanticJourney.png'),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildJourneyCard(
-                    'assets/culturalJourney.png', 'Cultural Journey',
-                    onTap: () {
-                      print('Cultural Journey tapped');
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const StartJourneyScreen(title: 'Cultural Journey', imagePath: 'assets/culturalJourney.png'),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildJourneyCard(
-                    'assets/inclusionJourney.png', 'Inclusion Journey',
-                    onTap: () {
-                      print('Inclusion Journey tapped');
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const StartJourneyScreen(title: 'Inclusion Journey', imagePath: 'assets/inclusionJourney.png'),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildJourneyCard(
-                    'assets/camperVanJourney.png', 'Camper Van Journey',
-                    onTap: () {
-                      print('Camper Van Journey tapped');
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const StartJourneyScreen(title: 'Camper Van Journey', imagePath: 'assets/camperVanJourney.png'),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                  );
+                },
               ),
-            ),
+            )
           ],
         ),
       ),
@@ -303,5 +263,39 @@ class _JourneyScreenState extends State<JourneyScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> getJourneyList() async {
+    EasyLoading.show(status: 'Loading...');
+    try {
+      final response = await apiService.getRequest(ApiConstants.journeys);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data;
+
+        if (data['success'] == true) {
+          final journeysResponse = JourneysResponse.fromJson(data);
+          EasyLoading.dismiss();
+          setState(() {
+            journeyList = journeysResponse.data;
+          });
+          print("Journeys retrieved: ${journeyList.length}");
+        } else {
+          EasyLoading.dismiss();
+          String errorMessage = data['message'] ?? 'Something went wrong';
+          EasyLoading.showError(errorMessage);
+        }
+      } else {
+        EasyLoading.dismiss();
+        EasyLoading.showError('Server Error: ${response.statusCode}');
+      }
+    } catch (e, stackTrace) {
+      print("Error fetching journeys: $e");
+      print(stackTrace);
+      EasyLoading.dismiss();
+      EasyLoading.showError(AlertConstants.somethingWrong);
+    } finally {
+      print("getJourneyList finished");
+    }
   }
 }

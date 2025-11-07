@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sleeping_beauty_app/Core/Color.dart';
 import 'package:sleeping_beauty_app/Screen/Tabbar/SideMenu/CustomSideMenu.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,8 +15,16 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  var currentCityName = "";
+
   void openDrawer() {
     _scaffoldKey.currentState?.openDrawer();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserLocation();
   }
 
   @override
@@ -60,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Image.asset('assets/currentLocation.png', height: 20, width: 20),
                       const SizedBox(width: 5),
                       Text(
-                        'Hofgeismar',
+                        currentCityName,
                         style: TextStyle(
                           color: App_Cool_Slate,
                           fontWeight: FontWeight.w400,
@@ -234,5 +245,56 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  Future<Position> _getCurrentPosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Check if location services are enabled
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    // Check permission
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, cannot request permissions.');
+    }
+
+    // Get current position
+    return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+  }
+
+  Future<String> getCityName(double latitude, double longitude) async {
+    List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
+    Placemark place = placemarks.first;
+    return place.locality ?? 'Unknown city';
+  }
+
+  void getUserLocation() async {
+    try {
+      Position position = await _getCurrentPosition();
+      String city = await getCityName(position.latitude, position.longitude);
+
+      print('Latitude: ${position.latitude}');
+      print('Longitude: ${position.longitude}');
+      print('City: $city');
+      setState(() {
+        currentCityName = city;
+      });
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 }

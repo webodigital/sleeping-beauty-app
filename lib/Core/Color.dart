@@ -29,5 +29,9 @@ final Color App_Devider = Color(0xFF787878);
 final Color App_SearchBoarder = Color(0xFFD2D2D2);
 final Color App_SearchText = Color(0xFF919191);
 final Color App_UsedView = const Color(0xFFBCB7B0);
-
-
+final Color App_ActiveOTP = const Color(0xFF008582);
+final Color App_InActiveOTP = const Color(0xFF8C8C8C);
+final Color App_light = const Color(0xFF7E7E7E);
+final Color App_sentCode = const Color(0xFF848484);
+final Color App_code = const Color(0xFFA4A4A4);
+final Color App_blue = const Color(0xFF1F3C88);

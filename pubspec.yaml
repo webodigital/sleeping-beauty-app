@@ -27,6 +27,11 @@ dev_dependencies:
   flutter_polyline_points: ^2.0.0
   image_picker: ^1.1.2
   flutter_launcher_icons: ^0.14.4
+  dio: ^5.4.3+1
+  internet_connection_checker: ^1.0.0+1
+  shared_preferences: ^2.2.2
+  pin_code_fields: ^8.0.0
+  geocoding: ^3.0.0
 
 flutter_icons:
   android: true
@@ -42,13 +47,6 @@ flutter:
     - assets/logo.png
     - assets/rightSideArrow.png
     - assets/bottomView.png
-    - assets/home.png
-    - assets/journey.png
-    - assets/events.png
-    - assets/home_selected.png
-    - assets/journeySelected.png
-    - assets/rewardsSelected.png
-    - assets/eventsSelected.png
     - assets/dummyProfile.png
     - assets/currentLocation.png
     - assets/wallet.png
@@ -98,7 +96,23 @@ flutter:
     - assets/rose.png
     - assets/newMapView.png
     - assets/appIcon.jpg
+    - assets/home_selected.png
+    - assets/journeySelected.png
+    - assets/rewardsSelected.png
+    - assets/eventsSelected.png
+    - assets/journey.png
     - assets/rewordTab.png
+    - assets/events.png
+    - assets/home_.png
+    - assets/journey_.png
+    - assets/rewords_.png
+    - assets/events_.png
+    - assets/forgotPassword.png
+    - assets/close.png
+    - assets/backEmail.png
+    - assets/newPassword.png
+    - assets/allDone.png
+
 
 
   fonts:

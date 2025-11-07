@@ -43,10 +43,10 @@ class _TabBarScreenState extends State<TabBarScreen>
   // ];
 
   final List<String> _unselectedIconPaths = [
-    'assets/home.png',
-    'assets/journey.png',
-    'assets/rewordTab.png',
-    'assets/events.png'
+    'assets/home_.png',
+    'assets/journey_.png',
+    'assets/rewords_.png',
+    'assets/events_.png'
   ];
 
   @override
@@ -129,8 +129,8 @@ class _TabBarScreenState extends State<TabBarScreen>
                             isSelected
                                 ? _selectedIconPaths[index]
                                 : _unselectedIconPaths[index],
-                            width: 24,
-                            height: 24,
+                            width: 26,
+                            height: 26,
                           ),
                         ),
                         const SizedBox(height: 4),

@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:sleeping_beauty_app/Core/Color.dart';
 import 'package:sleeping_beauty_app/Screen/Tabbar/Journey/JourneyListOnMapView.dart';
+import 'package:sleeping_beauty_app/Model/JourneyList.dart';
 
 class StartJourneyScreen extends StatefulWidget {
 
-  final String title;
-  final String imagePath;
+  final Journey journey;
 
-  const StartJourneyScreen({Key? key, required this.title, required this.imagePath}) : super(key: key);
+  const StartJourneyScreen({Key? key, required this.journey}) : super(key: key);
 
   @override
   State<StartJourneyScreen> createState() => _StartJourneyScreenState();
 }
 
 class _StartJourneyScreenState extends State<StartJourneyScreen> {
+
+
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +84,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
             // Centered Image
             Center(
               child: Image.asset(
-                widget.imagePath,
+                widget.journey.iconUrl ?? 'assets/romanticJourney.png',
                 width: 92,
                 height: 90,
                 fit: BoxFit.cover,
@@ -86,7 +93,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
             const SizedBox(height: 20),
             Center(
                child:  Text(
-                 widget.title,
+                 widget.journey.name,
                style: TextStyle(
                fontSize: 20,
                fontWeight: FontWeight.w600,
@@ -97,7 +104,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  'Follow the path where Sleeping Beauty and her prince once walked – through roses, lights, flavours, and stories',
+                  widget.journey.description,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,

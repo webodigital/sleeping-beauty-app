@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:sleeping_beauty_app/Core/Color.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter/services.dart';
-
+import 'package:sleeping_beauty_app/Network/ConstantString.dart';
+import 'package:sleeping_beauty_app/Network/ApiService.dart';
+import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -344,17 +346,53 @@ class _SignupScreenState extends State<SignupScreen> {
     final emailRegex = RegExp(
         r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
-    if (email.isEmpty) {
-      EasyLoading.showError("Please enter your email");
+    if (_NameController.text.isEmpty) {
+      EasyLoading.showError(AlertConstants.userNameBlank);
+      return;
+    } else if (email.isEmpty) {
+      EasyLoading.showError(AlertConstants.emailBlank);
       return;
     } else if (!emailRegex.hasMatch(email)) {
-      EasyLoading.showError("Please enter a valid email address");
+      EasyLoading.showError(AlertConstants.emailInvalid);
       return;
     } else if (password.isEmpty) {
-      EasyLoading.showError("Please enter your password");
+      EasyLoading.showError(AlertConstants.passwordBlank);
       return;
     } else {
-      print("Login API");
+      print("SignUP API");
+      signUP();
+    }
+  }
+
+  Future<void> signUP() async {
+    EasyLoading.show(status: 'Signup...');
+    try {
+      final response = await apiService.postWithoutTokenRequest(
+        ApiConstants.users_signUp,
+        {
+          "email": _emailController.text.trim(),
+          "password": _passwordController.text.trim(),
+          "fullName": _NameController.text.trim()
+        },
+      );
+
+      final data = response.data;
+
+      if (response.statusCode == 200 || response.statusCode == 201 && data['success'] == true) {
+        //  Signup success
+        final userJson = data['user'];
+        EasyLoading.showSuccess(data['message']);
+        Future.delayed(const Duration(seconds: 2), () {
+           print("Move");
+        });
+      } else  {
+
+        String errorMessage = data['message'];
+        EasyLoading.showError(errorMessage);
+      }
+    } catch (e) {
+      EasyLoading.dismiss();
+      EasyLoading.showError(AlertConstants.somethingWrong);
     }
   }
 }
