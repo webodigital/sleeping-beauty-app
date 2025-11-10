@@ -3,7 +3,6 @@ import 'package:dio/dio.dart';
 import 'ApiConstants.dart';
 import '/Network/ApiService.dart';
 
-
 final apiService = ApiService();
 
 class ApiConstants {
@@ -16,6 +15,7 @@ class ApiConstants {
   static const String resend_email_otp = "/users/forgot-password";
   static const String users_password_otp_verify = "/users/verify-otp";
   static const String users_reset_password = "/users/reset-password";
+  static const String businesses_by_location = "/businesses/by-location";
 
   static const String noInterNet = "No internet connection. Please check your network settings and try again.";
 }

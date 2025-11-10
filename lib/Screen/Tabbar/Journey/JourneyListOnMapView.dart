@@ -7,16 +7,19 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:sleeping_beauty_app/Core/Color.dart';
 import 'package:sleeping_beauty_app/Screen/Tabbar/Journey/VisitJournyMapview.dart';
 import 'package:sleeping_beauty_app/Screen/Tabbar/Journey/JourneyDetails.dart';
+import 'package:sleeping_beauty_app/Helper/Language.dart';
+import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:sleeping_beauty_app/Network/ConstantString.dart';
+import 'package:sleeping_beauty_app/Model/JourneyList.dart';
+import 'package:sleeping_beauty_app/Helper/Language.dart';
 
 class JourneyListOnMapViewScreen extends StatefulWidget {
-  final String title;
-  final String imagePath;
+  final Journey journey;
 
-  const JourneyListOnMapViewScreen({
-    Key? key,
-    required this.title,
-    required this.imagePath,
-  }) : super(key: key);
+
+  const JourneyListOnMapViewScreen({Key? key, required this.journey}) : super(key: key);
+
 
   @override
   State<JourneyListOnMapViewScreen> createState() =>
@@ -42,6 +45,13 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
       "image": "assets/castle.png", // add your demo image
     },
   );
+
+
+  @override
+  void initState() {
+    super.initState();
+    getBussinessList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +88,7 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
                     Image.asset("assets/backArrow.png", height: 26, width: 26),
                     const SizedBox(width: 10),
                     Text(
-                      'Journey',
+                      lngTranslation('Journey'),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -266,6 +276,49 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
         );
       },
     );
+  }
+
+  Future<void> getBussinessList() async {
+    EasyLoading.show(status: lngTranslation('Loading...'));
+    try {
+      final response = await apiService.getRequestWithParam(ApiConstants.businesses_by_location ,
+        queryParams: {
+          'page': "1",
+          'limit': "100",
+          'lat': "20.8009",
+          'lng': "70.6960",
+          'radiusKm': "1000",
+          'journeyId': widget.journey.id,
+      },);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data;
+
+        print("Response Data:- $data");
+
+        if (data['success'] == true) {
+
+          EasyLoading.dismiss();
+          setState(() {
+
+          });
+        } else {
+          EasyLoading.dismiss();
+          String errorMessage = data['message'] ?? lngTranslation('Something went wrong please try again');
+          EasyLoading.showError(errorMessage);
+        }
+      } else {
+        EasyLoading.dismiss();
+        EasyLoading.showError('Server Error: ${response.statusCode}');
+      }
+    } catch (e, stackTrace) {
+      print("Error fetching journeys: $e");
+      print(stackTrace);
+      EasyLoading.dismiss();
+      EasyLoading.showError(AlertConstants.somethingWrong);
+    } finally {
+      print("getJourneyList finished");
+    }
   }
 }
 
@@ -518,7 +571,7 @@ class JourneyPopupCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 10),
                       ),
                       child: Text(
-                        "View Details",
+                        lngTranslation("View Details"),
                         style: TextStyle(
                           color: App_BlackColor,
                           fontWeight: FontWeight.w500,
@@ -539,7 +592,7 @@ class JourneyPopupCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 10),
                       ),
                       child: Text(
-                        "Visit",
+                        lngTranslation("Visit"),
                         style: TextStyle(
                           color: App_BlackColor,
                           fontWeight: FontWeight.w600,

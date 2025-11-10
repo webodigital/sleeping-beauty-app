@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sleeping_beauty_app/Core/Color.dart';
+import 'package:sleeping_beauty_app/Helper/Language.dart';
 
 class RewardhistoryScreen extends StatefulWidget {
   const RewardhistoryScreen({Key? key}) : super(key: key);
@@ -61,7 +62,7 @@ class _RewardhistoryScreenState extends State<RewardhistoryScreen> {
                       Image.asset("assets/backArrow.png", height: 26, width: 26),
                       const SizedBox(width: 10),
                       Text(
-                        'Reward History',
+                        lngTranslation('Reward History'),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

@@ -3,7 +3,7 @@ import 'package:sleeping_beauty_app/Core/Color.dart';
 import 'package:sleeping_beauty_app/Screen/Tabbar/SideMenu/CustomSideMenu.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
-
+import 'package:sleeping_beauty_app/Helper/Language.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -33,6 +33,15 @@ class _HomeScreenState extends State<HomeScreen> {
       key: _scaffoldKey,
       backgroundColor: const Color(0xFFF8F8F8),
       drawer: const CustomSideMenu(),
+        onDrawerChanged: (isOpened) {
+          if (!isOpened) {
+            // Drawer just closed
+            print("Returned to main screen after closing drawer");
+            setState(() {
+              print("Reload Screen");
+            });
+          }
+        },
       drawerScrimColor: Colors.black.withOpacity(0.5),
       body: SafeArea(
         child: Column(
@@ -101,8 +110,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             Positioned(
                               bottom: -14,
-                              child: const Text(
-                                '100 Pts',
+                              child: Text(
+                                '100 ${lngTranslation("Pts")}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 12,

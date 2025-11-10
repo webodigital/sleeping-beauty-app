@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:sleeping_beauty_app/Network/ConstantString.dart';
 import 'package:sleeping_beauty_app/Network/ApiService.dart';
 import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
+import 'package:sleeping_beauty_app/Helper/Language.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -77,9 +78,9 @@ class _SignupScreenState extends State<SignupScreen> {
                         const SizedBox(height: 34),
 
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          padding:  EdgeInsets.symmetric(horizontal: 32),
                           child: Text(
-                            "Signup",
+                            lngTranslation("Signup"),
                             style: const TextStyle(
                               fontSize: 30,
                               fontWeight: FontWeight.bold,
@@ -89,7 +90,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 32),
                           child: Text(
-                            "Please enter your details",
+                            lngTranslation("Please enter your details"),
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
@@ -100,7 +101,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                         const SizedBox(height: 40),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                          padding: EdgeInsets.symmetric(horizontal: 25.0),
                           child: TextFormField(
                             controller: _NameController,
                             style: TextStyle(
@@ -109,7 +110,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               color: App_BlackColor,
                             ),
                             decoration: InputDecoration(
-                              labelText: "Full Name",
+                              labelText: lngTranslation("Full Name"),
                               labelStyle: TextStyle(
                                 color: App_DarkGray,
                                 fontWeight: FontWeight.w500,
@@ -156,7 +157,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               color: App_BlackColor,
                             ),
                             decoration: InputDecoration(
-                              labelText: "Email ID",
+                              labelText: lngTranslation("Email ID"),
                               labelStyle: TextStyle(
                                 color: App_DarkGray,
                                 fontWeight: FontWeight.w500,
@@ -205,7 +206,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               letterSpacing: 1.2,
                             ),
                             decoration: InputDecoration(
-                              labelText: "Password",
+                              labelText: lngTranslation("Password"),
                               labelStyle: TextStyle(
                                 color: App_DarkGray,
                                 fontWeight: FontWeight.w500,
@@ -273,7 +274,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "Signup",
+                                    lngTranslation("Signup"),
                                     style: TextStyle(
                                       color: App_BlackColor,
                                       fontSize: 16,
@@ -299,8 +300,8 @@ class _SignupScreenState extends State<SignupScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text(
-                                "Already have an account?",
+                               Text(
+                                lngTranslation("Already have an account?"),
                                 style: TextStyle(
                                   color: App_DeepIndigo,
                                   fontWeight: FontWeight.w400,
@@ -312,8 +313,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                   onTap: () {
                                     Navigator.pop(context);
                                   },
-                                child: const Text(
-                                  "Login",
+                                child: Text(
+                                  lngTranslation("Login"),
                                   style: TextStyle(
                                     color: Color(0xFF5669FF),
                                     fontWeight: FontWeight.w400,
@@ -347,16 +348,16 @@ class _SignupScreenState extends State<SignupScreen> {
         r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
     if (_NameController.text.isEmpty) {
-      EasyLoading.showError(AlertConstants.userNameBlank);
+      EasyLoading.showError(lngTranslation(AlertConstants.userNameBlank));
       return;
     } else if (email.isEmpty) {
-      EasyLoading.showError(AlertConstants.emailBlank);
+      EasyLoading.showError(lngTranslation(AlertConstants.emailBlank));
       return;
     } else if (!emailRegex.hasMatch(email)) {
-      EasyLoading.showError(AlertConstants.emailInvalid);
+      EasyLoading.showError(lngTranslation(AlertConstants.emailInvalid));
       return;
     } else if (password.isEmpty) {
-      EasyLoading.showError(AlertConstants.passwordBlank);
+      EasyLoading.showError(lngTranslation(AlertConstants.passwordBlank));
       return;
     } else {
       print("SignUP API");
@@ -365,7 +366,7 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   Future<void> signUP() async {
-    EasyLoading.show(status: 'Signup...');
+    EasyLoading.show(status: lngTranslation('Signup...'));
     try {
       final response = await apiService.postWithoutTokenRequest(
         ApiConstants.users_signUp,

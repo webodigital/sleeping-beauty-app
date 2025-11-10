@@ -4,6 +4,8 @@ import 'package:sleeping_beauty_app/Screen/Tabbar/SideMenu/EditProfile.dart';
 import 'package:sleeping_beauty_app/Screen/Tabbar/SideMenu/MyJourneyHistory.dart';
 import 'package:sleeping_beauty_app/Screen/Tabbar/SideMenu/MyFavoriteJourney.dart';
 import 'package:sleeping_beauty_app/Screen/Tabbar/SideMenu/RewardHistory.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sleeping_beauty_app/Helper/Language.dart';
 
 class CustomSideMenu extends StatefulWidget {
   const CustomSideMenu({super.key});
@@ -16,6 +18,32 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
   String selectedLanguage = "English";
 
   @override
+  void initState() {
+    super.initState();
+    _getDefaultLanguage();
+  }
+
+  Future<void> _getDefaultLanguage() async {
+    final lng = await loadLng(); // Wait for async value
+    setState(() {
+      selectedLanguage = (lng.toLowerCase() == "en") ? "English" : "German";
+    });
+  }
+
+  Future<void> saveLngForUser(String typeLng) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('saveLngForUser', typeLng);
+  }
+
+  Future<String> loadLng() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getString('Language') ?? "en"; // default to English
+
+    if (saved.toLowerCase() == "gr") return "gr";
+    return "en";
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Drawer(
       width: MediaQuery.of(context).size.width * 0.85,
@@ -26,7 +54,7 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
           bottomRight: Radius.circular(12),
         ),
       ),
-      //Removed SafeArea
+
       child: Stack(
         children: [
           Padding(
@@ -34,7 +62,7 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 40), // Added spacing to avoid overlap with close icon
+                const SizedBox(height: 20), // Added spacing to avoid overlap with close icon
                 Container(
                   width: 76,
                   height: 76,
@@ -63,11 +91,11 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                       fontWeight: FontWeight.w400,
                       fontSize: 14),
                 ),
-                const SizedBox(height: 25),
+                const SizedBox(height: 10),
 
                 DrawerItem(
                   icon: "assets/profile.png",
-                  title: "Profile",
+                  title: lngTranslation("Profile"),
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
@@ -78,7 +106,7 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                 ),
                 DrawerItem(
                   icon: "assets/myEvent.png",
-                  title: "My Events",
+                  title: lngTranslation("My Events"),
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.pushNamed(context, '/myEvents');
@@ -86,7 +114,7 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                 ),
                 DrawerItem(
                   icon: "assets/myJourney.png",
-                  title: "My Journey",
+                  title: lngTranslation("My Journey"),
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
@@ -97,7 +125,7 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                 ),
                 DrawerItem(
                   icon: "assets/myFavourites.png",
-                  title: "My Favourites",
+                  title: lngTranslation("My Favourites"),
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
@@ -109,7 +137,7 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                 ),
                 DrawerItem(
                   icon: "assets/aboutApp.png",
-                  title: "About App",
+                  title: lngTranslation("About App"),
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.pushNamed(context, '/aboutApp');
@@ -117,7 +145,7 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                 ),
                 DrawerItem(
                   icon: "assets/rewardHistory.png",
-                  title: "Reward History",
+                  title: lngTranslation("Reward History"),
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
@@ -128,7 +156,7 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                 ),
                 DrawerItem(
                   icon: "assets/helps.png",
-                  title: "Helps & FAQs",
+                  title: lngTranslation("Helps & FAQs"),
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.pushNamed(context, '/helps');
@@ -169,6 +197,15 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                             ],
                             onChanged: (value) {
                               setState(() => selectedLanguage = value!);
+
+                              setState(() {
+                                selectedSavedLanguage = value!;
+                                selectedLanguage = value;
+                                final code = value == "English" ? "EN" : "GR";
+                                TranslationManager().setLanguage(code);
+                                saveLngForUser(code);
+                                _getDefaultLanguage();
+                              });
                             },
                           ),
                         ),
@@ -190,7 +227,7 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                   ),
                   icon: const Icon(Icons.logout),
                   label: Text(
-                    "Sign Out",
+                    lngTranslation("Sign Out"),
                     style: TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 16,
@@ -202,7 +239,6 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
             ),
           ),
 
-          // Close Button at Top-Right Corner
           Positioned(
             top: 40,
             right: 4,
@@ -222,14 +258,14 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          title: const Center(
+          title: Center(
             child: Text(
-              "Log Out",
+              lngTranslation("Log Out"),
               style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
             ),
           ),
-          content: const Text(
-            "Are you sure you want to log out?",
+          content: Text(
+            lngTranslation("Are you sure you want to log out?"),
             style: TextStyle(fontSize: 15),
             textAlign: TextAlign.center,
           ),
@@ -248,7 +284,7 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                       padding: const EdgeInsets.symmetric(vertical: 10),
                     ),
                     child: Text(
-                      "Cancel",
+                      lngTranslation("Cancel"),
                       style: TextStyle(
                         color: App_BlackColor,
                         fontWeight: FontWeight.w500,
@@ -262,7 +298,7 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(ctx).pop();
-                      // TODO: Add logout logic
+
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: App_Start_Now,
@@ -272,7 +308,7 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                       padding: const EdgeInsets.symmetric(vertical: 10),
                     ),
                     child: Text(
-                      "Yes",
+                      lngTranslation("Yes"),
                       style: TextStyle(
                         color: App_BlackColor,
                         fontWeight: FontWeight.w600,
@@ -308,7 +344,7 @@ class DrawerItem extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 17),
         child: Row(
           children: [
             Image.asset(icon, width: 24, height: 24),

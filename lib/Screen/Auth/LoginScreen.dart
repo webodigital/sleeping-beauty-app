@@ -10,6 +10,7 @@ import 'package:sleeping_beauty_app/Network/ApiService.dart';
 import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:sleeping_beauty_app/Helper/Language.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -83,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 32),
                           child: Text(
-                            "Login",
+                            lngTranslation('Login'),
                             style: const TextStyle(
                               fontSize: 30,
                               fontWeight: FontWeight.bold,
@@ -93,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 32),
                           child: Text(
-                            "Please enter your details",
+                            lngTranslation('Please enter your details'),
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
@@ -114,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               color: App_BlackColor,
                             ),
                             decoration: InputDecoration(
-                              labelText: "Email ID",
+                              labelText: lngTranslation("Email ID"),
                               labelStyle: TextStyle(
                                 color: App_DarkGray,
                                 fontWeight: FontWeight.w500,
@@ -168,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               letterSpacing: 1.2,
                             ),
                             decoration: InputDecoration(
-                              labelText: "Password",
+                              labelText: lngTranslation("Password"),
                               labelStyle: TextStyle(
                                 color: App_DarkGray,
                                 fontWeight: FontWeight.w500,
@@ -229,8 +230,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 12),
-                                child: const Text(
-                                  "Forgot Password ?",
+                                child: Text(
+                                  lngTranslation("Forgot Password ?"),
                                   style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w400,
@@ -259,13 +260,18 @@ class _LoginScreenState extends State<LoginScreen> {
                               onPressed: () async {
                                 print("Login pressed");
                                 validate();
-
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (context) => const TabBarScreen(),
+                                //   ),
+                                // );
                               },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "Login",
+                                    lngTranslation("Login"),
                                     style: TextStyle(
                                       color: App_BlackColor,
                                       fontSize: 16,
@@ -289,8 +295,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text(
-                                "Don't have an account?",
+                              Text(
+                                lngTranslation("Don't have an account?"),
                                 style: TextStyle(
                                   color: App_DeepIndigo,
                                   fontWeight: FontWeight.w400,
@@ -307,8 +313,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                   );
                                 },
-                                child: const Text(
-                                  "Signup",
+                                child: Text(
+                                  lngTranslation("Signup"),
                                   style: TextStyle(
                                     color: Color(0xFF5669FF),
                                     fontWeight: FontWeight.w400,
@@ -357,7 +363,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> login() async {
-    EasyLoading.show(status: 'Login...');
+    EasyLoading.show(status: lngTranslation('Login...'));
     try {
       final response = await apiService.postWithoutTokenRequest(
         ApiConstants.users_login, {
@@ -406,7 +412,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final TextEditingController _emailResetPasswordController = TextEditingController();
 
     Future<void> resendEmailOTP() async {
-      EasyLoading.show(status: 'Sending OTP...');
+      EasyLoading.show(status: lngTranslation('Sending OTP...'));
       try {
         final response = await apiService.postWithoutTokenRequest(
           ApiConstants.resend_email_otp,
@@ -425,12 +431,12 @@ class _LoginScreenState extends State<LoginScreen> {
         } else {
           String errorMessage = data['errors']?['message'] ??
               data['message'] ??
-              "Resend otp failed";
+              lngTranslation("Resend otp failed");
           EasyLoading.showError(errorMessage);
         }
       } catch (e) {
         EasyLoading.dismiss();
-        EasyLoading.showError("Resend otp failed: ${e.toString()}");
+        EasyLoading.showError(lngTranslation("Resend otp failed"));
       }
       Navigator.pop(context);
       otpCode = "";
@@ -445,10 +451,10 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (email.isEmpty) {
-        EasyLoading.showError("Please enter your email");
+        EasyLoading.showError(lngTranslation("Please enter your email"));
         return;
       } else if (!emailRegex.hasMatch(email)) {
-        EasyLoading.showError("Please enter a valid email address");
+        EasyLoading.showError(lngTranslation("Please enter a valid email address"));
         return;
       } else {
         print("Reset Password API");
@@ -495,7 +501,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      "Forgot Password?",
+                      lngTranslation("Forgot Password?"),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 18,
@@ -505,7 +511,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      "Dont’ worry we will send you reset Instructions",
+                      lngTranslation("Dont’ worry we will send you reset Instructions"),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
@@ -524,7 +530,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: App_BlackColor,
                         ),
                         decoration: InputDecoration(
-                          labelText: "Email ID",
+                          labelText: lngTranslation("Email ID"),
                           labelStyle: TextStyle(
                             color: App_DarkGray,
                             fontWeight: FontWeight.w500,
@@ -582,7 +588,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Reset Password",
+                          lngTranslation("Reset Password"),
                           style: TextStyle(
                             color: App_BlackColor,
                             fontSize: 18,
@@ -615,7 +621,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           const SizedBox(width: 5),
                           Text(
-                            "Back to login",
+                            lngTranslation("Back to login"),
                             style: TextStyle(
                               fontSize: 16,
                               color: App_light,
@@ -651,7 +657,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void showResetPasswordView(BuildContext context, String emailID) {
 
     Future<void> emailOTPVerify() async {
-      EasyLoading.show(status: 'OTP Verify...');
+      EasyLoading.show(status: lngTranslation('OTP Verify...'));
       try {
         final response = await apiService.postWithoutTokenRequest(
           ApiConstants.users_password_otp_verify,
@@ -664,11 +670,11 @@ class _LoginScreenState extends State<LoginScreen> {
         final data = response.data;
 
         if ((response.statusCode == 200 || response.statusCode == 201) && data['success'] == true) {
-          EasyLoading.showSuccess("OTP verify successful!");
+          EasyLoading.showSuccess(lngTranslation("OTP verify successful!"));
           Navigator.pop(context);
           showNewPasswordView(context, emailID);
         } else {
-          String errorMessage = data['message'] ?? "Something went wrong please try again";
+          String errorMessage = data['message'] ?? lngTranslation("Something went wrong please try again");
           EasyLoading.showError(errorMessage);
         }
       } catch (e) {
@@ -680,7 +686,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     Future<void> resendEmailOTP() async {
-      EasyLoading.show(status: 'Sending OTP...');
+      EasyLoading.show(status: lngTranslation('Sending OTP...'));
       try {
         final response = await apiService.postWithoutTokenRequest(
           ApiConstants.resend_email_otp,
@@ -696,12 +702,12 @@ class _LoginScreenState extends State<LoginScreen> {
         } else {
           String errorMessage = data['errors']?['message'] ??
               data['message'] ??
-              "Resend otp failed";
+              lngTranslation("Resend otp failed");
           EasyLoading.showError(errorMessage);
         }
       } catch (e) {
         EasyLoading.dismiss();
-        EasyLoading.showError("Resend otp failed: ${e.toString()}");
+        EasyLoading.showError(lngTranslation("Resend otp failed"));
       }
     }
 
@@ -744,7 +750,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 18),
                     Text(
-                      "Reset Password?",
+                      lngTranslation("Reset Password?"),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 18,
@@ -754,7 +760,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      "we sent a code to",
+                      lngTranslation("We sent a code to"),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
@@ -793,14 +799,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               print("OTP 4 digit");
                               emailOTPVerify();
                             } else {
-                              EasyLoading.showError("Please enter otp");
+                              EasyLoading.showError(lngTranslation("Please enter otp"));
                             }
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "Reset Password",
+                                lngTranslation("Reset Password"),
                                 style: TextStyle(
                                   color: App_BlackColor,
                                   fontSize: 18,
@@ -825,7 +831,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Didn’t receive the email?",
+                            lngTranslation("Didn’t receive the email?"),
                             style: TextStyle(
                               color: App_code,
                               fontWeight: FontWeight.w500,
@@ -839,7 +845,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               resendEmailOTP();
                             },
                             child: Text(
-                              "Click to resend",
+                              lngTranslation("Click to resend"),
                               style: TextStyle(
                                 color: App_blue,
                                 fontWeight: FontWeight.w700,
@@ -865,7 +871,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           const SizedBox(width: 5),
                           Text(
-                            "Back to login",
+                            lngTranslation("Back to login"),
                             style: TextStyle(
                               fontSize: 16,
                               color: App_light,
@@ -936,7 +942,7 @@ class _LoginScreenState extends State<LoginScreen> {
     bool isPasswordVisibleResetPasswprd = false;
 
     Future<void> resetPasswprd() async {
-      EasyLoading.show(status: 'Loading...');
+      EasyLoading.show(status: lngTranslation('Loading...'));
       try {
         final response = await apiService.postWithoutTokenRequest(
           ApiConstants.users_reset_password,
@@ -955,12 +961,12 @@ class _LoginScreenState extends State<LoginScreen> {
         } else {
           String errorMessage = data['errors']?['message'] ??
               data['message'] ??
-              "Reset password failed";
+              lngTranslation("Reset password failed");
           EasyLoading.showError(errorMessage);
         }
       } catch (e) {
         EasyLoading.dismiss();
-        EasyLoading.showError("Reset password failed: ${e.toString()}");
+        EasyLoading.showError(lngTranslation("Reset password failed"));
       }
     }
 
@@ -980,19 +986,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // Password validations
       if (password.isEmpty) {
-        EasyLoading.showError("Please enter your password");
+        EasyLoading.showError(lngTranslation("Please enter your password"));
         return;
       }
 
       // Collect missing rules
       List<String> errors = [];
-      if (!hasMinLength) errors.add("• At least 8 characters");
+      if (!hasMinLength) errors.add(lngTranslation("• At least 8 characters"));
       if (!hasUppercase) errors.add("• At least one uppercase letter");
       if (!hasDigit) errors.add("• At least one number");
       if (!hasSpecialChar) errors.add("• At least one special character");
 
       if (errors.isNotEmpty) {
-        EasyLoading.showError("Password must include:\n${errors.join("\n")}");
+        EasyLoading.showError("${(lngTranslation("Password must include:"))}\n${errors.join("\n")}");
         return;
       }
 
@@ -1033,7 +1039,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          "New Password",
+                          lngTranslation("New Password"),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 18,
@@ -1043,7 +1049,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          "Must be at least 8 characters",
+                          lngTranslation("Must be at least 8 characters"),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 16,
@@ -1068,7 +1074,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     color: App_BlackColor,
                                   ),
                                   decoration: InputDecoration(
-                                    labelText: "New Password",
+                                    labelText: lngTranslation("New Password"),
                                     labelStyle: TextStyle(
                                       color: App_DarkGray,
                                       fontWeight: FontWeight.w500,
@@ -1079,7 +1085,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       fontWeight: FontWeight.w500,
                                       fontSize: 14,
                                     ),
-                                    hintText: "New Password",
+                                    hintText: lngTranslation("New Password"),
                                     hintStyle: const TextStyle(
                                       color: App_DarkGray,
                                       fontWeight: FontWeight.w500,
@@ -1129,7 +1135,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "Reset Password",
+                                    lngTranslation("Reset Password"),
                                     style: TextStyle(
                                       color: App_BlackColor,
                                       fontSize: 18,
@@ -1162,7 +1168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               const SizedBox(width: 5),
                               Text(
-                                "Back to login",
+                                lngTranslation("Back to login"),
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: App_light,
@@ -1232,7 +1238,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        "All Done",
+                        lngTranslation("All Done"),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 18,
@@ -1242,7 +1248,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        "Your password has been reset Successfully",
+                        lngTranslation("Your password has been reset Successfully"),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 16,
@@ -1270,7 +1276,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Continue",
+                                  lngTranslation("Continue"),
                                   style: TextStyle(
                                     color: App_BlackColor,
                                     fontSize: 18,

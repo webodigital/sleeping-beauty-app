@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sleeping_beauty_app/Core/Color.dart';
+import 'package:sleeping_beauty_app/Helper/Language.dart';
 
 class EditprofileScreen extends StatefulWidget {
   @override
@@ -19,7 +20,7 @@ class _EditprofileScreenState extends State<EditprofileScreen> {
     _emailController.text = "johndoe@gmail.com";
   }
 
-  // 🔹 Function to pick image
+  // Function to pick image
   Future<void> _pickImage(ImageSource source) async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: source);
@@ -31,7 +32,7 @@ class _EditprofileScreenState extends State<EditprofileScreen> {
     Navigator.pop(context);
   }
 
-  // 🔹 Bottom sheet for camera/gallery options
+  // Bottom sheet for camera/gallery options
   void _showImagePickerOptions() {
     showModalBottomSheet(
       context: context,
@@ -44,12 +45,12 @@ class _EditprofileScreenState extends State<EditprofileScreen> {
             children: [
               ListTile(
                 leading: const Icon(Icons.camera_alt, color: Colors.blue),
-                title: const Text("Camera"),
+                title: Text(lngTranslation("Camera")),
                 onTap: () => _pickImage(ImageSource.camera),
               ),
               ListTile(
                 leading: const Icon(Icons.photo_library, color: Colors.green),
-                title: const Text("Gallery"),
+                title: Text(lngTranslation("Gallery")),
                 onTap: () => _pickImage(ImageSource.gallery),
               ),
               const SizedBox(height: 8),
@@ -69,7 +70,7 @@ class _EditprofileScreenState extends State<EditprofileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 🔹 Top bar
+              // Top bar
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
@@ -93,7 +94,7 @@ class _EditprofileScreenState extends State<EditprofileScreen> {
 
               const SizedBox(height: 20),
 
-              // 🔹 Profile Image (clickable)
+              // Profile Image (clickable)
               Padding(
                 padding: const EdgeInsets.only(left: 16),
                 child: GestureDetector(
@@ -140,7 +141,7 @@ class _EditprofileScreenState extends State<EditprofileScreen> {
 
               const SizedBox(height: 30),
 
-              // 🔹 Name field
+              // Name field
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: TextFormField(
@@ -151,7 +152,7 @@ class _EditprofileScreenState extends State<EditprofileScreen> {
                     color: App_BlackColor,
                   ),
                   decoration: InputDecoration(
-                    labelText: "Full Name",
+                    labelText: lngTranslation("Full Name"),
                     labelStyle: TextStyle(
                       color: App_DarkGray,
                       fontWeight: FontWeight.w500,
@@ -183,7 +184,7 @@ class _EditprofileScreenState extends State<EditprofileScreen> {
 
               const SizedBox(height: 30),
 
-              // 🔹 Email field (disabled)
+              //Email field (disabled)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: TextFormField(
@@ -196,7 +197,7 @@ class _EditprofileScreenState extends State<EditprofileScreen> {
                     color: App_BlackColor,
                   ),
                   decoration: InputDecoration(
-                    labelText: "Email ID",
+                    labelText: lngTranslation("Email ID"),
                     labelStyle: TextStyle(
                       color: App_DarkGray,
                       fontWeight: FontWeight.w500,
@@ -226,7 +227,7 @@ class _EditprofileScreenState extends State<EditprofileScreen> {
                 ),
               ),
 
-              // 🔹 Image & code section
+              // Image & code section
               const SizedBox(height: 40),
               Center(
                 child: Column(

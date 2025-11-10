@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sleeping_beauty_app/Core/Color.dart';
+import 'package:sleeping_beauty_app/Helper/Language.dart';
 
 class JourneyDetailsScreen extends StatefulWidget {
   final String title;
@@ -56,7 +57,7 @@ class _JourneyDetailsScreenState extends State<JourneyDetailsScreen> {
                       Image.asset("assets/backArrow.png", height: 26, width: 26),
                       const SizedBox(width: 10),
                       Text(
-                        'Journey',
+                        lngTranslation('Journey'),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -154,7 +155,7 @@ class _JourneyDetailsScreenState extends State<JourneyDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Description",
+                      lngTranslation("Description"),
                       style: TextStyle(
                         color: App_DescText,
                         fontWeight: FontWeight.w600,
@@ -180,7 +181,7 @@ class _JourneyDetailsScreenState extends State<JourneyDetailsScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  "Multimedia",
+                  lngTranslation("Multimedia"),
                   style: TextStyle(
                     color: App_DescText,
                     fontWeight: FontWeight.w600,
@@ -215,7 +216,7 @@ class _JourneyDetailsScreenState extends State<JourneyDetailsScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  "Opening Hours",
+                  lngTranslation("Opening Hours"),
                   style: TextStyle(
                     color: App_DescText,
                     fontWeight: FontWeight.w600,
@@ -244,7 +245,7 @@ class _JourneyDetailsScreenState extends State<JourneyDetailsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Offers",
+            lngTranslation("Offers"),
             style: TextStyle(
               color: App_BlackColor,
               fontWeight: FontWeight.w600,

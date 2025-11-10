@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sleeping_beauty_app/Core/Color.dart';
 import 'package:sleeping_beauty_app/Screen/Tabbar/Journey/JourneyListOnMapView.dart';
 import 'package:sleeping_beauty_app/Model/JourneyList.dart';
+import 'package:sleeping_beauty_app/Model/JourneyList.dart';
+import 'package:sleeping_beauty_app/Helper/Language.dart';
 
 class StartJourneyScreen extends StatefulWidget {
 
@@ -43,7 +45,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                     Image.asset("assets/backArrow.png", height: 26, width: 26),
                     const SizedBox(width: 10),
                     Text(
-                      'Journey',
+                      lngTranslation('Journey'),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -131,15 +133,14 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const JourneyListOnMapViewScreen(title: 'Wellness Journey', imagePath: 'assets/wellness.png'),
+                        builder: (_) => JourneyListOnMapViewScreen(journey:  widget.journey),
                       ),
                     );
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        "Start Now",
+                      Text(lngTranslation("Start Now"),
                         style: TextStyle(
                           color: App_BlackColor,
                           fontSize: 16,

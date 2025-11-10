@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sleeping_beauty_app/Core/Color.dart';
 import 'package:sleeping_beauty_app/Screen/Tabbar/SideMenu/HistoryDetails.dart';
 import 'package:flutter/material.dart';
+import 'package:sleeping_beauty_app/Helper/Language.dart';
 
 class MyjourneyhistoryScreen extends StatefulWidget {
   const MyjourneyhistoryScreen({Key? key}) : super(key: key);
@@ -35,7 +36,7 @@ class _MyjourneyhistoryScreenState extends State<MyjourneyhistoryScreen> {
                       Image.asset("assets/backArrow.png", height: 26, width: 26),
                       const SizedBox(width: 10),
                       Text(
-                        'My Journey History',
+                        lngTranslation('My Journey History'),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sleeping_beauty_app/Core/Color.dart';
-
+import 'package:sleeping_beauty_app/Helper/Language.dart';
 import 'package:flutter/material.dart';
 
 class MyFavoriteJourneyScreen extends StatefulWidget {
@@ -25,7 +25,7 @@ class _MyFavoriteJourneyState extends State<MyFavoriteJourneyScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 🔹 Header Row
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: GestureDetector(
@@ -36,7 +36,7 @@ class _MyFavoriteJourneyState extends State<MyFavoriteJourneyScreen> {
                       Image.asset("assets/backArrow.png", height: 26, width: 26),
                       const SizedBox(width: 10),
                       Text(
-                        'My Favorite Journeys',
+                        lngTranslation('My Favorite Journeys'),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -67,7 +67,7 @@ class _MyFavoriteJourneyState extends State<MyFavoriteJourneyScreen> {
                     ),
                     decoration: InputDecoration(
                       hintText:
-                      "Search by Romantic, Adventure, Family, Cultural etc",
+                      lngTranslation("Search by Romantic, Adventure, Family, Cultural etc"),
                       hintStyle: TextStyle(
                         color: App_SearchText,
                         fontSize: 13,

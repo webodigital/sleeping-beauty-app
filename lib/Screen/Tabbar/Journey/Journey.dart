@@ -5,6 +5,11 @@ import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:sleeping_beauty_app/Network/ConstantString.dart';
 import 'package:sleeping_beauty_app/Model/JourneyList.dart';
+import 'package:sleeping_beauty_app/Helper/Language.dart';
+import 'package:sleeping_beauty_app/Screen/Tabbar/SideMenu/CustomSideMenu.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
+
 
 class JourneyScreen extends StatefulWidget {
   const JourneyScreen({Key? key}) : super(key: key);
@@ -17,6 +22,14 @@ class _JourneyScreenState extends State<JourneyScreen> {
 
   List<Journey> journeyList = [];
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  var currentCityName = "";
+
+  void openDrawer() {
+    _scaffoldKey.currentState?.openDrawer();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -26,7 +39,19 @@ class _JourneyScreenState extends State<JourneyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: const Color(0xFFF8F8F8),
+      drawer: const CustomSideMenu(),
+      onDrawerChanged: (isOpened) {
+        if (!isOpened) {
+          // Drawer just closed
+          print("Returned to main screen after closing drawer");
+          setState(() {
+            print("Reload Screen");
+          });
+        }
+      },
+      drawerScrimColor: Colors.black.withOpacity(0.5),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,19 +65,24 @@ class _JourneyScreenState extends State<JourneyScreen> {
                   //Profile
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: Container(
-                      width: 46,
-                      height: 46,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.green.shade200, width: 3),
-                      ),
-                      child: ClipOval(
-                        child: Image.asset('assets/dummyProfile.png', fit: BoxFit.cover),
+                    child: GestureDetector(
+                      onTap: openDrawer,
+                      child: Container(
+                        width: 46,
+                        height: 46,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.green.shade200, width: 3),
+                        ),
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/dummyProfile.png',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-
                   //Location
                   Row(
                     mainAxisSize: MainAxisSize.min,
@@ -90,8 +120,8 @@ class _JourneyScreenState extends State<JourneyScreen> {
                             ),
                             Positioned(
                               bottom: -14,
-                              child: const Text(
-                                '100 Pts',
+                              child: Text(
+                                '100 ${lngTranslation("Pts")}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 12,
@@ -141,8 +171,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     final double width = constraints.maxWidth;
-                    final double height = width * 0.50; // dynamic height based on width
-
+                    final double height = width * 0.50;
                     return Stack(
                       alignment: Alignment.center,
                       children: [
@@ -179,7 +208,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
             Padding(
               padding: const EdgeInsets.only(left: 20, top: 0),
               child: Text(
-                'Choose Your Path',
+                lngTranslation('Choose Your Path'),
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
@@ -188,7 +217,6 @@ class _JourneyScreenState extends State<JourneyScreen> {
               ),
             ),
             const SizedBox(height: 10),
-
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -266,7 +294,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
   }
 
   Future<void> getJourneyList() async {
-    EasyLoading.show(status: 'Loading...');
+    EasyLoading.show(status: lngTranslation('Loading...'));
     try {
       final response = await apiService.getRequest(ApiConstants.journeys);
 
@@ -282,7 +310,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
           print("Journeys retrieved: ${journeyList.length}");
         } else {
           EasyLoading.dismiss();
-          String errorMessage = data['message'] ?? 'Something went wrong';
+          String errorMessage = data['message'] ?? lngTranslation('Something went wrong please try again');
           EasyLoading.showError(errorMessage);
         }
       } else {

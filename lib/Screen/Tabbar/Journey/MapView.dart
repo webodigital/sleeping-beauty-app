@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-/// 🔹 Model for map markers
+// Model for map markers
 class MapMarker {
   final int id;
   final double latitude;
@@ -15,7 +15,7 @@ class MapMarker {
   });
 }
 
-/// 🔹 Main Custom Map Widget
+// Main Custom Map Widget
 class CustomMapWidget extends StatelessWidget {
   final List<MapMarker> markers;
   final double zoom;
@@ -30,7 +30,7 @@ class CustomMapWidget extends StatelessWidget {
     this.onPinTap,
   });
 
-  /// ✅ Helper to safely create LatLng
+  // Helper to safely create LatLng
   LatLng _safeLatLng(double? lat, double? lng) {
     if (lat == null ||
         lng == null ||
@@ -38,7 +38,7 @@ class CustomMapWidget extends StatelessWidget {
         lng.isNaN ||
         lat.isInfinite ||
         lng.isInfinite) {
-      debugPrint('⚠️ Invalid coordinates detected, using default (0,0)');
+      debugPrint('Invalid coordinates detected, using default (0,0)');
       return const LatLng(0, 0);
     }
     return LatLng(lat, lng);
@@ -56,13 +56,13 @@ class CustomMapWidget extends StatelessWidget {
           initialZoom: zoom,
         ),
         children: [
-          // 🔹 OpenStreetMap Tiles
+          // OpenStreetMap Tiles
           TileLayer(
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
             userAgentPackageName: 'com.example.custommap',
           ),
 
-          // 🔹 Marker Layer
+          // Marker Layer
           MarkerLayer(
             markers: markers.map((marker) {
               final LatLng pos = _safeLatLng(marker.latitude, marker.longitude);
@@ -96,7 +96,7 @@ class CustomMapWidget extends StatelessWidget {
   }
 }
 
-/// 🔹 Custom pin widget (just image + shadow)
+// Custom pin widget (just image + shadow)
 class _CustomPin extends StatelessWidget {
   final double size;
   final String mapImg;

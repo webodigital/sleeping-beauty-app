@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sleeping_beauty_app/Core/Color.dart';
+import 'package:sleeping_beauty_app/Helper/Language.dart';
+import 'package:sleeping_beauty_app/Screen/Tabbar/SideMenu/CustomSideMenu.dart';
 
 class RewardsScreen extends StatefulWidget {
   const RewardsScreen({Key? key}) : super(key: key);
@@ -9,6 +11,17 @@ class RewardsScreen extends StatefulWidget {
 }
 
 class _RewardsScreenState extends State<RewardsScreen> {
+
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  var currentCityName = "";
+
+  void openDrawer() {
+    _scaffoldKey.currentState?.openDrawer();
+  }
+
+
   final List<Map<String, dynamic>> offers = [
     {
       "image": "assets/shop.png",
@@ -40,7 +53,19 @@ class _RewardsScreenState extends State<RewardsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: const Color(0xFFF8F8F8),
+      drawer: const CustomSideMenu(),
+      onDrawerChanged: (isOpened) {
+        if (!isOpened) {
+          // Drawer just closed
+          print("Returned to main screen after closing drawer");
+          setState(() {
+            print("Reload Screen");
+          });
+        }
+      },
+      drawerScrimColor: Colors.black.withOpacity(0.5),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,17 +78,21 @@ class _RewardsScreenState extends State<RewardsScreen> {
                 children: [
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: Container(
-                      width: 46,
-                      height: 46,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border:
-                        Border.all(color: Colors.green.shade200, width: 3),
-                      ),
-                      child: ClipOval(
-                        child: Image.asset('assets/dummyProfile.png',
-                            fit: BoxFit.cover),
+                    child: GestureDetector(
+                      onTap: openDrawer,
+                      child: Container(
+                        width: 46,
+                        height: 46,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.green.shade200, width: 3),
+                        ),
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/dummyProfile.png',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -102,10 +131,10 @@ class _RewardsScreenState extends State<RewardsScreen> {
                               child: Image.asset('assets/wallet.png',
                                   height: 20),
                             ),
-                            const Positioned(
+                            Positioned(
                               bottom: -14,
                               child: Text(
-                                '100 Pts',
+                                '100 ${lngTranslation("Pts")}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 12,
@@ -148,7 +177,6 @@ class _RewardsScreenState extends State<RewardsScreen> {
                 ],
               ),
             ),
-
             /// Points Card
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -176,7 +204,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "You have 125 points",
+                            "${lngTranslation("You have")} 125 ${lngTranslation("points")}",
                             style: TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
@@ -192,7 +220,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
                               const SizedBox(width: 6),
                               Flexible(
                                 child: Text(
-                                  "Keep exploring to unlock new experiences",
+                                  lngTranslation("Keep exploring to unlock new experiences"),
                                   style: TextStyle(
                                     fontWeight: FontWeight.w400,
                                     fontSize: 13,
@@ -334,8 +362,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
             ),
           ],
         ),
-      )
-      ],
+      )],
         ),
       ),
     );
