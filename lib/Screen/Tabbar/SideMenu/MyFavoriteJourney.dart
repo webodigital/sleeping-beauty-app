@@ -112,12 +112,10 @@ class _MyFavoriteJourneyState extends State<MyFavoriteJourneyScreen> {
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(12, 14, 10, 0),
 
-                    // 👇 Add IntrinsicHeight here
                     child: IntrinsicHeight(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // ❤️ Left Icon
                           Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -131,7 +129,6 @@ class _MyFavoriteJourneyState extends State<MyFavoriteJourneyScreen> {
                             ],
                           ),
                           const SizedBox(width: 9),
-                          // 👇 Divider will now match column height
                           Container(
                             width: 1,
                             margin: const EdgeInsets.only(top: 0, bottom: 50),
@@ -140,7 +137,6 @@ class _MyFavoriteJourneyState extends State<MyFavoriteJourneyScreen> {
 
                           const SizedBox(width: 12),
 
-                          // 🔹 Journey Details
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,8 +236,6 @@ class _MyFavoriteJourneyState extends State<MyFavoriteJourneyScreen> {
                     ),
                   ),
                 ),
-
-                // ❤️ Heart Top Right
                 Positioned(
                   top: 10,
                   right: 10,

@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:sleeping_beauty_app/Core/Color.dart';
 import 'package:sleeping_beauty_app/Helper/Language.dart';
+import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:sleeping_beauty_app/Network/ConstantString.dart';
+import 'package:sleeping_beauty_app/Model/Details.dart';
 
 class JourneyDetailsScreen extends StatefulWidget {
-  final String title;
-  final String imagePath;
+  final String id;
+
 
   const JourneyDetailsScreen({
     Key? key,
-    required this.title,
-    required this.imagePath,
+    required this.id,
   }) : super(key: key);
 
   @override
@@ -17,6 +20,11 @@ class JourneyDetailsScreen extends StatefulWidget {
 }
 
 class _JourneyDetailsScreenState extends State<JourneyDetailsScreen> {
+
+
+  BusinessDetailResponse? businessDetailResponse;
+  Business? businessDetail;
+
   final List<String> mediaImages = [
     'assets/shop.png',
     'assets/shop.png',
@@ -37,6 +45,13 @@ class _JourneyDetailsScreenState extends State<JourneyDetailsScreen> {
       "subtitle": "Show this offer to the cashier at checkout\nCode: TREATME (Today until 6:00)",
     }
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    print("initState:- JourneyDetailsScreen");
+    getJourneyDetails();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,11 +88,11 @@ class _JourneyDetailsScreenState extends State<JourneyDetailsScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    'assets/shop.png',
+                  child: Image.network(
+                    height: 190,
                     width: double.infinity,
-                    height: 180,
-                    fit: BoxFit.cover,
+                    businessDetail?.images?.first.url ?? "",
+                    fit: BoxFit.fitWidth,
                   ),
                 ),
               ),
@@ -89,7 +104,7 @@ class _JourneyDetailsScreenState extends State<JourneyDetailsScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        "Bäckerei Herzstück",
+                        businessDetail?.companyName ?? "",
                         style: TextStyle(
                           color: App_BlackColor,
                           fontWeight: FontWeight.w600,
@@ -102,8 +117,7 @@ class _JourneyDetailsScreenState extends State<JourneyDetailsScreen> {
                       children: [
                         Image.asset('assets/locationPin.png', height: 15, width: 15),
                         const SizedBox(width: 6),
-                        const Text(
-                          "1.5 Km",
+                         Text("${businessDetail?.distance ?? 0} Km",
                           style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13),
                         ),
                       ],
@@ -124,7 +138,7 @@ class _JourneyDetailsScreenState extends State<JourneyDetailsScreen> {
                         Image.asset('assets/disableLocation.png', height: 18, width: 18),
                         const SizedBox(width: 4),
                         Text(
-                          "Hofgeismar Old Town, Germany",
+                          businessDetail?.address ?? "",
                           style: TextStyle(
                             fontWeight: FontWeight.w400,
                             fontSize: 13,
@@ -164,7 +178,7 @@ class _JourneyDetailsScreenState extends State<JourneyDetailsScreen> {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      "Bäckerei Herzstück is a cozy, locally loved bakery known for its seasonal fairy tale specials. Step inside for sweet moments, soft music, and fresh aromas.",
+                      businessDetail?.shortDescription ?? "",
                       style: TextStyle(
                         color: App_BlackColor,
                         fontWeight: FontWeight.w400,
@@ -193,20 +207,19 @@ class _JourneyDetailsScreenState extends State<JourneyDetailsScreen> {
               const SizedBox(height: 12),
 
               SizedBox(
-                height: 95,
+                height: 80,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: mediaImages.length,
+                  itemCount: businessDetail?.images?.length ?? 0,
                   separatorBuilder: (context, index) => const SizedBox(width: 10),
                   itemBuilder: (context, index) {
                     return ClipRRect(
                       borderRadius: BorderRadius.circular(6),
-                      child: Image.asset(
-                        mediaImages[index],
-                        width: 100,
-                        height: 95,
-                        fit: BoxFit.cover,
+                      child: Image.network(
+                        height: 70,
+                        businessDetail?.images?[index].url ?? "",
+                        fit: BoxFit.fitWidth,
                       ),
                     );
                   },
@@ -227,18 +240,17 @@ class _JourneyDetailsScreenState extends State<JourneyDetailsScreen> {
               const SizedBox(height: 12),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  "10:00 – 18:00 (Daily)",
-                  style: TextStyle(
-                    color: App_BlackColor,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 13,
+                  child: Text(
+                    (businessDetail?.regularOpeningHours ?? "").replaceAll(", ", "\n"),
+                    style: TextStyle(
+                      color: App_BlackColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 13,
+                      height: 2,
+                    ),
                   ),
-                ),
               ),
               const SizedBox(height: 18),
-          // Offers Section
-
       Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -258,10 +270,23 @@ class _JourneyDetailsScreenState extends State<JourneyDetailsScreen> {
           ListView.separated(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            itemCount: offers.length,
+            itemCount: businessDetail?.discounts?.length ?? 0,
             separatorBuilder: (context, index) => const SizedBox(height: 10),
             itemBuilder: (context, index) {
-              final offer = offers[index];
+              final offer = businessDetail?.discounts?[index] ?? "";
+
+              String mainText = offer;
+              String codeText = "";
+              String extraText = "";
+
+              if (offer.contains("Code:")) {
+                final parts = offer.split("Code:");
+                mainText = parts[0].trim();
+                final codeParts = parts[1].split("-");
+                codeText = codeParts[0].trim();
+                extraText = codeParts.length > 1 ? "- ${codeParts[1].trim()}" : "";
+              }
+
               return Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -278,32 +303,37 @@ class _JourneyDetailsScreenState extends State<JourneyDetailsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            offer["title"]!,
+                            mainText,
                             style: TextStyle(
                               color: App_BlackColor,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                               fontSize: 14,
                             ),
                           ),
                           const SizedBox(height: 4),
-                      RichText(
-                        text: TextSpan(
-                          style: TextStyle(
-                            color: App_DescText,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 13,
-                            height: 1.3,
-                          ),
-                          children: [
-                            const TextSpan(text: "Code: "),
-                            TextSpan(
-                              text: "LOVE10",
-                              style: const TextStyle(fontWeight: FontWeight.w600), // bold only LOVE10
+                          RichText(
+                            text: TextSpan(
+                              style: TextStyle(
+                                color: App_DescText,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 13,
+                                height: 1.3,
+                              ),
+                              children: [
+                                if (codeText.isNotEmpty) ...[
+                                  const TextSpan(text: "Code: "),
+                                  TextSpan(
+                                    text: codeText,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600, // bold only code
+                                    ),
+                                  ),
+                                ],
+                                if (extraText.isNotEmpty)
+                                  TextSpan(text: " $extraText"), // rest of text
+                              ],
                             ),
-                            const TextSpan(text: " (valid today only)"),
-                          ],
-                        ),
-                      ),
+                          ),
                         ],
                       ),
                     ),
@@ -326,11 +356,11 @@ class _JourneyDetailsScreenState extends State<JourneyDetailsScreen> {
                 const SizedBox(width: 16),
                 Flexible(
                   child: Text(
-                    "You will Earn 100 Points by visiting there",
+                    "You will Earn ${businessDetail?.pointReceive} Points by visiting there",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: App_BlackColor,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       fontSize: 14,
                       height: 1.3,
                     ),
@@ -349,4 +379,49 @@ class _JourneyDetailsScreenState extends State<JourneyDetailsScreen> {
       ),
     );
   }
+
+
+  Future<void> getJourneyDetails() async {
+    EasyLoading.show(status: lngTranslation('Loading...'));
+
+    print(" widget.id:-- ${ widget.id}");
+    try {
+      final response = await apiService.getRequestWithParam(
+        ApiConstants.businesses_details_id + widget.id,
+        queryParams: {
+          'lat': "20.8009",
+          'lng': "70.6960"
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data;
+
+        if (data['success'] == true) {
+          EasyLoading.dismiss();
+
+          setState(() {
+            businessDetailResponse = BusinessDetailResponse.fromJson(data);
+            businessDetail = businessDetailResponse?.data?.business;
+          });
+
+        } else {
+          EasyLoading.dismiss();
+          String errorMessage = data['message'] ??
+              lngTranslation('Something went wrong please try again');
+          EasyLoading.showError(errorMessage);
+        }
+      } else {
+        EasyLoading.dismiss();
+        EasyLoading.showError('Server Error: ${response.statusCode}');
+      }
+    } catch (e) {
+      print("Error fetching journey details: $e");
+      EasyLoading.dismiss();
+      EasyLoading.showError(AlertConstants.somethingWrong);
+    } finally {
+      print("getJourneyDetails finished");
+    }
+  }
+
 }

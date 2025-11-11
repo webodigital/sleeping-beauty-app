@@ -7,17 +7,16 @@ import 'package:sleeping_beauty_app/Helper/Language.dart';
 
 class StartJourneyScreen extends StatefulWidget {
 
-  final Journey journey;
+  final Journey? journey;
+  final bool isFromJourneyScreen;
 
-  const StartJourneyScreen({Key? key, required this.journey}) : super(key: key);
+  const StartJourneyScreen({Key? key, required this.journey, required this.isFromJourneyScreen}) : super(key: key);
 
   @override
   State<StartJourneyScreen> createState() => _StartJourneyScreenState();
 }
 
 class _StartJourneyScreenState extends State<StartJourneyScreen> {
-
-
 
   @override
   void initState() {
@@ -86,7 +85,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
             // Centered Image
             Center(
               child: Image.asset(
-                widget.journey.iconUrl ?? 'assets/romanticJourney.png',
+                widget.journey?.iconUrl ?? 'assets/romanticJourney.png',
                 width: 92,
                 height: 90,
                 fit: BoxFit.cover,
@@ -95,7 +94,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
             const SizedBox(height: 20),
             Center(
                child:  Text(
-                 widget.journey.name,
+                 widget.journey?.name ?? "",
                style: TextStyle(
                fontSize: 20,
                fontWeight: FontWeight.w600,
@@ -106,7 +105,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  widget.journey.description,
+                  widget.journey?.description ?? "",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
@@ -133,7 +132,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => JourneyListOnMapViewScreen(journey:  widget.journey),
+                        builder: (_) => JourneyListOnMapViewScreen(journey: widget.journey, isFromJourneyScreen:  false, journeyID: ""),
                       ),
                     );
                   },

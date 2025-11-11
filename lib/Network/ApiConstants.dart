@@ -7,6 +7,8 @@ final apiService = ApiService();
 
 class ApiConstants {
 
+  static const String googleApiKey = "AIzaSyDkelEWkKhlcHPupM7RJfEtZOXHbDQbDYE";
+
   static const String baseUrl = "http://64.227.123.153:5001";
 
   static const String users_signUp = "/users/signup";
@@ -16,6 +18,11 @@ class ApiConstants {
   static const String users_password_otp_verify = "/users/verify-otp";
   static const String users_reset_password = "/users/reset-password";
   static const String businesses_by_location = "/businesses/by-location";
+  static const String businesses_details_id = "/businesses/details/";
+  static const String user_start_journey = "/user-journeys/start-journey";
+  static const String user_journeys_ongoing = "/user-journeys/ongoing";
+  static const String user_journeys_business_complete = "/user-journeys/business/";
+  static const String user_journeys_completed = "/user-journeys/";
 
   static const String noInterNet = "No internet connection. Please check your network settings and try again.";
 }

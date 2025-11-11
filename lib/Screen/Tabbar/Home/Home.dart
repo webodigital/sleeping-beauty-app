@@ -4,9 +4,12 @@ import 'package:sleeping_beauty_app/Screen/Tabbar/SideMenu/CustomSideMenu.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:sleeping_beauty_app/Helper/Language.dart';
+import 'package:sleeping_beauty_app/Network/ConstantString.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final void Function(int tabIndex)? onTabChange;
+  const HomeScreen({super.key, this.onTabChange});
+  // const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -18,13 +21,19 @@ class _HomeScreenState extends State<HomeScreen> {
   var currentCityName = "";
 
   void openDrawer() {
+    isSideMenuOpen = true;
+    widget.onTabChange?.call(0);
     _scaffoldKey.currentState?.openDrawer();
   }
 
   @override
   void initState() {
     super.initState();
-    getUserLocation();
+    getUserLocation().then((city) {
+      setState(() {
+        currentCityName = city ?? 'Unknown';
+      });
+    });
   }
 
   @override
@@ -37,8 +46,12 @@ class _HomeScreenState extends State<HomeScreen> {
           if (!isOpened) {
             // Drawer just closed
             print("Returned to main screen after closing drawer");
-            setState(() {
-              print("Reload Screen");
+            Future.delayed(const Duration(milliseconds: 200), () {
+              setState(() {
+                isSideMenuOpen = false;
+                widget.onTabChange?.call(0);
+                print("Reload Screen");
+              });
             });
           }
         },
@@ -256,54 +269,54 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<Position> _getCurrentPosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // Check if location services are enabled
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-
-    // Check permission
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, cannot request permissions.');
-    }
-
-    // Get current position
-    return await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-  }
-
-  Future<String> getCityName(double latitude, double longitude) async {
-    List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
-    Placemark place = placemarks.first;
-    return place.locality ?? 'Unknown city';
-  }
-
-  void getUserLocation() async {
-    try {
-      Position position = await _getCurrentPosition();
-      String city = await getCityName(position.latitude, position.longitude);
-
-      print('Latitude: ${position.latitude}');
-      print('Longitude: ${position.longitude}');
-      print('City: $city');
-      setState(() {
-        currentCityName = city;
-      });
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
+  // Future<Position> _getCurrentPosition() async {
+  //   bool serviceEnabled;
+  //   LocationPermission permission;
+  //
+  //   // Check if location services are enabled
+  //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  //   if (!serviceEnabled) {
+  //     return Future.error('Location services are disabled.');
+  //   }
+  //
+  //   // Check permission
+  //   permission = await Geolocator.checkPermission();
+  //   if (permission == LocationPermission.denied) {
+  //     permission = await Geolocator.requestPermission();
+  //     if (permission == LocationPermission.denied) {
+  //       return Future.error('Location permissions are denied');
+  //     }
+  //   }
+  //
+  //   if (permission == LocationPermission.deniedForever) {
+  //     return Future.error(
+  //         'Location permissions are permanently denied, cannot request permissions.');
+  //   }
+  //
+  //   // Get current position
+  //   return await Geolocator.getCurrentPosition(
+  //       desiredAccuracy: LocationAccuracy.high);
+  // }
+  //
+  // Future<String> getCityName(double latitude, double longitude) async {
+  //   List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
+  //   Placemark place = placemarks.first;
+  //   return place.locality ?? 'Unknown city';
+  // }
+  //
+  // void getUserLocation() async {
+  //   try {
+  //     Position position = await _getCurrentPosition();
+  //     String city = await getCityName(position.latitude, position.longitude);
+  //
+  //     print('Latitude: ${position.latitude}');
+  //     print('Longitude: ${position.longitude}');
+  //     print('City: $city');
+  //     setState(() {
+  //       currentCityName = city;
+  //     });
+  //   } catch (e) {
+  //     print('Error: $e');
+  //   }
+  // }
 }

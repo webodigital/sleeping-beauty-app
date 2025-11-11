@@ -73,7 +73,7 @@ class CustomMapWidget extends StatelessWidget {
                 alignment: Alignment.topCenter,
                 child: GestureDetector(
                   onTap: () {
-                    debugPrint("📍 Pin tapped with ID: ${marker.id}");
+                    debugPrint("Pin tapped with ID: ${marker.id}");
                     if (onPinTap != null) {
                       onPinTap!(marker.id);
                     } else {

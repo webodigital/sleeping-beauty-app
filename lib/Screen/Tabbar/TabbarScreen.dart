@@ -168,6 +168,8 @@ import 'package:sleeping_beauty_app/Helper/Language.dart';
 // }
 
 
+
+
 class TabBarScreen extends StatefulWidget {
   const TabBarScreen({super.key});
 
@@ -181,12 +183,15 @@ class _TabBarScreenState extends State<TabBarScreen>
 
   late final List<AnimationController> _iconControllers;
 
-  final List<Widget> _pages = const [
-    HomeScreen(),
-    JourneyScreen(),
-    RewardsScreen(),
-    EventsScreen(),
-  ];
+  late final List<Widget> _pages;
+
+
+  // final List<Widget> _pages = const [
+  //   HomeScreen(),
+  //   JourneyScreen(),
+  //   RewardsScreen(),
+  //   EventsScreen(),
+  // ];
 
   final List<String> _labels = ["Home", "Journey", "Rewards", "Events"];
 
@@ -207,6 +212,31 @@ class _TabBarScreenState extends State<TabBarScreen>
   @override
   void initState() {
     super.initState();
+
+    _pages = [
+      HomeScreen(
+        onTabChange: (index) {
+          setState(() {
+            print("Home init");
+          });
+        },
+      ),
+      JourneyScreen(
+        onTabChange: (index) {
+          setState(() {
+            print("JourneyScreen init");
+          });
+        },
+      ),
+      RewardsScreen(
+        onTabChange: (index) {
+          setState(() {
+            print("RewardsScreen init");
+          });
+        },
+      ),
+      EventsScreen(),
+    ];
 
     _iconControllers = List.generate(
       _pages.length,
@@ -253,7 +283,7 @@ class _TabBarScreenState extends State<TabBarScreen>
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.only(left: 5, right: 5, bottom: 20),
           child: Container(
-            height: 70,
+            height: isSideMenuOpen ? 0 : 70,
             decoration: BoxDecoration(
               color: App_ThemeColor,
               borderRadius: BorderRadius.circular(10),

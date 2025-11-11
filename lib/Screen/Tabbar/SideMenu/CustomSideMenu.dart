@@ -58,11 +58,11 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
       child: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 20), // Added spacing to avoid overlap with close icon
+                const SizedBox(height: 50),
                 Container(
                   width: 76,
                   height: 76,
@@ -80,7 +80,7 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                 Text(
                   "John Doe",
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       fontSize: 18,
                       color: App_BlackColor),
                 ),
@@ -91,7 +91,7 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                       fontWeight: FontWeight.w400,
                       fontSize: 14),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
 
                 DrawerItem(
                   icon: "assets/profile.png",
@@ -220,7 +220,7 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: App_SignOut,
                     foregroundColor: Colors.black,
-                    minimumSize: const Size(double.infinity, 44),
+                    minimumSize: const Size(double.infinity, 48),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5),
                     ),

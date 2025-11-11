@@ -335,7 +335,7 @@ class ApiService {
     await prefs.remove('accessToken');
   }
 
-  // POST with token
+  // POST with tokena
   Future<Response> postRequest(String endpoint, Map<String, dynamic> data) async {
 
     bool isConnected = await InternetConnectionChecker().hasConnection;

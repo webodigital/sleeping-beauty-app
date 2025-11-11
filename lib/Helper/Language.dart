@@ -470,3 +470,4 @@ class TranslationManager extends ChangeNotifier {
 String lngTranslation(String key) => TranslationManager().translate(key);
 
 var selectedSavedLanguage = "";
+var isSideMenuOpen = false;

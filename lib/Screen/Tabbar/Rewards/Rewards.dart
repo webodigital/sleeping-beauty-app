@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:sleeping_beauty_app/Core/Color.dart';
 import 'package:sleeping_beauty_app/Helper/Language.dart';
 import 'package:sleeping_beauty_app/Screen/Tabbar/SideMenu/CustomSideMenu.dart';
+import 'package:sleeping_beauty_app/Network/ConstantString.dart';
 
 class RewardsScreen extends StatefulWidget {
-  const RewardsScreen({Key? key}) : super(key: key);
+  final void Function(int tabIndex)? onTabChange;
+  const RewardsScreen({super.key, this.onTabChange});
 
   @override
   State<RewardsScreen> createState() => _RewardsScreenState();
@@ -18,6 +20,8 @@ class _RewardsScreenState extends State<RewardsScreen> {
   var currentCityName = "";
 
   void openDrawer() {
+    isSideMenuOpen = true;
+    widget.onTabChange?.call(2);
     _scaffoldKey.currentState?.openDrawer();
   }
 
@@ -51,6 +55,17 @@ class _RewardsScreenState extends State<RewardsScreen> {
 
 
   @override
+  void initState() {
+    super.initState();
+    getUserLocation().then((city) {
+      setState(() {
+        currentCityName = city ?? 'Unknown';
+      });
+      print('Current city: $currentCityName');
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
@@ -60,8 +75,12 @@ class _RewardsScreenState extends State<RewardsScreen> {
         if (!isOpened) {
           // Drawer just closed
           print("Returned to main screen after closing drawer");
-          setState(() {
-            print("Reload Screen");
+          Future.delayed(const Duration(milliseconds: 200), () {
+            setState(() {
+              isSideMenuOpen = false;
+              widget.onTabChange?.call(2);
+              print("Reload Screen");
+            });
           });
         }
       },
@@ -103,7 +122,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
                           height: 20, width: 20),
                       const SizedBox(width: 5),
                       Text(
-                        'Hofgeismar',
+                        currentCityName,
                         style: TextStyle(
                           color: App_Cool_Slate,
                           fontWeight: FontWeight.w400,

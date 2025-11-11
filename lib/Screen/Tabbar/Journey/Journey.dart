@@ -9,16 +9,22 @@ import 'package:sleeping_beauty_app/Helper/Language.dart';
 import 'package:sleeping_beauty_app/Screen/Tabbar/SideMenu/CustomSideMenu.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
-
+import 'package:sleeping_beauty_app/Model/OnGoingJourny.dart';
+import 'package:sleeping_beauty_app/Screen/Tabbar/Journey/VisitJournyMapview.dart';
+import 'package:sleeping_beauty_app/Screen/Tabbar/Journey/JourneyListOnMapView.dart';
 
 class JourneyScreen extends StatefulWidget {
-  const JourneyScreen({Key? key}) : super(key: key);
+  final void Function(int tabIndex)? onTabChange;
+  const JourneyScreen({super.key, this.onTabChange});
 
   @override
   State<JourneyScreen> createState() => _JourneyScreenState();
 }
 
 class _JourneyScreenState extends State<JourneyScreen> {
+
+  JourneyResponse? ongoingJourneyResponse;
+  JourneyData? ongoingJourneyData;
 
   List<Journey> journeyList = [];
 
@@ -27,12 +33,20 @@ class _JourneyScreenState extends State<JourneyScreen> {
   var currentCityName = "";
 
   void openDrawer() {
+    isSideMenuOpen = true;
+    widget.onTabChange?.call(1);
     _scaffoldKey.currentState?.openDrawer();
   }
 
   @override
   void initState() {
     super.initState();
+    getUserLocation().then((city) {
+      setState(() {
+        currentCityName = city ?? 'Unknown';
+      });
+      print('Current city: $currentCityName');
+    });
     getJourneyList();
   }
 
@@ -46,8 +60,12 @@ class _JourneyScreenState extends State<JourneyScreen> {
         if (!isOpened) {
           // Drawer just closed
           print("Returned to main screen after closing drawer");
-          setState(() {
-            print("Reload Screen");
+          Future.delayed(const Duration(milliseconds: 200), () {
+            setState(() {
+              isSideMenuOpen = false;
+              widget.onTabChange?.call(1);
+              print("Reload Screen");
+            });
           });
         }
       },
@@ -90,7 +108,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
                       Image.asset('assets/currentLocation.png', height: 20, width: 20),
                       const SizedBox(width: 5),
                       Text(
-                        'Hofgeismar',
+                        currentCityName,
                         style: TextStyle(
                           color: App_Cool_Slate,
                           fontWeight: FontWeight.w400,
@@ -236,6 +254,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
                         MaterialPageRoute(
                           builder: (_) => StartJourneyScreen(
                             journey: journey,
+                            isFromJourneyScreen: false,
                           ),
                         ),
                       );
@@ -324,6 +343,91 @@ class _JourneyScreenState extends State<JourneyScreen> {
       EasyLoading.showError(AlertConstants.somethingWrong);
     } finally {
       print("getJourneyList finished");
+      getOngoingJourneyList();
+    }
+  }
+
+  Future<void> getOngoingJourneyList() async {
+    EasyLoading.show(status: lngTranslation('Loading...'));
+
+    try {
+      final response = await apiService.getRequest(ApiConstants.user_journeys_ongoing);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data;
+
+        if (data['success'] == true) {
+
+          ongoingJourneyResponse = JourneyResponse.fromJson(data);
+          ongoingJourneyData = ongoingJourneyResponse?.data;
+
+          // Print for debug
+          print("Journey fetched successfully");
+
+          EasyLoading.dismiss();
+
+
+          if (ongoingJourneyData?.businesses.isNotEmpty == true) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => JourneyVisitRootOnMapScreen(
+                  isFromJourneyScreen: true,
+                  journeyData: ongoingJourneyData!,
+                  businessData: null,
+                ),
+              ),
+            ).then((_) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => JourneyListOnMapViewScreen(
+                    journey: null,
+                    isFromJourneyScreen: true,
+                    journeyID: ongoingJourneyResponse?.data?.journeyId ?? "",
+                  ),
+                ),
+              );
+            });
+          } else if ((ongoingJourneyResponse?.data?.journeyId ?? "").isNotEmpty) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => JourneyListOnMapViewScreen(
+                  journey: null,
+                  isFromJourneyScreen: true,
+                  journeyID: ongoingJourneyResponse?.data?.journeyId ?? "",
+                ),
+              ),
+            );
+          }
+
+
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (_) =>  JourneyVisitRootOnMapScreen(isFromJourneyScreen: true, journeyData: ongoingJourneyData!),
+          //   ),
+          // );
+        } else {
+          EasyLoading.dismiss();
+          String errorMessage =
+              data['message'] ?? lngTranslation('Something went wrong please try again');
+          EasyLoading.showError(errorMessage);
+        }
+
+      } else {
+        EasyLoading.dismiss();
+        EasyLoading.showError(lngTranslation('Something went wrong please try again'));
+      }
+
+    } catch (e, stackTrace) {
+      print("Error fetching journeys: $e");
+      print(stackTrace);
+      EasyLoading.dismiss();
+      EasyLoading.showError(AlertConstants.somethingWrong);
+    } finally {
+      print("getOngoingJourneyList finished");
     }
   }
 }

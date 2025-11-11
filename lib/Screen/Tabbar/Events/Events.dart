@@ -15,9 +15,10 @@ class _EventsScreenState extends State<EventsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('EventsScreen'),
+        automaticallyImplyLeading: false,
       ),
       body: const Center(
-        child: Text('Welcome to EventsScreen!'),
+        child: Text('Upcoming'),
       ),
     );
   }

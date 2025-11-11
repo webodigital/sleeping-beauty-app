@@ -13,13 +13,16 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:sleeping_beauty_app/Network/ConstantString.dart';
 import 'package:sleeping_beauty_app/Model/JourneyList.dart';
 import 'package:sleeping_beauty_app/Helper/Language.dart';
+import 'package:sleeping_beauty_app/Model/BussinesListOfJourney.dart';
+import 'package:sleeping_beauty_app/Model/OnGoingJourny.dart';
 
 class JourneyListOnMapViewScreen extends StatefulWidget {
-  final Journey journey;
+  final Journey? journey;
+  final bool isFromJourneyScreen;
+  final String journeyID;
 
 
-  const JourneyListOnMapViewScreen({Key? key, required this.journey}) : super(key: key);
-
+  const JourneyListOnMapViewScreen({Key? key, required this.journey, required this.isFromJourneyScreen, required this.journeyID}) : super(key: key);
 
   @override
   State<JourneyListOnMapViewScreen> createState() =>
@@ -27,30 +30,22 @@ class JourneyListOnMapViewScreen extends StatefulWidget {
 }
 
 class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
+
+  JourneyResponse? ongoingJourneyResponse;
+  JourneyData? ongoingJourneyData;
+
+  BusinessResponse? businessResponse;
+
   final PageController _pageController = PageController(viewportFraction: 0.45);
   int _currentPage = 0;
 
-  final List<MapMarker> markers = [
-    MapMarker(id: 1, latitude: 21.3012, longitude: 70.2499),
-    MapMarker(id: 2, latitude: 21.3022, longitude: 70.2599),
-    MapMarker(id: 3, latitude: 21.3032, longitude: 70.2699),
-  ];
-
-  final List<Map<String, dynamic>> cardData = List.generate(
-    10,
-        (index) => {
-      "title": "Sababurg Castle",
-      "rating": "4.2",
-      "reviews": "(24 Reviews)",
-      "image": "assets/castle.png", // add your demo image
-    },
-  );
-
+  List<MapMarker> markers = [];
 
   @override
   void initState() {
     super.initState();
-    getBussinessList();
+    print('Current city: _JourneyListOnMapViewState ${widget.journeyID}');
+    getOngoingJourneyList();
   }
 
   @override
@@ -64,44 +59,151 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
             markers: markers,
             zoom: 6.5,
             initialCenter: const LatLng(21.3012, 70.2499),
-            onPinTap: (id) {
-              debugPrint("Tapped marker: $id");
-              showJourneyPopup(context);
+            onPinTap: (markerId) {
+              debugPrint("Tapped marker: $markerId");
+
+              // Find the matching business from businessResponse
+              final matchedBusiness = businessResponse?.data.firstWhere(
+                    (b) => b.id.toString() == markerId
+              );
+
+              if (matchedBusiness != null) {
+                showJourneyPopup(context, matchedBusiness);
+              } else {
+                debugPrint("No matching business found for marker $markerId");
+              }
             },
           ),
 
-          //Header (floating on top of map)
           Positioned(
             top: MediaQuery.of(context).padding.top + 8,
             left: 16,
-            child: GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                // decoration: BoxDecoration(
-                //   color: Colors.white.withOpacity(0.85),
-                //   borderRadius: BorderRadius.circular(10),
-                // ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset("assets/backArrow.png", height: 26, width: 26),
-                    const SizedBox(width: 10),
-                    Text(
-                      lngTranslation('Journey'),
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: App_BlackColor,
+            right: 16,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: () {
+
+                    if ((ongoingJourneyResponse?.data?.journeyId ?? "").isNotEmpty) {
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false, // User must choose an action
+                        builder: (BuildContext context) {
+                          return Dialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+                            child: Padding(
+                              padding:
+                              const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "End Journey",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                      color: App_BlackColor,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    "Are you sure you want to end this journey?",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: App_BlackColor,
+                                      height: 1.4,
+                                    ),
+                                  ),
+                                  const SizedBox(height:40),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: OutlinedButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            // Close dialog
+                                          },
+                                          style: OutlinedButton.styleFrom(
+                                            side: const BorderSide(color: Colors.grey),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                            padding:
+                                            const EdgeInsets.symmetric(vertical: 14),
+                                          ),
+                                          child: Text(
+                                            "Cancel",
+                                            style: TextStyle(
+                                              color: App_BlackColor,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            completeJourney(widget.isFromJourneyScreen ? widget.journeyID : widget.journey?.id ?? "");
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.redAccent,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                            padding:
+                                            const EdgeInsets.symmetric(vertical: 14),
+                                          ),
+                                          child: Text(
+                                            "End Journey",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 14,
+                                              color: App_WhiteColor,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    }else{
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset("assets/backArrow.png", height: 26, width: 26),
+                      const SizedBox(width: 10),
+                      Text(
+                        "Journey",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: App_BlackColor,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
-
-          // Bottom Cards Overlay
           Positioned(
             bottom: 30,
             left: 0,
@@ -113,98 +215,115 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
                   height: 130,
                   child: PageView.builder(
                     controller: _pageController,
-                    itemCount: cardData.length,
+                    itemCount: businessResponse?.data.length ?? 0,
                     onPageChanged: (index) {
                       setState(() {
                         _currentPage = index;
                       });
                     },
                     itemBuilder: (context, index) {
-                      final item = cardData[index];
+                      final item = businessResponse?.data[index];
+
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: App_WhiteColor,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color:App_BlackColor,
-                                blurRadius: 0,
-                                offset: const Offset(0, 0),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(12),
-                                  topRight: Radius.circular(12),
+                        child: GestureDetector(
+                          onTap: () {
+                            debugPrint("Clicked index: $index");
+                            debugPrint("Business: ${item?.companyName}");
+                            debugPrint("Full object: ${item?.toJson()}");
+                            final matchedBusiness = businessResponse?.data[index];
+
+                            if (matchedBusiness != null) {
+                              showJourneyPopup(context, matchedBusiness);
+                            } else {
+                              debugPrint("No matching business found forclick bottom card");
+                            }
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: App_WhiteColor,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: App_BlackColor,
+                                  blurRadius: 0,
+                                  offset: const Offset(0, 0),
                                 ),
-                                child: Image.asset(
-                                  item["image"],
-                                  height: 75,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                child: Text(
-                                  item["title"],
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12,
-                                    color: App_BlackColor,
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(12),
+                                    topRight: Radius.circular(12),
+                                  ),
+                                  child: Image.network(
+                                    height: 75,
+                                    width: double.infinity,
+                                    item?.images.first.url ?? "",
+                                    fit: BoxFit.fitWidth,
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 8, bottom: 6, right: 8),
-                                child: Row(
-                                  children: [
-                                    const Icon(Icons.star,
-                                        size: 14, color: Colors.amber),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      "${item["rating"]}",
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w600,
-                                        color: App_BlackColor,
-                                      ),
+                                const SizedBox(height: 5),
+                                Padding(
+                                  padding:
+                                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  child: Text(
+                                    item?.companyName ?? "",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12,
+                                      color: App_BlackColor,
                                     ),
-                                    Text(
-                                      " ${item["reviews"]}",
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w400,
-                                        color: App_BlackColor,
-                                      ),
-                                    ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                                Padding(
+                                  padding:
+                                  const EdgeInsets.only(left: 8, bottom: 6, right: 8),
+                                  child: Row(
+                                    children: [
+                                      Image.asset(
+                                        'assets/start.png',
+                                        width: 14,
+                                        height: 14,
+                                        fit: BoxFit.contain,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        "4.2",
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w600,
+                                          color: App_BlackColor,
+                                        ),
+                                      ),
+                                      Text(
+                                        " (244 Reviews)",
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w400,
+                                          color: App_BlackColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
                     },
                   ),
                 ),
-
                 const SizedBox(height: 8),
-
                 // Dots Indicator
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(
-                    cardData.length,
+                    businessResponse?.data.length ?? 0,
                         (index) => Container(
                       margin: const EdgeInsets.symmetric(horizontal: 4),
                       width: 8,
@@ -226,7 +345,7 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
     );
   }
 
-  void showJourneyPopup(BuildContext context) {
+  void showJourneyPopup(BuildContext context, Business data) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -240,13 +359,13 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
               child: GestureDetector(
                 onTap: () {},
                 child: JourneyPopupCard(
-                  imageUrl: 'assets/castle.png',
-                  title: 'The Sleeping Beauty Castle',
-                  subtitle: 'Sababurg Castle',
-                  description: 'Built in 1334, this castle has enchanted travelers for centuries. It is widely believed to have inspired the Brothers Grimm when writing the famous Sleeping Beauty tale.',
+                  imageUrl: data.images.first.url,
+                  title: data.companyName,
+                  subtitle: data.companyName,
+                  description: data.shortDescription,
                   rating: 4.8,
                   reviews: 243,
-                  points: 120,
+                  points: data.pointReceive,
                   onViewDetails: () {
                     Navigator.pop(context);
                     print("on click view details");
@@ -254,20 +373,15 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const JourneyDetailsScreen(title: 'Wellness Journey', imagePath: 'assets/wellness.png'),
+                        builder: (_) => JourneyDetailsScreen(id: data.id.toString()),
                       ),
                     );
                   },
                   onVisit: () {
                     Navigator.pop(context);
                     // handle visit
-                    print("on click Visit");
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const JourneyVisitRootOnMapScreen(title: 'Wellness Journey', imagePath: 'assets/wellness.png'),
-                      ),
-                    );
+                    print("on click Visit :-- ${data.id}");
+                    startBusinessJourny(data.id, data);
                   },
                 ),
               ),
@@ -278,18 +392,20 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
     );
   }
 
-  Future<void> getBussinessList() async {
+  Future<void> getBusinessList() async {
     EasyLoading.show(status: lngTranslation('Loading...'));
     try {
-      final response = await apiService.getRequestWithParam(ApiConstants.businesses_by_location ,
+      final response = await apiService.getRequestWithParam(
+        ApiConstants.businesses_by_location,
         queryParams: {
           'page': "1",
           'limit': "100",
           'lat': "20.8009",
           'lng': "70.6960",
           'radiusKm': "1000",
-          'journeyId': widget.journey.id,
-      },);
+          'journeyId':  widget.isFromJourneyScreen ? widget.journeyID : widget.journey?.id ?? "",
+        },
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data;
@@ -298,13 +414,24 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
 
         if (data['success'] == true) {
 
+          businessResponse = BusinessResponse.fromJson(data);
+
           EasyLoading.dismiss();
           setState(() {
-
+            // now you can access businessResponse anywhere in this widget
+            print("First business: ${businessResponse!.data[0].companyName}");
+            businessResponse = BusinessResponse.fromJson(data);
+            Future.delayed(const Duration(seconds: 2), () {
+              if (businessResponse != null) {
+                updateMarkersFromData(businessResponse!);
+                setState(() {});
+              }
+            });
           });
         } else {
           EasyLoading.dismiss();
-          String errorMessage = data['message'] ?? lngTranslation('Something went wrong please try again');
+          String errorMessage =
+              data['message'] ?? lngTranslation('Something went wrong please try again');
           EasyLoading.showError(errorMessage);
         }
       } else {
@@ -312,21 +439,150 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
         EasyLoading.showError('Server Error: ${response.statusCode}');
       }
     } catch (e, stackTrace) {
-      print("Error fetching journeys: $e");
+      print("Error fetching businesses: $e");
       print(stackTrace);
       EasyLoading.dismiss();
       EasyLoading.showError(AlertConstants.somethingWrong);
     } finally {
-      print("getJourneyList finished");
+      print("getBusinessList finished");
+    }
+  }
+
+  void updateMarkersFromData(BusinessResponse businessResponse) {
+    markers = businessResponse.data.map((business) {
+      return MapMarker(
+        id: business.id,
+        latitude: business.gpsCoordinates.lat,
+        longitude: business.gpsCoordinates.lng,
+      );
+    }).toList();
+  }
+
+  Future<void> startBusinessJourny(String businessId, Business business) async {
+    EasyLoading.show(status: 'Loading...');
+
+    print("------------------");
+
+    try {
+      final response = await apiService.postRequest(
+        ApiConstants.user_start_journey,
+        {
+          "journeyId": widget.isFromJourneyScreen ? widget.journeyID : widget.journey?.id,
+          "businessId": businessId,
+        },
+      );
+
+      final responseData = response.data;
+
+      if ((response.statusCode == 200 || response.statusCode == 201) &&
+          (responseData['success'] == true || responseData['status'] == "success")) {
+        print("Started journey successfully");
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => JourneyVisitRootOnMapScreen(
+              isFromJourneyScreen: false,
+              journeyData: null,
+              businessData: business,
+            ),
+          ),
+        ).then((result) {
+
+          debugPrint("Returned from JourneyVisitRootOnMapScreen");
+          getOngoingJourneyList();
+        });
+      } else {
+        final errorMessage = responseData['message'] ?? "Something went wrong.";
+        EasyLoading.showError(errorMessage);
+      }
+    } catch (e) {
+      print("Error in startBusinessJourny: $e");
+      EasyLoading.showError(lngTranslation(AlertConstants.somethingWrong));
+    } finally {
+      EasyLoading.dismiss();
+    }
+  }
+
+  Future<void> completeJourney(String journeyID) async {
+    EasyLoading.show(status: 'Loading...');
+
+    print("journeyID:- $journeyID");
+
+    try {
+      final response = await apiService.patchRequestWithParam(
+        ApiConstants.user_journeys_completed + journeyID + "/complete",
+        body: {
+          "": ""
+        },
+      );
+
+      final data = response.data;
+
+      print("data:-- $data");
+
+      if ((response.statusCode == 200 || response.statusCode == 201) &&
+          (data['success'] == true || data['status'] == "success")) {
+        EasyLoading.showSuccess(data['message'] ?? "");
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.of(context).pop();
+        });
+
+        // If you want to refresh job list after request:
+        // await fetchJobList();
+      } else {
+        final errorMessage = data['message'] ?? "";
+        EasyLoading.showError(errorMessage);
+      }
+    } catch (e) {
+      EasyLoading.showError("${e.toString()}");
+    } finally {
+      EasyLoading.dismiss();
+    }
+  }
+
+  Future<void> getOngoingJourneyList() async {
+    EasyLoading.show(status: lngTranslation('Loading...'));
+
+    try {
+      final response = await apiService.getRequest(ApiConstants.user_journeys_ongoing);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data;
+
+        if (data['success'] == true) {
+
+          ongoingJourneyResponse = JourneyResponse.fromJson(data);
+          ongoingJourneyData = ongoingJourneyResponse?.data;
+
+          // Print for debug
+          print("Journey fetched successfully");
+
+          EasyLoading.dismiss();
+
+        } else {
+          EasyLoading.dismiss();
+        }
+
+      } else {
+        EasyLoading.dismiss();
+      }
+
+    } catch (e, stackTrace) {
+      print("Error fetching journeys: $e");
+      EasyLoading.dismiss();
+    } finally {
+      print("getOngoingJourneyList finished");
+      getBusinessList();
     }
   }
 }
 
 // Model for map markers
 class MapMarker {
-  final int id;
-  final double latitude;
+  final String id;
   final double longitude;
+  final double latitude;
 
   MapMarker({
     required this.id,
@@ -340,7 +596,7 @@ class CustomMapWidget extends StatelessWidget {
   final List<MapMarker> markers;
   final double zoom;
   final LatLng? initialCenter;
-  final Function(int id)? onPinTap;
+  final Function(String id)? onPinTap;
 
   const CustomMapWidget({
     super.key,
@@ -371,7 +627,7 @@ class CustomMapWidget extends StatelessWidget {
               height: 60,
               alignment: Alignment.topCenter,
               child: GestureDetector(
-                onTap: () => onPinTap?.call(marker.id),
+                onTap: () => onPinTap?.call(marker.id.toString() ?? ""),
                 child: Image.asset(
                   "assets/pinStr.png",
                   width: 30,
@@ -412,6 +668,11 @@ class JourneyPopupCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Calculate the content width inside the Card
+    const double cardWidth = 360;
+    const double horizontalPadding = 12;
+    const double contentWidth = cardWidth - (horizontalPadding * 2);
+
     return Center(
       child: Card(
         elevation: 12,
@@ -421,8 +682,8 @@ class JourneyPopupCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Container(
-          width: 360,
-          padding: const EdgeInsets.only(top: 16, left: 12,right: 12),
+          width: cardWidth, // 360
+          padding: const EdgeInsets.only(top: 16, left: horizontalPadding, right: horizontalPadding),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             color: App_WhiteColor,
@@ -431,20 +692,24 @@ class JourneyPopupCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// Image with Points Badge
+
+              // --- Image Stack Section ---
               Stack(
                 children: [
                   // Background Image
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.asset(
-                      imageUrl,
-                      width: double.infinity,
-                      height: 160,
-                      fit: BoxFit.cover,
+                  SizedBox(
+                    width: contentWidth, // 360 - 24 = 336
+                    height: 140,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(
+                        imageUrl,
+                        // The height property here is now redundant but harmless;
+                        // the parent SizedBox provides the strict constraint.
+                        fit: BoxFit.fitWidth,
+                      ),
                     ),
                   ),
-
                   // Points Badge (Top Left)
                   Positioned(
                     top: 10,
@@ -480,7 +745,6 @@ class JourneyPopupCard extends StatelessWidget {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(20),
                       onTap: () {
-                        // Handle heart tap here
                         print("Heart tapped!");
                       },
                       child: Container(
@@ -490,9 +754,9 @@ class JourneyPopupCard extends StatelessWidget {
                   ),
                 ],
               ),
-
               const SizedBox(height: 12),
 
+              // --- Subtitle and Ratings ---
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -533,7 +797,7 @@ class JourneyPopupCard extends StatelessWidget {
 
               const SizedBox(height: 15),
 
-              // Title
+              // --- Title ---
               Text(
                 title,
                 style: const TextStyle(
@@ -544,7 +808,7 @@ class JourneyPopupCard extends StatelessWidget {
 
               const SizedBox(height: 8),
 
-              // Description
+              // --- Description ---
               Text(
                 description,
                 style: TextStyle(
@@ -556,7 +820,7 @@ class JourneyPopupCard extends StatelessWidget {
 
               const SizedBox(height: 10),
 
-              /// Buttons
+              /// --- Buttons ---
               Row(
                 children: [
                   Expanded(
@@ -571,11 +835,12 @@ class JourneyPopupCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 10),
                       ),
                       child: Text(
+                        // NOTE: Assuming lngTranslation is defined globally or passed in
                         lngTranslation("View Details"),
                         style: TextStyle(
-                          color: App_BlackColor,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14
+                            color: App_BlackColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14
                         ),
                       ),
                     ),
@@ -585,7 +850,7 @@ class JourneyPopupCard extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: onVisit,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: App_Start_Now,
+                        backgroundColor: App_UsedView,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -594,8 +859,8 @@ class JourneyPopupCard extends StatelessWidget {
                       child: Text(
                         lngTranslation("Visit"),
                         style: TextStyle(
-                          color: App_BlackColor,
-                          fontWeight: FontWeight.w600,
+                            color: App_BlackColor,
+                            fontWeight: FontWeight.w600,
                             fontSize: 14
                         ),
                       ),
