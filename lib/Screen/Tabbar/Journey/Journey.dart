@@ -12,6 +12,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:sleeping_beauty_app/Model/OnGoingJourny.dart';
 import 'package:sleeping_beauty_app/Screen/Tabbar/Journey/VisitJournyMapview.dart';
 import 'package:sleeping_beauty_app/Screen/Tabbar/Journey/JourneyListOnMapView.dart';
+import 'package:sleeping_beauty_app/Model/Profile.dart';
 
 class JourneyScreen extends StatefulWidget {
   final void Function(int tabIndex)? onTabChange;
@@ -31,6 +32,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   var currentCityName = "";
+  User? userData;
 
   void openDrawer() {
     isSideMenuOpen = true;
@@ -41,12 +43,14 @@ class _JourneyScreenState extends State<JourneyScreen> {
   @override
   void initState() {
     super.initState();
+    getUsersProfile();
     getUserLocation().then((city) {
       setState(() {
         currentCityName = city ?? 'Unknown';
       });
       print('Current city: $currentCityName');
     });
+
     getJourneyList();
   }
 
@@ -60,6 +64,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
         if (!isOpened) {
           // Drawer just closed
           print("Returned to main screen after closing drawer");
+
           Future.delayed(const Duration(milliseconds: 200), () {
             setState(() {
               isSideMenuOpen = false;
@@ -93,9 +98,16 @@ class _JourneyScreenState extends State<JourneyScreen> {
                           border: Border.all(color: Colors.green.shade200, width: 3),
                         ),
                         child: ClipOval(
-                          child: Image.asset(
-                            'assets/dummyProfile.png',
+                          child: Image.network(
+                            userData?.avatar?.url ?? 'https://example.com/defaultProfile.png',
                             fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              // Fallback to local dummy image if network fails
+                              return Image.asset(
+                                'assets/dummyProfile.png',
+                                fit: BoxFit.cover,
+                              );
+                            },
                           ),
                         ),
                       ),
@@ -428,6 +440,41 @@ class _JourneyScreenState extends State<JourneyScreen> {
       EasyLoading.showError(AlertConstants.somethingWrong);
     } finally {
       print("getOngoingJourneyList finished");
+    }
+  }
+
+  Future<void> getUsersProfile() async {
+    EasyLoading.show(status: lngTranslation('Loading...'));
+    try {
+      final response = await apiService.getRequest(ApiConstants.users_profile_get);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data;
+
+        print("data:-- $data");
+
+        if (data['success'] == true) {
+
+          EasyLoading.dismiss();
+          setState(() {
+            final profile = ProfileResponse.fromJson(response.data);
+            userData = profile.data?.user;
+          });
+        } else {
+          EasyLoading.dismiss();
+          String errorMessage = data['message'] ?? lngTranslation(AlertConstants.somethingWrong);
+          EasyLoading.showError(errorMessage);
+        }
+      } else {
+        EasyLoading.dismiss();
+        EasyLoading.showError(lngTranslation(AlertConstants.somethingWrong));
+      }
+    } catch (e, stackTrace) {
+      print("Error fetching getUsersProfile: $e");
+      EasyLoading.dismiss();
+      EasyLoading.showError(AlertConstants.somethingWrong);
+    } finally {
+      print("getUsersProfile finished");
     }
   }
 }

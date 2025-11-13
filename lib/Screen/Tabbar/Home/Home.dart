@@ -5,6 +5,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:sleeping_beauty_app/Helper/Language.dart';
 import 'package:sleeping_beauty_app/Network/ConstantString.dart';
+import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:sleeping_beauty_app/Network/ConstantString.dart';
+import 'package:sleeping_beauty_app/Model/Profile.dart';
 
 class HomeScreen extends StatefulWidget {
   final void Function(int tabIndex)? onTabChange;
@@ -20,6 +24,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   var currentCityName = "";
 
+  User? userData;
+
   void openDrawer() {
     isSideMenuOpen = true;
     widget.onTabChange?.call(0);
@@ -28,12 +34,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+
+    print("initState Home");
+
     super.initState();
     getUserLocation().then((city) {
       setState(() {
         currentCityName = city ?? 'Unknown';
       });
     });
+    getUsersProfile();
   }
 
   @override
@@ -46,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if (!isOpened) {
             // Drawer just closed
             print("Returned to main screen after closing drawer");
+            getUsersProfile();
             Future.delayed(const Duration(milliseconds: 200), () {
               setState(() {
                 isSideMenuOpen = false;
@@ -78,10 +89,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           border: Border.all(color: Colors.green.shade200, width: 3),
                         ),
                         child: ClipOval(
-                          child: Image.asset(
-                            'assets/dummyProfile.png',
+                          child: Image.network(
+                            userData?.avatar?.url ?? 'https://example.com/defaultProfile.png',
                             fit: BoxFit.cover,
-                          ),
+                            errorBuilder: (context, error, stackTrace) {
+                              // Fallback to local dummy image if network fails
+                              return Image.asset(
+                                'assets/dummyProfile.png',
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          )
+                          ,
                         ),
                       ),
                     ),
@@ -269,54 +288,38 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Future<Position> _getCurrentPosition() async {
-  //   bool serviceEnabled;
-  //   LocationPermission permission;
-  //
-  //   // Check if location services are enabled
-  //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  //   if (!serviceEnabled) {
-  //     return Future.error('Location services are disabled.');
-  //   }
-  //
-  //   // Check permission
-  //   permission = await Geolocator.checkPermission();
-  //   if (permission == LocationPermission.denied) {
-  //     permission = await Geolocator.requestPermission();
-  //     if (permission == LocationPermission.denied) {
-  //       return Future.error('Location permissions are denied');
-  //     }
-  //   }
-  //
-  //   if (permission == LocationPermission.deniedForever) {
-  //     return Future.error(
-  //         'Location permissions are permanently denied, cannot request permissions.');
-  //   }
-  //
-  //   // Get current position
-  //   return await Geolocator.getCurrentPosition(
-  //       desiredAccuracy: LocationAccuracy.high);
-  // }
-  //
-  // Future<String> getCityName(double latitude, double longitude) async {
-  //   List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
-  //   Placemark place = placemarks.first;
-  //   return place.locality ?? 'Unknown city';
-  // }
-  //
-  // void getUserLocation() async {
-  //   try {
-  //     Position position = await _getCurrentPosition();
-  //     String city = await getCityName(position.latitude, position.longitude);
-  //
-  //     print('Latitude: ${position.latitude}');
-  //     print('Longitude: ${position.longitude}');
-  //     print('City: $city');
-  //     setState(() {
-  //       currentCityName = city;
-  //     });
-  //   } catch (e) {
-  //     print('Error: $e');
-  //   }
-  // }
+  Future<void> getUsersProfile() async {
+    EasyLoading.show(status: lngTranslation('Loading...'));
+    try {
+      final response = await apiService.getRequest(ApiConstants.users_profile_get);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data;
+
+        print("data:-- $data");
+
+        if (data['success'] == true) {
+
+          EasyLoading.dismiss();
+          setState(() {
+            final profile = ProfileResponse.fromJson(response.data);
+            userData = profile.data?.user;
+          });
+        } else {
+          EasyLoading.dismiss();
+          String errorMessage = data['message'] ?? lngTranslation(AlertConstants.somethingWrong);
+          EasyLoading.showError(errorMessage);
+        }
+      } else {
+        EasyLoading.dismiss();
+        EasyLoading.showError(lngTranslation(AlertConstants.somethingWrong));
+      }
+    } catch (e, stackTrace) {
+      print("Error fetching getUsersProfile: $e");
+      EasyLoading.dismiss();
+      EasyLoading.showError(AlertConstants.somethingWrong);
+    } finally {
+      print("getUsersProfile finished");
+    }
+  }
 }

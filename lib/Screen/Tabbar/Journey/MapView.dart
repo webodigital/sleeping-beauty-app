@@ -127,6 +127,3 @@ class _CustomPin extends StatelessWidget {
     );
   }
 }
-
-
-

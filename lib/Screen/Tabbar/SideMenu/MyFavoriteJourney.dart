@@ -252,7 +252,6 @@ class _MyFavoriteJourneyState extends State<MyFavoriteJourneyScreen> {
             );
           },
         )
-
         ],
           ),
         ),

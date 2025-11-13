@@ -39,6 +39,7 @@ class _JourneyVisitRootOnMapScreenState
   final Set<Marker> _googleMarkers = {};
   final Set<Polyline> _polylines = {};
   late PolylinePoints polylinePoints;
+
   LatLng? _currentPosition;
   bool _isLoadingLocation = true;
 
@@ -408,21 +409,28 @@ class _JourneyVisitRootOnMapScreenState
     );
   }
 
-  Future<void> completeVisit(String businessID) async {
+  Future<void> completeVisit(
+      String businessID) async {
     EasyLoading.show(status: 'Loading...');
 
-    print("businessID:- $businessID");
-
     try {
+
+      Position currentPosition = await getCurrentLocation();
+
+      final body = {
+        "distance": "2.5",
+        "destinationGPS": {
+          "lat": currentPosition.latitude,
+          "lng": currentPosition.longitude,
+        }
+      };
+
       final response = await apiService.patchRequestWithParam(
         ApiConstants.user_journeys_business_complete + businessID + "/complete",
-        body: {
-          "": ""
-        },
+        body: body,
       );
 
       final data = response.data;
-
       print("data:-- $data");
 
       if ((response.statusCode == 200 || response.statusCode == 201) &&
@@ -431,11 +439,8 @@ class _JourneyVisitRootOnMapScreenState
         Future.delayed(const Duration(seconds: 2), () {
           Navigator.of(context).pop();
         });
-
-        // If you want to refresh job list after request:
-        // await fetchJobList();
       } else {
-        final errorMessage = data['message'] ?? "";
+        final errorMessage = data['message'] ?? "Something went wrong";
         EasyLoading.showError(errorMessage);
       }
     } catch (e) {
@@ -458,4 +463,31 @@ class MapMarker {
   });
 }
 
+Future<Position> getCurrentLocation() async {
+  // Check if location services are enabled
+  bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) {
+    // Location services are not enabled, request user to enable them
+    return Future.error('Location services are disabled.');
+  }
 
+  // Check for permission
+  LocationPermission permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      return Future.error('Location permissions are denied');
+    }
+  }
+
+  if (permission == LocationPermission.deniedForever) {
+    return Future.error(
+        'Location permissions are permanently denied, we cannot request permissions.');
+  }
+
+  // Get current position
+  Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high);
+
+  return position;
+}

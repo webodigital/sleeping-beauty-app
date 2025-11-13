@@ -6,6 +6,11 @@ import 'package:sleeping_beauty_app/Screen/Tabbar/SideMenu/MyFavoriteJourney.dar
 import 'package:sleeping_beauty_app/Screen/Tabbar/SideMenu/RewardHistory.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sleeping_beauty_app/Helper/Language.dart';
+import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:sleeping_beauty_app/Network/ConstantString.dart';
+import 'package:sleeping_beauty_app/Model/Profile.dart';
+import 'package:sleeping_beauty_app/Screen/Auth/LoginScreen.dart';
 
 class CustomSideMenu extends StatefulWidget {
   const CustomSideMenu({super.key});
@@ -17,10 +22,13 @@ class CustomSideMenu extends StatefulWidget {
 class _CustomSideMenuState extends State<CustomSideMenu> {
   String selectedLanguage = "English";
 
+  User? userData;
+
   @override
   void initState() {
     super.initState();
     _getDefaultLanguage();
+     getUsersProfile();
   }
 
   Future<void> _getDefaultLanguage() async {
@@ -68,24 +76,31 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                   height: 76,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: App_PtnView.withOpacity(0.30), width: 2),
+                    border: Border.all(color: App_PtnView.withOpacity(0.30), width: 4),
                   ),
-                  child: const CircleAvatar(
-                    radius: 38,
-                    backgroundImage: AssetImage('assets/profile.png'),
-                    backgroundColor: Colors.transparent,
+                  child: ClipOval(
+                    child: Image.network(
+                      userData?.avatar?.url ?? 'https://example.com/defaultProfile.png',
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          'assets/dummyProfile.png',
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  "John Doe",
+                  userData?.fullName ?? "",
                   style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 18,
                       color: App_BlackColor),
                 ),
                 Text(
-                  "Johndoe@gmail.com",
+                  userData?.email ?? "",
                   style: TextStyle(
                       color: App_TextProfile,
                       fontWeight: FontWeight.w400,
@@ -298,7 +313,11 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(ctx).pop();
-
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (_) => LoginScreen()),
+                            (route) => false,
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: App_Start_Now,
@@ -323,6 +342,41 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
         );
       },
     );
+  }
+
+  Future<void> getUsersProfile() async {
+    EasyLoading.show(status: lngTranslation('Loading...'));
+    try {
+      final response = await apiService.getRequest(ApiConstants.users_profile_get);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data;
+
+        print("data:-- $data");
+
+        if (data['success'] == true) {
+
+          EasyLoading.dismiss();
+          setState(() {
+            final profile = ProfileResponse.fromJson(response.data);
+            userData = profile.data?.user;
+          });
+        } else {
+          EasyLoading.dismiss();
+          String errorMessage = data['message'] ?? lngTranslation(AlertConstants.somethingWrong);
+          EasyLoading.showError(errorMessage);
+        }
+      } else {
+        EasyLoading.dismiss();
+        EasyLoading.showError(lngTranslation(AlertConstants.somethingWrong));
+      }
+    } catch (e, stackTrace) {
+      print("Error fetching getUsersProfile: $e");
+      EasyLoading.dismiss();
+      EasyLoading.showError(AlertConstants.somethingWrong);
+    } finally {
+      print("getUsersProfile finished");
+    }
   }
 }
 

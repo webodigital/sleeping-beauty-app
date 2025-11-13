@@ -11,6 +11,8 @@ class AlertConstants {
   static const String emailInvalid = "Please enter a valid email address";
   static const String passwordBlank = "Please enter your password";
   static const String somethingWrong = "Something went wrong";
+  static const String profileUploadfailed = "Profile upload failed";
+  static const String profilePhoto = "Please select profile photo";
 
   static const String noInterNet = "No internet connection. Please check your network settings and try again.";
 }
@@ -31,8 +33,6 @@ Future<String?> getUserLocation() async {
     return null;
   }
 }
-
-
 
 Future<Position> _getCurrentPosition() async {
   bool serviceEnabled;

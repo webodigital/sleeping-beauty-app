@@ -3,6 +3,12 @@ import 'package:sleeping_beauty_app/Core/Color.dart';
 import 'package:sleeping_beauty_app/Screen/Tabbar/SideMenu/HistoryDetails.dart';
 import 'package:flutter/material.dart';
 import 'package:sleeping_beauty_app/Helper/Language.dart';
+import 'package:sleeping_beauty_app/Model/JourneyHistory.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:sleeping_beauty_app/Network/ConstantString.dart';
+import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
+import 'package:intl/intl.dart';
+
 
 class MyjourneyhistoryScreen extends StatefulWidget {
   const MyjourneyhistoryScreen({Key? key}) : super(key: key);
@@ -12,8 +18,15 @@ class MyjourneyhistoryScreen extends StatefulWidget {
 }
 
 class _MyjourneyhistoryScreenState extends State<MyjourneyhistoryScreen> {
-  final Color App_BlackColor = const Color(0xFF1C1C1C);
-  final Color App_Card_View = Colors.white;
+
+
+  List<UserJourney> journyHistoryList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getJourneyList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,17 +64,20 @@ class _MyjourneyhistoryScreenState extends State<MyjourneyhistoryScreen> {
               const SizedBox(height: 10),
 
         ListView.builder(
-          itemCount: 4,
+          itemCount: journyHistoryList.length,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.symmetric(horizontal: 16),
           itemBuilder: (context, index) {
+
+            var data = journyHistoryList[index];
+
             return InkWell(
               borderRadius: BorderRadius.circular(18), // smooth ripple
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HistorydetailsScreen()),
+                  MaterialPageRoute(builder: (context) => HistorydetailsScreen(id: data.id ?? "",)),
                 );
               },
               child: Container(
@@ -110,7 +126,7 @@ class _MyjourneyhistoryScreenState extends State<MyjourneyhistoryScreen> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      "Romantic Journey",
+                                      data.journey?.name ?? "",
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
@@ -132,7 +148,7 @@ class _MyjourneyhistoryScreenState extends State<MyjourneyhistoryScreen> {
                                           Image.asset("assets/gift.png", height: 14, width: 14),
                                           const SizedBox(width: 4),
                                           Text(
-                                            "+100 Pts",
+                                            "+${data.journey?.totalPoi ?? ""} Pts",
                                             style: TextStyle(
                                               fontSize: 11,
                                               fontWeight: FontWeight.w500,
@@ -149,39 +165,47 @@ class _MyjourneyhistoryScreenState extends State<MyjourneyhistoryScreen> {
                               Row(
                                 children: [
                                   Image.asset("assets/date.png", height: 14, width: 14),
-                                  SizedBox(width: 10),
+                                  const SizedBox(width: 10),
                                   Text(
-                                    "14–17 Aug 2025",
-                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: App_BlackColor),
+                                    _formatCompactDateRange(DateTime.parse(data.startedAt!).toLocal(), DateTime.parse(data.completedAt!).toLocal()),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                      color: App_BlackColor,
+                                    ),
                                   ),
-                                  SizedBox(width: 22),
+                                  const SizedBox(width: 22),
                                   Image.asset("assets/time.png", height: 14, width: 14),
-                                  SizedBox(width: 8),
+                                  const SizedBox(width: 8),
                                   Text(
-                                    "07:00 – 14:00",
-                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: App_BlackColor),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 15),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Image.asset("assets/locationGray.png", height: 14, width: 14),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: Text(
-                                      "WachsLiebe Studio Heidelberg, Germany",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w400,
-                                        color: App_BlackColor,
-                                        height: 1.3,
-                                      ),
+                                    "${DateFormat('HH:mm').format(DateTime.parse(data.startedAt!).toLocal())} – ${DateFormat('HH:mm').format(DateTime.parse(data.completedAt!).toLocal())}",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                      color: App_BlackColor,
                                     ),
                                   ),
                                 ],
                               ),
+                              // const SizedBox(height: 15),
+                              // Row(
+                              //   crossAxisAlignment: CrossAxisAlignment.start,
+                              //   children: [
+                              //     Image.asset("assets/locationGray.png", height: 14, width: 14),
+                              //     SizedBox(width: 10),
+                              //     Expanded(
+                              //       child: Text(
+                              //         "WachsLiebe Studio Heidelberg, Germany",
+                              //         style: TextStyle(
+                              //           fontSize: 12,
+                              //           fontWeight: FontWeight.w400,
+                              //           color: App_BlackColor,
+                              //           height: 1.3,
+                              //         ),
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
                             ],
                           ),
                         ),
@@ -199,4 +223,68 @@ class _MyjourneyhistoryScreenState extends State<MyjourneyhistoryScreen> {
       ),
     );
   }
+
+
+  Future<void> getJourneyList() async {
+    EasyLoading.show(status: lngTranslation('Loading...'));
+    try {
+      final response = await apiService.getRequestWithParam(
+        ApiConstants.my_journeys_history ,
+        queryParams: {
+          'limit': "100",
+          'page': "1"
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data;
+
+        if (data['success'] == true) {
+          final journeysResponse = UserJourneysResponse.fromJson(data);
+          EasyLoading.dismiss();
+          setState(() {
+            journyHistoryList = journeysResponse.data?.data ?? [];
+          });
+        } else {
+          EasyLoading.dismiss();
+          EasyLoading.showError(data['message'] ?? 'Something went wrong');
+        }
+      } else {
+        EasyLoading.dismiss();
+        EasyLoading.showError(AlertConstants.somethingWrong);
+      }
+    } catch (e) {
+      print("Error fetching journeys history : $e");
+      EasyLoading.dismiss();
+      EasyLoading.showError(AlertConstants.somethingWrong);
+    } finally {
+      print("getJourney history List finished");
+    }
+  }
 }
+
+String _formatCompactDateRange(DateTime start, DateTime end) {
+  final sameDay = start.year == end.year &&
+      start.month == end.month &&
+      start.day == end.day;
+
+  if (sameDay) {
+    // Example: Nov 12 2025
+    return "${DateFormat('MMM d yyyy').format(start)}";
+  }
+
+  final sameMonth = start.month == end.month;
+  final sameYear = start.year == end.year;
+
+  if (sameMonth && sameYear) {
+    // Example: Nov 12–15 2025
+    return "${DateFormat('MMM').format(start)} ${start.day}–${end.day} ${start.year}";
+  } else if (sameYear) {
+    // Example: Nov 30 – Dec 2 2025
+    return "${DateFormat('MMM d').format(start)} – ${DateFormat('MMM d').format(end)} ${start.year}";
+  } else {
+    // Example: Dec 30 2025 – Jan 2 2026
+    return "${DateFormat('MMM d yyyy').format(start)} – ${DateFormat('MMM d yyyy').format(end)}";
+  }
+}
+

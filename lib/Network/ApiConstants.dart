@@ -23,6 +23,12 @@ class ApiConstants {
   static const String user_journeys_ongoing = "/user-journeys/ongoing";
   static const String user_journeys_business_complete = "/user-journeys/business/";
   static const String user_journeys_completed = "/user-journeys/";
+  static const String users_profile_update = "/users/profile";
+  static const String users_profile_get = "/users/profile";
+  static const String my_journeys_history = "/user-journeys/my-journeys";
+  static const String my_journeys_history_details = "/user-journeys/journey/";
+
+
 
   static const String noInterNet = "No internet connection. Please check your network settings and try again.";
 }

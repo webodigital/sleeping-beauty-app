@@ -34,6 +34,7 @@ dev_dependencies:
   provider: ^6.1.2
   google_maps_flutter: ^2.6.1
   http: ^1.2.0
+  qr_flutter: ^4.1.0
 
 flutter_icons:
   android: true
@@ -116,6 +117,7 @@ flutter:
     - assets/allDone.png
     - assets/startLocation.png
     - assets/endLocation.png
+    - assets/newDate.png
 
 
 

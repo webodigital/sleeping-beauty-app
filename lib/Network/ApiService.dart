@@ -196,49 +196,44 @@ class ApiService {
     }
   }
 
-  // Upload photo example
   Future<Response> uploadPhoto({
     required String endpoint,
-    required bool isIreland,
-    required String ppsNumber,
-    required bool isDrive,
-    required int visaTypeId,
-    required String driverLicenseUrl,
+    required String profileImage,
+    required String fullName,
   }) async {
-
     bool isConnected = await InternetConnectionChecker().hasConnection;
     if (!isConnected) {
       throw ApiConstants.noInterNet;
     }
-    try {
-      dynamic driverLicenseField = "";
 
-      if (isDrive && driverLicenseUrl.isNotEmpty) {
-        if (driverLicenseUrl.startsWith("http")) {
-          final response = await http.get(Uri.parse(driverLicenseUrl));
+    try {
+      dynamic profileImageFile;
+
+      if (profileImage.isNotEmpty) {
+        if (profileImage.startsWith("http")) {
+          //Remote URL — fetch and wrap in MultipartFile
+          final response = await http.get(Uri.parse(profileImage));
           if (response.statusCode == 200) {
             final bytes = response.bodyBytes;
-            driverLicenseField = MultipartFile.fromBytes(
+            profileImageFile = MultipartFile.fromBytes(
               bytes,
-              filename: driverLicenseUrl.split('/').last,
+              filename: profileImage.split('/').last,
             );
           } else {
             throw Exception("Failed to download remote file");
           }
         } else {
-          driverLicenseField = await MultipartFile.fromFile(
-            driverLicenseUrl,
-            filename: driverLicenseUrl.split('/').last,
+          //Local file path
+          profileImageFile = await MultipartFile.fromFile(
+            profileImage,
+            filename: profileImage.split('/').last,
           );
         }
       }
 
       final formData = FormData.fromMap({
-        "isIreland": isIreland,
-        "ppsNumber": ppsNumber,
-        "isDrive": isDrive,
-        "visaTypeId": visaTypeId,
-        "driverLicenseUrl": driverLicenseField,
+        "fullName": fullName,
+        if (profileImageFile != null) "profileImage": profileImageFile,
       });
 
       final token = await getToken();
@@ -247,7 +242,7 @@ class ApiService {
         if (token != null) HttpHeaders.authorizationHeader: token,
       };
 
-      final response = await _dio.post(
+      final response = await _dio.patch(
         endpoint,
         data: formData,
         options: Options(headers: headers),
@@ -262,58 +257,6 @@ class ApiService {
     }
   }
 
-  // User clock-out with signature
-  Future<Response> userClockOut({
-    required String endpoint,
-    required int jobId,
-    required String staffId,
-    required DateTime checkIn,
-    required DateTime checkOut,
-    required int breakMinutes,
-    required String managerName,
-    required String managerEmail,
-    required Uint8List signatureBytes,
-  }) async {
-
-    bool isConnected = await InternetConnectionChecker().hasConnection;
-    if (!isConnected) {
-      throw ApiConstants.noInterNet;
-    }
-
-    final token = await getToken();
-    if (token == null) throw Exception("Authorization token not found.");
-
-    final signatureFile = MultipartFile.fromBytes(
-      signatureBytes,
-      filename: "signature.png",
-      contentType: MediaType("image", "png"),
-    );
-
-    final formData = FormData.fromMap({
-      "jobId": jobId,
-      "staffId": staffId,
-      "checkIn": checkIn.toUtc().toIso8601String(),
-      "checkOut": checkOut.toUtc().toIso8601String(),
-      "break": breakMinutes,
-      "managerName": managerName,
-      "managerEmail": managerEmail,
-      "managerSignUrl": signatureFile,
-    });
-
-    final response = await _dio.post(
-      endpoint,
-      data: formData,
-      options: Options(
-        headers: {
-          HttpHeaders.authorizationHeader: token,
-          HttpHeaders.acceptHeader: "application/json",
-        },
-        contentType: "multipart/form-data",
-      ),
-    );
-
-    return response;
-  }
 
   // Token helpers
   Future<String?> getToken() async {

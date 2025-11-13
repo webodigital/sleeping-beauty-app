@@ -15,12 +15,12 @@ import 'package:sleeping_beauty_app/Model/JourneyList.dart';
 import 'package:sleeping_beauty_app/Helper/Language.dart';
 import 'package:sleeping_beauty_app/Model/BussinesListOfJourney.dart';
 import 'package:sleeping_beauty_app/Model/OnGoingJourny.dart';
+import 'package:geolocator/geolocator.dart';
 
 class JourneyListOnMapViewScreen extends StatefulWidget {
   final Journey? journey;
   final bool isFromJourneyScreen;
   final String journeyID;
-
 
   const JourneyListOnMapViewScreen({Key? key, required this.journey, required this.isFromJourneyScreen, required this.journeyID}) : super(key: key);
 
@@ -394,14 +394,16 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
 
   Future<void> getBusinessList() async {
     EasyLoading.show(status: lngTranslation('Loading...'));
+    Position currentPosition = await getCurrentLocation();
+
     try {
       final response = await apiService.getRequestWithParam(
         ApiConstants.businesses_by_location,
         queryParams: {
           'page': "1",
           'limit': "100",
-          'lat': "20.8009",
-          'lng': "70.6960",
+          'lat': currentPosition.latitude,
+          'lng': currentPosition.longitude,
           'radiusKm': "1000",
           'journeyId':  widget.isFromJourneyScreen ? widget.journeyID : widget.journey?.id ?? "",
         },
@@ -460,6 +462,7 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
 
   Future<void> startBusinessJourny(String businessId, Business business) async {
     EasyLoading.show(status: 'Loading...');
+    Position currentPosition = await getCurrentLocation();
 
     print("------------------");
 
@@ -467,8 +470,14 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
       final response = await apiService.postRequest(
         ApiConstants.user_start_journey,
         {
-          "journeyId": widget.isFromJourneyScreen ? widget.journeyID : widget.journey?.id,
+          "journeyId": widget.isFromJourneyScreen
+              ? widget.journeyID
+              : widget.journey?.id,
           "businessId": businessId,
+          "sourceGPS": {
+            "lat": currentPosition.latitude,
+            "lng": currentPosition.longitude,
+          },
         },
       );
 
@@ -875,4 +884,33 @@ class JourneyPopupCard extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<Position> getCurrentLocation() async {
+  // Check if location services are enabled
+  bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) {
+    // Location services are not enabled, request user to enable them
+    return Future.error('Location services are disabled.');
+  }
+
+  // Check for permission
+  LocationPermission permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      return Future.error('Location permissions are denied');
+    }
+  }
+
+  if (permission == LocationPermission.deniedForever) {
+    return Future.error(
+        'Location permissions are permanently denied, we cannot request permissions.');
+  }
+
+  // Get current position
+  Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high);
+
+  return position;
 }

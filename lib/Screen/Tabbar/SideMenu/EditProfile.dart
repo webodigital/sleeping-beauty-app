@@ -3,6 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sleeping_beauty_app/Core/Color.dart';
 import 'package:sleeping_beauty_app/Helper/Language.dart';
+import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:sleeping_beauty_app/Network/ConstantString.dart';
+import 'package:sleeping_beauty_app/Model/Profile.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+
 
 class EditprofileScreen extends StatefulWidget {
   @override
@@ -10,14 +16,19 @@ class EditprofileScreen extends StatefulWidget {
 }
 
 class _EditprofileScreenState extends State<EditprofileScreen> {
+
   final TextEditingController _NameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+
   File? _selectedImage;
+
+  User? userData;
 
   @override
   void initState() {
     super.initState();
-    _emailController.text = "johndoe@gmail.com";
+
+    getUsersProfile();
   }
 
   // Function to pick image
@@ -113,10 +124,16 @@ class _EditprofileScreenState extends State<EditprofileScreen> {
                           ),
                         ),
                         child: CircleAvatar(
-                          backgroundImage: _selectedImage != null
-                              ? FileImage(_selectedImage!)
-                              : const AssetImage('assets/pf.png') as ImageProvider,
+                          radius: 38, // optional, adjust size
                           backgroundColor: Colors.transparent,
+                          backgroundImage: _selectedImage != null
+                              ? FileImage(_selectedImage!) as ImageProvider
+                              : (userData?.avatar?.url != null && userData!.avatar!.url!.isNotEmpty)
+                              ? NetworkImage(userData!.avatar!.url!)
+                              : const AssetImage('assets/pf.png'),
+                          onBackgroundImageError: (_, __) {
+                            // optional: handle image load error gracefully
+                          },
                         ),
                       ),
                       Positioned(
@@ -229,31 +246,164 @@ class _EditprofileScreenState extends State<EditprofileScreen> {
 
               // Image & code section
               const SizedBox(height: 40),
-              Center(
-                child: Column(
-                  children: [
-                    Image.asset(
-                      "assets/scaner.png",
-                      height: 280,
-                      width: 280,
-                      fit: BoxFit.cover,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      "345678",
-                      style: TextStyle(
-                        fontSize: 33,
-                        fontWeight: FontWeight.w600,
-                        color: App_BlackColor,
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                child: SizedBox(
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: App_Warm_Gray,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
                       ),
                     ),
-                  ],
+                    onPressed: () async {
+                      print("Upload pressed");
+                      _uploadImage();
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => const TabBarScreen(),
+                      //   ),
+                      // );
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          lngTranslation("Upload"),
+                          style: TextStyle(
+                            color: App_BlackColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
               ),
+
+              const SizedBox(height: 50),
+
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (userData?.qrUrl != null && userData!.qrUrl!.isNotEmpty)
+                      QrImageView(
+                        data: userData!.qrUrl!,
+                        version: QrVersions.auto,
+                        size: 200.0,
+                        backgroundColor: Colors.white,
+                        eyeStyle: const QrEyeStyle(
+                          eyeShape: QrEyeShape.square,
+                          color: Colors.black,
+                        ),
+                        dataModuleStyle: const QrDataModuleStyle(
+                          dataModuleShape: QrDataModuleShape.circle,
+                          color: Colors.black,
+                        ),
+                      ),
+                    const SizedBox(height: 12),
+                  ],
+                ),
+              )
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _uploadImage() async {
+    EasyLoading.show(status: 'Uploading...');
+
+    print("isFileSelected:-- $_selectedImage");
+    print("------------------------");
+
+    String fileURL = "";
+
+    if (_selectedImage != null && _selectedImage!.path.isNotEmpty) {
+      fileURL = _selectedImage!.path;
+    }
+
+    else if (userData?.avatar?.url?.isNotEmpty == true) {
+      fileURL = userData?.avatar?.url ?? "";
+    }
+
+    if (fileURL.isEmpty) {
+      EasyLoading.dismiss();
+      EasyLoading.showError(AlertConstants.profilePhoto);
+      return;
+    }
+
+    if (_NameController.text.trim().isEmpty) {
+      EasyLoading.dismiss();
+      EasyLoading.showError(AlertConstants.userNameBlank);
+      return;
+    }
+
+    try {
+      final response = await apiService.uploadPhoto(
+        endpoint: ApiConstants.users_profile_update,
+        profileImage: fileURL,
+        fullName: _NameController.text.trim(),
+      );
+
+      final data = response.data;
+
+      if ((response.statusCode == 200 || response.statusCode == 201) &&
+          data['success'] == true) {
+        EasyLoading.showSuccess(data['message']);
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.pop(context);
+        });
+      } else {
+        EasyLoading.showError(lngTranslation(AlertConstants.profileUploadfailed));
+      }
+    } catch (e) {
+      EasyLoading.showError(lngTranslation(AlertConstants.somethingWrong));
+      print("Upload error: $e");
+    } finally {
+      EasyLoading.dismiss();
+    }
+  }
+
+  Future<void> getUsersProfile() async {
+    EasyLoading.show(status: lngTranslation('Loading...'));
+    try {
+      final response = await apiService.getRequest(ApiConstants.users_profile_get);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data;
+
+        print("data:-- $data");
+
+        if (data['success'] == true) {
+          EasyLoading.dismiss();
+          setState(() {
+            final profile = ProfileResponse.fromJson(response.data);
+            userData = profile.data?.user;
+            _emailController.text = userData?.email ?? "";
+            _NameController.text = userData?.fullName ?? "";
+          });
+        } else {
+          EasyLoading.dismiss();
+          String errorMessage = data['message'] ?? lngTranslation(AlertConstants.somethingWrong);
+          EasyLoading.showError(errorMessage);
+        }
+      } else {
+        EasyLoading.dismiss();
+        EasyLoading.showError(lngTranslation(AlertConstants.somethingWrong));
+      }
+    } catch (e, stackTrace) {
+      print("Error fetching getUsersProfile: $e");
+      EasyLoading.dismiss();
+      EasyLoading.showError(AlertConstants.somethingWrong);
+    } finally {
+      print("getUsersProfile finished");
+    }
   }
 }
