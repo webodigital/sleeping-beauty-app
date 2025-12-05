@@ -37,25 +37,87 @@ class ApiService {
       error: true,
     ));
 
-    // Add error interceptor to handle 401 globally
-    _dio.interceptors.add(InterceptorsWrapper(
-      onResponse: (response, handler) {
-        handler.next(response);
-      },
-      onError: (DioError e, handler) async {
-        if (e.response?.statusCode == 401) {
-          EasyLoading.dismiss();
-          await clearToken();
-          // Redirect to login screen
-          navigatorKey.currentState?.pushNamedAndRemoveUntil(
-            '/login',
-                (route) => false,
-          );
-          EasyLoading.dismiss();
-        }
-        handler.next(e);
-      },
-    ));
+    // // Add error interceptor to handle 401 globally
+    // _dio.interceptors.add(InterceptorsWrapper(
+    //   onResponse: (response, handler) {
+    //     handler.next(response);
+    //   },
+    //   onError: (DioError e, handler) async {
+    //     if (e.response?.statusCode == 401 || (e.response?.statusCode == 403)) {
+    //       EasyLoading.dismiss();
+    //       await clearToken();
+    //       // Redirect to login screen
+    //       navigatorKey.currentState?.pushNamedAndRemoveUntil(
+    //         '/login',
+    //             (route) => false,
+    //       );
+    //       EasyLoading.dismiss();
+    //     }
+    //     handler.next(e);
+    //   },
+    // ));
+
+
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onResponse: (response, handler) {
+          return handler.next(response);
+        },
+        onError: (DioException e, handler) async {
+
+          if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+
+            await clearToken();
+            EasyLoading.dismiss();
+
+            // Avoid multiple redirects
+            if (navigatorKey.currentState?.canPop() == true) {
+              navigatorKey.currentState?.popUntil((route) => route.isFirst);
+            }
+
+            navigatorKey.currentState?.pushNamedAndRemoveUntil(
+              '/login',
+                  (route) => false,
+            );
+
+            return;
+          }
+
+          return handler.next(e);
+        },
+      ),
+    );
+
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onResponse: (response, handler) {
+          return handler.next(response);
+        },
+        onError: (DioException e, handler) async {
+
+          if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+
+            await clearToken();
+            EasyLoading.dismiss();
+
+            // Avoid multiple redirects
+            if (navigatorKey.currentState?.canPop() == true) {
+              navigatorKey.currentState?.popUntil((route) => route.isFirst);
+            }
+
+            navigatorKey.currentState?.pushNamedAndRemoveUntil(
+              '/login',
+                  (route) => false,
+            );
+
+            return; // prevent sending error forward
+          }
+
+          return handler.next(e);
+        },
+      ),
+    );
+
   }
 
   // PUT request with optional params and data
@@ -72,9 +134,12 @@ class ApiService {
 
     try {
       final token = await getToken();
+      final lang = await loadLng();
+
       final headers = {
         HttpHeaders.authorizationHeader: token ?? "",
         HttpHeaders.contentTypeHeader: "application/json",
+        "languageType": lang
       };
       final response = await _dio.put(
         endpoint,
@@ -100,10 +165,24 @@ class ApiService {
       throw ApiConstants.noInterNet;
     }
     final token = await getToken();
-    if (token == null) throw Exception("Authorization token not found.");
+    final lang = await loadLng();
+    if (token == null) {
+
+      EasyLoading.showInfo("Session expired. Please log in again.");
+      Future.delayed(const Duration(seconds: 2), () {
+        // throw Exception("Authorization token not found.");
+        navigatorKey.currentState?.pushNamedAndRemoveUntil(
+          '/login',
+              (route) => false,
+        );
+      });
+
+      throw Exception("Session expired. Please log in again.");
+    }
 
     final headers = {
       HttpHeaders.authorizationHeader: token,
+      "languageType": lang
     };
 
     try {
@@ -151,8 +230,10 @@ class ApiService {
     }
     try {
       final token = await getToken();
+      final lang = await loadLng();
       final headers = {
         HttpHeaders.authorizationHeader: token ?? "",
+        "languageType": lang
       };
       final response = await _dio.get(
         endpoint,
@@ -174,12 +255,13 @@ class ApiService {
     if (!isConnected) {
       throw ApiConstants.noInterNet;
     }
-
+    final lang = await loadLng();
     try {
       final headers = {
         HttpHeaders.contentTypeHeader: "application/json",
         "lat": currentLat,
         "long": currentLong,
+        "languageType": lang
       };
       final response = await _dio.post(
         endpoint,
@@ -237,9 +319,12 @@ class ApiService {
       });
 
       final token = await getToken();
+      final lang = await loadLng();
       final headers = {
         HttpHeaders.contentTypeHeader: "multipart/form-data",
-        if (token != null) HttpHeaders.authorizationHeader: token,
+        if (token != null)
+          HttpHeaders.authorizationHeader: token,
+         "languageType": lang
       };
 
       final response = await _dio.patch(
@@ -287,12 +372,14 @@ class ApiService {
     }
 
     final token = await getToken();
+    final lang = await loadLng();
     if (token == null) throw Exception("Authorization token not found.");
 
     try {
       final headers = {
         HttpHeaders.contentTypeHeader: "application/json",
         HttpHeaders.authorizationHeader: token,
+        "languageType": lang
       };
       final response = await _dio.post(
         endpoint,
@@ -325,11 +412,13 @@ class ApiService {
 
     try {
       final token = await getToken();
+      final lang = await loadLng();
       if (token == null) throw Exception("Authorization token not found.");
 
       final headers = {
         HttpHeaders.authorizationHeader: token,
         HttpHeaders.contentTypeHeader: "application/json",
+        "languageType": lang
       };
 
       final response = await _dio.patch(
@@ -365,8 +454,10 @@ class ApiService {
         "docUrl": await MultipartFile.fromFile(docUrl, filename: "upload.jpg"),
       });
       final token = await getToken();
+      final lang = await loadLng();
       final headers = {
         HttpHeaders.contentTypeHeader: "multipart/form-data",
+        "languageType": lang,
         if (token != null) HttpHeaders.authorizationHeader: token,
       };
       final response = await _dio.post(
@@ -424,9 +515,14 @@ class ApiService {
             : await MultipartFile.fromFile(profilePicture, filename: "upload.jpg"),
       });
       final token = await getToken();
+      final lang = await loadLng();
+
       final headers = {
         HttpHeaders.contentTypeHeader: "multipart/form-data",
-        if (token != null) HttpHeaders.authorizationHeader: token,
+        "languageType": lang,
+        if (token != null)
+          HttpHeaders.authorizationHeader: token,
+
       };
       final response = await _dio.post(
         endpoint,
@@ -442,6 +538,56 @@ class ApiService {
       throw Exception("Unexpected upload error: $e");
     }
   }
+
+  Future<String> loadLng() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getString('Language') ?? "en"; // default to English
+
+    // Map saved values to language codes
+    String code;
+    if (saved.toLowerCase().contains("GR") || saved.toLowerCase() == "gr") {
+      code = "gr";
+    } else {
+      code = "en";
+    }
+
+    print("lngCode for API header: $code");
+    return code;
+  }
+
+  Future<Response> deleteRequestWithParam(
+      String endpoint, {
+        Map<String, dynamic>? queryParams,
+        dynamic data,
+      }) async {
+
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+    if (!isConnected) {
+      throw ApiConstants.noInterNet;
+    }
+
+    try {
+      final token = await getToken();
+      final lang = await loadLng();
+
+      final headers = {
+        HttpHeaders.authorizationHeader: token ?? "",
+        HttpHeaders.contentTypeHeader: "application/json",
+        "languageType": lang
+      };
+      final response = await _dio.delete(
+        endpoint,
+        data: data ?? {},
+        queryParameters: queryParams,
+        options: Options(headers: headers),
+      );
+      return response;
+    } on DioError catch (e) {
+      throw Exception("Delete request failed: ${e.message}");
+      EasyLoading.dismiss();
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+      EasyLoading.dismiss();
+    }
+  }
 }
-
-

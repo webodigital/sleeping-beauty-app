@@ -1,16 +1,23 @@
-import Flutter
 import UIKit
+import Flutter
 import GoogleMaps
+import Firebase
+import FirebaseMessaging
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
   override func application(
     _ application: UIApplication,
-    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-  ) -> Bool {
+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
     GMSServices.provideAPIKey("AIzaSyDkelEWkKhlcHPupM7RJfEtZOXHbDQbDYE")
     GeneratedPluginRegistrant.register(with: self)
+      
+//      FirebaseApp.configure()
+
+      UNUserNotificationCenter.current().delegate = self
+      application.registerForRemoteNotifications()
+      
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }

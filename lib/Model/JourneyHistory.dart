@@ -137,7 +137,7 @@ class Journey {
   final String? updatedAt;
   final String? iconUrl;
   final String? backgroundImage;
-  final int? totalPoi;
+  final int? totalPoints;
 
   Journey({
     this.id,
@@ -152,7 +152,7 @@ class Journey {
     this.updatedAt,
     this.iconUrl,
     this.backgroundImage,
-    this.totalPoi,
+    this.totalPoints,
   });
 
   factory Journey.fromJson(Map<String, dynamic> json) {
@@ -169,7 +169,7 @@ class Journey {
       updatedAt: json['updatedAt'],
       iconUrl: json['iconUrl'],
       backgroundImage: json['backgroundImage'],
-      totalPoi: json['totalPoi'],
+      totalPoints: json['totalPoints'],
     );
   }
 
@@ -186,7 +186,7 @@ class Journey {
     'updatedAt': updatedAt,
     'iconUrl': iconUrl,
     'backgroundImage': backgroundImage,
-    'totalPoi': totalPoi,
+    'totalPoints': totalPoints,
   };
 }
 

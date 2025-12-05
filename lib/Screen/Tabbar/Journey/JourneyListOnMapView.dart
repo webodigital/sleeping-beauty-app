@@ -21,8 +21,10 @@ class JourneyListOnMapViewScreen extends StatefulWidget {
   final Journey? journey;
   final bool isFromJourneyScreen;
   final String journeyID;
+  final String journeyName;
 
-  const JourneyListOnMapViewScreen({Key? key, required this.journey, required this.isFromJourneyScreen, required this.journeyID}) : super(key: key);
+
+  const JourneyListOnMapViewScreen({Key? key, required this.journey, required this.isFromJourneyScreen, required this.journeyID, required this.journeyName}) : super(key: key);
 
   @override
   State<JourneyListOnMapViewScreen> createState() =>
@@ -103,7 +105,7 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "End Journey",
+                                    lngTranslation("End Journey"),
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w700,
@@ -112,7 +114,7 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
                                   ),
                                   const SizedBox(height: 12),
                                   Text(
-                                    "Are you sure you want to end this journey?",
+                                    lngTranslation("Are you sure you want to end this journey?"),
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 15,
@@ -139,7 +141,7 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
                                             const EdgeInsets.symmetric(vertical: 14),
                                           ),
                                           child: Text(
-                                            "Cancel",
+                                            lngTranslation("Cancel"),
                                             style: TextStyle(
                                               color: App_BlackColor,
                                               fontSize: 14,
@@ -164,7 +166,7 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
                                             const EdgeInsets.symmetric(vertical: 14),
                                           ),
                                           child: Text(
-                                            "End Journey",
+                                            lngTranslation("End Journey"),
                                             style: TextStyle(
                                               fontWeight: FontWeight.w600,
                                               fontSize: 14,
@@ -191,7 +193,11 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
                       Image.asset("assets/backArrow.png", height: 26, width: 26),
                       const SizedBox(width: 10),
                       Text(
-                        "Journey",
+                        widget.isFromJourneyScreen
+                            ? widget.journeyName
+                            : ((widget.journey?.name.isNotEmpty ?? false)
+                            ? "${widget.journey!.name}"
+                            : lngTranslation("Journey")),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -260,18 +266,20 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
                                     topRight: Radius.circular(12),
                                   ),
                                   child: Image.network(
+                                    (item?.images != null && item!.images!.isNotEmpty)
+                                        ? item!.images!.first.url
+                                        : "https://placehold.co/600x400.png?text=No+Image",
                                     height: 75,
                                     width: double.infinity,
-                                    item?.images.first.url ?? "",
                                     fit: BoxFit.fitWidth,
-                                  ),
-                                ),
+                                  ),),
                                 const SizedBox(height: 5),
                                 Padding(
-                                  padding:
-                                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                   child: Text(
                                     item?.companyName ?? "",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 12,
@@ -279,6 +287,7 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
                                     ),
                                   ),
                                 ),
+
                                 Padding(
                                   padding:
                                   const EdgeInsets.only(left: 8, bottom: 6, right: 8),
@@ -359,13 +368,15 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
               child: GestureDetector(
                 onTap: () {},
                 child: JourneyPopupCard(
-                  imageUrl: data.images.first.url,
+                  imageUrl: (data?.images != null && data!.images!.isNotEmpty)
+                      ? data!.images!.first.url
+                      : "https://placehold.co/600x400.png?text=No+Image",
                   title: data.companyName,
                   subtitle: data.companyName,
                   description: data.shortDescription,
                   rating: 4.8,
                   reviews: 243,
-                  points: data.pointReceive,
+                  points: data.pointEarn ?? 0,
                   onViewDetails: () {
                     Navigator.pop(context);
                     print("on click view details");
@@ -373,7 +384,8 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => JourneyDetailsScreen(id: data.id.toString()),
+                        builder: (_) => JourneyDetailsScreen(id: data.id.toString(), journyName:  widget.isFromJourneyScreen
+                            ? "" : "${widget.journey!.name}"),
                       ),
                     );
                   },
@@ -421,8 +433,13 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
           EasyLoading.dismiss();
           setState(() {
             // now you can access businessResponse anywhere in this widget
-            print("First business: ${businessResponse!.data[0].companyName}");
+            // print("First business: ${businessResponse!.data[0].companyName}");
             businessResponse = BusinessResponse.fromJson(data);
+
+            if (businessResponse?.data.isEmpty == true){
+              EasyLoading.showError(AlertConstants.noBussiness);
+            }
+
             Future.delayed(const Duration(seconds: 2), () {
               if (businessResponse != null) {
                 updateMarkersFromData(businessResponse!);
@@ -433,12 +450,12 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
         } else {
           EasyLoading.dismiss();
           String errorMessage =
-              data['message'] ?? lngTranslation('Something went wrong please try again');
+              data['message'] ?? lngTranslation(AlertConstants.somethingWrong);
           EasyLoading.showError(errorMessage);
         }
       } else {
         EasyLoading.dismiss();
-        EasyLoading.showError('Server Error: ${response.statusCode}');
+        EasyLoading.showError(AlertConstants.somethingWrong);
       }
     } catch (e, stackTrace) {
       print("Error fetching businesses: $e");
@@ -494,6 +511,8 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
               isFromJourneyScreen: false,
               journeyData: null,
               businessData: business,
+              journyName: widget.isFromJourneyScreen
+            ? "" : "${widget.journey!.name}",
             ),
           ),
         ).then((result) {

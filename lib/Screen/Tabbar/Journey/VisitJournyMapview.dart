@@ -11,17 +11,20 @@ import 'package:sleeping_beauty_app/Helper/Language.dart';
 import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:sleeping_beauty_app/Model/BussinesListOfJourney.dart';
+import 'package:sleeping_beauty_app/Network/ConstantString.dart';
 
 class JourneyVisitRootOnMapScreen extends StatefulWidget {
   final bool isFromJourneyScreen;
   final JourneyData? journeyData;
   final Business? businessData;
+  final String journyName;
 
   const JourneyVisitRootOnMapScreen({
     Key? key,
     this.isFromJourneyScreen = false,
     this.journeyData,
     this.businessData,
+    this.journyName = "",
   }) : super(key: key);
 
   @override
@@ -30,6 +33,10 @@ class JourneyVisitRootOnMapScreen extends StatefulWidget {
 
 class _JourneyVisitRootOnMapScreenState
     extends State<JourneyVisitRootOnMapScreen> {
+
+  StreamSubscription<Position>? positionStream;
+
+
   GoogleMapController? _mapController;
 
   final List<MapMarker> markers = [
@@ -51,7 +58,9 @@ class _JourneyVisitRootOnMapScreenState
   @override
   void initState() {
     super.initState();
+
     markers.removeAt(0);
+
     businessesLat = widget.isFromJourneyScreen ? widget.journeyData?.businesses.first.business?.gpsCoordinates?.lat ?? 0.0 : widget.businessData?.gpsCoordinates.lat ?? 0.0;
     businessesLong = widget.isFromJourneyScreen ? widget.journeyData?.businesses.first.business?.gpsCoordinates?.lng ?? 0.0 : widget.businessData?.gpsCoordinates.lng ?? 0.0;
 
@@ -61,6 +70,13 @@ class _JourneyVisitRootOnMapScreenState
     _setupMarkers();
     _getCurrentLocation();
   }
+
+  @override
+  void dispose() {
+    positionStream?.cancel();
+    super.dispose();
+  }
+
 
   void _setupMarkers() {
     for (var m in markers) {
@@ -91,6 +107,7 @@ class _JourneyVisitRootOnMapScreenState
 
     if (permission == LocationPermission.deniedForever) return;
 
+    // Get initial location
     final position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
@@ -99,26 +116,103 @@ class _JourneyVisitRootOnMapScreenState
 
     await _getAddressFromLatLng(_currentPosition!);
 
-    setState(() {
-      _isLoadingLocation = false;
-    });
+    setState(() => _isLoadingLocation = false);
 
-    // Add current location marker
-    _googleMarkers.add(Marker(
-      markerId: const MarkerId("current_location"),
-      position: _currentPosition!,
-      infoWindow: const InfoWindow(title: "You are here"),
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-    ));
+    // Add marker
+    _googleMarkers.add(
+      Marker(
+        markerId: const MarkerId("current_location"),
+        position: _currentPosition!,
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+      ),
+    );
 
-    // Move camera
     _mapController?.animateCamera(
       CameraUpdate.newLatLngZoom(_currentPosition!, 13.5),
     );
 
-    // Draw route to destination
+    // Draw first route
     _drawRoute();
+
+    // START LIVE LOCATION UPDATES
+    positionStream = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 20, // update every 20 meters
+      ),
+    ).listen((Position newPos) {
+      _currentPosition = LatLng(newPos.latitude, newPos.longitude);
+
+      // Update current location marker
+      setState(() {
+        _googleMarkers.removeWhere((m) => m.markerId == const MarkerId("current_location"));
+        _googleMarkers.add(
+          Marker(
+            markerId: const MarkerId("current_location"),
+            position: _currentPosition!,
+            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+          ),
+        );
+      });
+
+      // Move camera
+      _mapController?.animateCamera(
+        CameraUpdate.newLatLng(_currentPosition!),
+      );
+
+      // Re-draw route from new position
+      _drawRoute();
+    });
   }
+
+
+
+  // Future<void> _getCurrentLocation() async {
+  //   bool serviceEnabled;
+  //   LocationPermission permission;
+  //
+  //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  //   if (!serviceEnabled) {
+  //     await Geolocator.openLocationSettings();
+  //     return;
+  //   }
+  //
+  //   permission = await Geolocator.checkPermission();
+  //   if (permission == LocationPermission.denied) {
+  //     permission = await Geolocator.requestPermission();
+  //     if (permission == LocationPermission.denied) return;
+  //   }
+  //
+  //   if (permission == LocationPermission.deniedForever) return;
+  //
+  //   final position = await Geolocator.getCurrentPosition(
+  //     desiredAccuracy: LocationAccuracy.high,
+  //   );
+  //
+  //   _currentPosition = LatLng(position.latitude, position.longitude);
+  //
+  //   await _getAddressFromLatLng(_currentPosition!);
+  //
+  //   setState(() {
+  //     _isLoadingLocation = false;
+  //   });
+  //
+  //   // Add current location marker
+  //   _googleMarkers.add(Marker(
+  //     markerId: const MarkerId("current_location"),
+  //     position: _currentPosition!,
+  //     infoWindow: const InfoWindow(title: "You are here"),
+  //     icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+  //   ));
+  //
+  //   // Move camera
+  //   _mapController?.animateCamera(
+  //     CameraUpdate.newLatLngZoom(_currentPosition!, 13.5),
+  //   );
+  //
+  //   // Draw route to destination
+  //   _drawRoute();
+  // }
 
   Future<void> _getAddressFromLatLng(LatLng pos) async {
     try {
@@ -137,10 +231,15 @@ class _JourneyVisitRootOnMapScreenState
   Future<void> _drawRoute() async {
     if (_currentPosition == null) return;
 
-    final origin =
-    PointLatLng(_currentPosition!.latitude, _currentPosition!.longitude);
-    final destination =
-    PointLatLng(markers[0].latitude, markers[0].longitude);
+    final origin = PointLatLng(
+      _currentPosition!.latitude,
+      _currentPosition!.longitude,
+    );
+
+    final destination = PointLatLng(
+      markers[0].latitude,
+      markers[0].longitude,
+    );
 
     final result = await polylinePoints.getRouteBetweenCoordinates(
       googleApiKey: ApiConstants.googleApiKey,
@@ -152,21 +251,58 @@ class _JourneyVisitRootOnMapScreenState
     );
 
     if (result.points.isNotEmpty) {
-      final routeCoords =
-      result.points.map((p) => LatLng(p.latitude, p.longitude)).toList();
+      final routeCoords = result.points
+          .map((p) => LatLng(p.latitude, p.longitude))
+          .toList();
 
       setState(() {
-        _polylines.add(Polyline(
-          polylineId: const PolylineId('route'),
-          color: Colors.blueAccent,
-          width: 5,
-          points: routeCoords,
-        ));
+        _polylines.clear(); // IMPORTANT for live updates
+        _polylines.add(
+          Polyline(
+            polylineId: const PolylineId('route'),
+            color: Colors.blueAccent,
+            width: 5,
+            points: routeCoords,
+          ),
+        );
       });
-    } else {
-      debugPrint("No route found: ${result.errorMessage}");
     }
   }
+
+
+  // Future<void> _drawRoute() async {
+  //   if (_currentPosition == null) return;
+  //
+  //   final origin =
+  //   PointLatLng(_currentPosition!.latitude, _currentPosition!.longitude);
+  //   final destination =
+  //   PointLatLng(markers[0].latitude, markers[0].longitude);
+  //
+  //   final result = await polylinePoints.getRouteBetweenCoordinates(
+  //     googleApiKey: ApiConstants.googleApiKey,
+  //     request: PolylineRequest(
+  //       origin: origin,
+  //       destination: destination,
+  //       mode: TravelMode.driving,
+  //     ),
+  //   );
+  //
+  //   if (result.points.isNotEmpty) {
+  //     final routeCoords =
+  //     result.points.map((p) => LatLng(p.latitude, p.longitude)).toList();
+  //
+  //     setState(() {
+  //       _polylines.add(Polyline(
+  //         polylineId: const PolylineId('route'),
+  //         color: Colors.blueAccent,
+  //         width: 5,
+  //         points: routeCoords,
+  //       ));
+  //     });
+  //   } else {
+  //     debugPrint("No route found: ${result.errorMessage}");
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -223,7 +359,7 @@ class _JourneyVisitRootOnMapScreenState
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                  Text(
-                                  "End Visit",
+                                   lngTranslation("End Visit"),
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w700,
@@ -232,7 +368,7 @@ class _JourneyVisitRootOnMapScreenState
                                 ),
                                 const SizedBox(height: 12),
                                  Text(
-                                  "Are you sure you want to end this visit?",
+                                   lngTranslation("Are you sure you want to end this visit?"),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 15,
@@ -259,7 +395,7 @@ class _JourneyVisitRootOnMapScreenState
                                           const EdgeInsets.symmetric(vertical: 14),
                                         ),
                                         child: Text(
-                                          "Cancel",
+                                          lngTranslation("Cancel"),
                                           style: TextStyle(
                                             color: App_BlackColor,
                                             fontSize: 14,
@@ -287,7 +423,7 @@ class _JourneyVisitRootOnMapScreenState
                                           const EdgeInsets.symmetric(vertical: 14),
                                         ),
                                         child: Text(
-                                          "End Visit",
+                                          lngTranslation("End Visit"),
                                           style: TextStyle(
                                             fontWeight: FontWeight.w600,
                                             fontSize: 14,
@@ -311,7 +447,7 @@ class _JourneyVisitRootOnMapScreenState
                       Image.asset("assets/backArrow.png", height: 26, width: 26),
                       const SizedBox(width: 10),
                       Text(
-                        "Journey",
+                        widget.journyName,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -362,8 +498,8 @@ class _JourneyVisitRootOnMapScreenState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Your Location",
+                        Text(
+                          lngTranslation("Your Location"),
                           style: TextStyle(
                             color: Colors.grey,
                             fontSize: 12,
@@ -372,7 +508,7 @@ class _JourneyVisitRootOnMapScreenState
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          _currentAddress ?? "Fetching current location...",
+                          _currentAddress ?? lngTranslation("Fetching current location..."),
                           style: const TextStyle(
                             color: Colors.black,
                             fontSize: 14,
@@ -380,8 +516,8 @@ class _JourneyVisitRootOnMapScreenState
                           ),
                         ),
                         const SizedBox(height: 8),
-                        const Text(
-                          "Destination Location",
+                        Text(
+                          lngTranslation("Destination Location"),
                           style: TextStyle(
                             color: Colors.grey,
                             fontSize: 12,
@@ -390,7 +526,7 @@ class _JourneyVisitRootOnMapScreenState
                         ),
                         const SizedBox(height: 2),
                         Text(
-                         widget.isFromJourneyScreen  ? widget.journeyData?.businesses.first.business?.address  ?? "" : "",
+                         widget.isFromJourneyScreen ? widget.journeyData?.businesses.first.business?.address  ?? "" : widget.businessData?.address ?? "",
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 14,
@@ -411,7 +547,7 @@ class _JourneyVisitRootOnMapScreenState
 
   Future<void> completeVisit(
       String businessID) async {
-    EasyLoading.show(status: 'Loading...');
+    EasyLoading.show(status: lngTranslation('Loading...'));
 
     try {
 
@@ -440,11 +576,11 @@ class _JourneyVisitRootOnMapScreenState
           Navigator.of(context).pop();
         });
       } else {
-        final errorMessage = data['message'] ?? "Something went wrong";
+        final errorMessage = data['message'] ?? lngTranslation(AlertConstants.somethingWrong);
         EasyLoading.showError(errorMessage);
       }
     } catch (e) {
-      EasyLoading.showError("${e.toString()}");
+      EasyLoading.showError(lngTranslation(AlertConstants.somethingWrong));
     } finally {
       EasyLoading.dismiss();
     }

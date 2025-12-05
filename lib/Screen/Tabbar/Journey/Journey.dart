@@ -151,7 +151,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
                             Positioned(
                               bottom: -14,
                               child: Text(
-                                '100 ${lngTranslation("Pts")}',
+                                '${(userData?.pointEarn ?? 0).toString()} ${lngTranslation("Pts")}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 12,
@@ -301,8 +301,9 @@ class _JourneyScreenState extends State<JourneyScreen> {
         ),
         child: Row(
           children: [
-            Image.asset(iconPath, height: 36, width: 36),
-            Container(
+            // Image.asset(iconPath, height: 36, width: 36),
+        buildImage(iconPath),
+        Container(
               width: 1,
               height: 42,
               color: Colors.grey.shade300,
@@ -387,6 +388,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
                   isFromJourneyScreen: true,
                   journeyData: ongoingJourneyData!,
                   businessData: null,
+                  journyName: ongoingJourneyData?.journeyName ?? "",
                 ),
               ),
             ).then((_) {
@@ -397,6 +399,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
                     journey: null,
                     isFromJourneyScreen: true,
                     journeyID: ongoingJourneyResponse?.data?.journeyId ?? "",
+                      journeyName: ongoingJourneyData?.journeyName ?? ""
                   ),
                 ),
               );
@@ -409,11 +412,11 @@ class _JourneyScreenState extends State<JourneyScreen> {
                   journey: null,
                   isFromJourneyScreen: true,
                   journeyID: ongoingJourneyResponse?.data?.journeyId ?? "",
+                  journeyName: ongoingJourneyData?.journeyName ?? "",
                 ),
               ),
             );
           }
-
 
           // Navigator.push(
           //   context,
@@ -478,3 +481,22 @@ class _JourneyScreenState extends State<JourneyScreen> {
     }
   }
 }
+
+Widget buildImage(String path) {
+  bool isNetwork = path.startsWith('http');
+
+  return isNetwork
+      ? Image.network(
+    path,
+    height: 36,
+    width: 36,
+    fit: BoxFit.cover,
+  )
+      : Image.asset(
+    path,
+    height: 36,
+    width: 36,
+    fit: BoxFit.cover,
+  );
+}
+

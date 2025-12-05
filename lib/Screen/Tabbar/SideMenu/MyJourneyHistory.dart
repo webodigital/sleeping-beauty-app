@@ -63,7 +63,24 @@ class _MyjourneyhistoryScreenState extends State<MyjourneyhistoryScreen> {
 
               const SizedBox(height: 10),
 
-        ListView.builder(
+              journyHistoryList.isEmpty
+                  ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 250, horizontal: 20),
+                  child: Center(
+                    child: Text(
+                      lngTranslation("Start exploring — your first journey awaits!"),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: App_BlackColor,
+                      ),
+                    ),
+                  ),
+                ),
+              )
+                  :  ListView.builder(
           itemCount: journyHistoryList.length,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -148,7 +165,7 @@ class _MyjourneyhistoryScreenState extends State<MyjourneyhistoryScreen> {
                                           Image.asset("assets/gift.png", height: 14, width: 14),
                                           const SizedBox(width: 4),
                                           Text(
-                                            "+${data.journey?.totalPoi ?? ""} Pts",
+                                            "+${data.journey?.totalPoints.toString() } ${lngTranslation("Pts")}",
                                             style: TextStyle(
                                               fontSize: 11,
                                               fontWeight: FontWeight.w500,

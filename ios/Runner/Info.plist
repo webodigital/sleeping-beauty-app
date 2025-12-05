@@ -2,61 +2,88 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>CFBundleDisplayName</key>
-	<string>Sleeping Beauty App</string>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>sleeping_beauty_app</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>NSCameraUsageDescription</key>
-    <string>We need camera access to take your profile photo.</string>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>We need photo library access to select your profile picture.</string>
-<key>NSLocationAlwaysUsageDescription</key>
-<string>We use your location to improve the app experience.</string>
-<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-<string>We need your location even when the app is in background.</string>
-<key>NSLocationWhenInUseUsageDescription</key>
-<string>We need your location to show nearby places on map.</string>
-<key>io.flutter.embedded_views_preview</key>
-<true/>
+    <key>CADisableMinimumFrameDurationOnPhone</key>
+    <true/>
 
+    <key>CFBundleDevelopmentRegion</key>
+    <string>$(DEVELOPMENT_LANGUAGE)</string>
+
+    <key>CFBundleDisplayName</key>
+    <string>Dornröschen</string>
+
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+
+    <key>CFBundleName</key>
+    <string>Dornröschen</string>
+
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+
+    <key>CFBundleShortVersionString</key>
+    <string>$(FLUTTER_BUILD_NAME)</string>
+
+    <key>CFBundleSignature</key>
+    <string>????</string>
+
+    <key>CFBundleVersion</key>
+    <string>$(FLUTTER_BUILD_NUMBER)</string>
+
+    <key>LSRequiresIPhoneOS</key>
+    <true/>
+
+    <!-- Camera permission -->
+    <key>NSCameraUsageDescription</key>
+    <string>This app needs access to your camera so you can take a photo for your profile picture.</string>
+
+    <!-- Location permissions -->
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>We use your location to show your current position on the map, display nearby shops, and provide an accurate route during your journey.</string>
+
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>We use your location to show your current position on the map, display nearby shops, and provide an accurate route during your journey.</string>
+
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>We use your location to show your current position on the map, display nearby shops, and provide an accurate route during your journey.</string>
+
+    <!-- Photo library permission -->
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app needs access to your photo library so you can select a picture for your profile.</string>
+
+    <key>UIApplicationSupportsIndirectInputEvents</key>
+    <true/>
+
+    <key>UILaunchStoryboardName</key>
+    <string>LaunchScreen</string>
+
+    <key>UIMainStoryboardFile</key>
+    <string>Main</string>
+
+    <key>UIStatusBarStyle</key>
+    <string></string>
+
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+
+    <key>io.flutter.embedded_views_preview</key>
+    <true/>
+
+    <key>UIDeviceFamily</key>
+    <array>
+        <integer>1</integer>
+    </array>
+
+    <key>UIRequiresFullScreen</key>
+    <true/>
 </dict>
 </plist>

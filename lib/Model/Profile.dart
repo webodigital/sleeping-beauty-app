@@ -67,7 +67,7 @@ class User {
   final String? deletedAt;
   final String? createdAt;
   final String? updatedAt;
-  final String? pointEarn;
+  final int? pointEarn;
   final Role? role;
   final Avatar? avatar;
   final String? qrUrl;

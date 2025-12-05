@@ -42,10 +42,13 @@ class BusinessResponse {
 class Business {
   final String id;
   final String companyName;
+  final String address;
   final GpsCoordinates gpsCoordinates;
   final String shortDescription;
   final String extendedDescription;
   final int pointReceive;
+  final int pointEarn;
+
   final List<BusinessImage> images;
   final double distanceKm;
 
@@ -58,16 +61,21 @@ class Business {
     required this.pointReceive,
     required this.images,
     required this.distanceKm,
+    required this.address,
+    required this.pointEarn,
   });
 
   factory Business.fromJson(Map<String, dynamic> json) {
     return Business(
       id: json['id'] ?? '',
       companyName: json['companyName'] ?? '',
+      address: json['address'] ?? '',
       gpsCoordinates: GpsCoordinates.fromJson(json['gpsCoordinates']),
       shortDescription: json['shortDescription'] ?? '',
       extendedDescription: json['extendedDescription'] ?? '',
       pointReceive: json['pointReceive'] ?? 0,
+      pointEarn: json['pointEarn'] ?? 0,
+
       images: (json['images'] as List<dynamic>?)
           ?.map((e) => BusinessImage.fromJson(e))
           .toList() ??
@@ -85,6 +93,7 @@ class Business {
     'pointReceive': pointReceive,
     'images': images.map((e) => e.toJson()).toList(),
     'distance_km': distanceKm,
+    'address': address,
   };
 }
 

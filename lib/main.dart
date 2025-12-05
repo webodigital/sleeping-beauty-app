@@ -3,26 +3,48 @@ import 'dart:async';
 import 'Screen/Auth/SplashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:sleeping_beauty_app/Network/Gloabal.dart';
 import 'package:flutter/services.dart';
 import 'package:sleeping_beauty_app/Helper/Language.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
+import 'package:sleeping_beauty_app/Network/firebase_notification_service.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:sleeping_beauty_app/Screen/Auth/LoginScreen.dart';
 
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Background Message Received: ${message.notification?.title}");
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize Firebase
+  await Firebase.initializeApp();
+
+  // Initialize translation manager
   final translationManager = TranslationManager();
   await translationManager.init();
 
+  // Initialize FireBase Notification
+  await FirebaseNotificationService.init();
 
+  // Background Notification Handler
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   bool isUserFirstTime = await LocalStorageHelper.getFlag();
 
-  if (isUserFirstTime == false){
+  if (isUserFirstTime == false) {
     LocalStorageHelper.saveFlag(true);
     await translationManager.setLanguage('GR');
   }
+
+  FirebaseMessaging.instance.getToken().then((token) {
+    print("FCM Token: $token");
+  });
 
   runApp(
     ChangeNotifierProvider<TranslationManager>.value(
@@ -39,6 +61,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      navigatorKey: navigatorKey, // Add this for global navigation
       theme: ThemeData(
         fontFamily: 'Montserrat',
         primarySwatch: Colors.deepPurple,
@@ -51,8 +74,13 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-        builder: EasyLoading.init(),
-      home: SplashScreen(),
+      builder: EasyLoading.init(),
+      initialRoute: '/', // Optional: initial route
+      routes: {
+        '/': (context) => SplashScreen(),  // your initial screen
+        '/login': (context) => LoginScreen(), // your login screen
+        // Add other screens here if needed
+      },
     );
   }
 }

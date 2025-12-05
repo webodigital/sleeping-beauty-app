@@ -9,7 +9,6 @@ import 'package:sleeping_beauty_app/Network/ConstantString.dart';
 import 'package:sleeping_beauty_app/Model/Profile.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-
 class EditprofileScreen extends StatefulWidget {
   @override
   State<EditprofileScreen> createState() => _EditprofileScreenState();
@@ -92,7 +91,7 @@ class _EditprofileScreenState extends State<EditprofileScreen> {
                     ),
                     const SizedBox(width: 10),
                     Text(
-                      'Profile',
+                      lngTranslation('Profile'),
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
@@ -318,7 +317,7 @@ class _EditprofileScreenState extends State<EditprofileScreen> {
   }
 
   void _uploadImage() async {
-    EasyLoading.show(status: 'Uploading...');
+    EasyLoading.show(status: lngTranslation('Uploading...'));
 
     print("isFileSelected:-- $_selectedImage");
     print("------------------------");
@@ -335,13 +334,13 @@ class _EditprofileScreenState extends State<EditprofileScreen> {
 
     if (fileURL.isEmpty) {
       EasyLoading.dismiss();
-      EasyLoading.showError(AlertConstants.profilePhoto);
+      EasyLoading.showError(lngTranslation(AlertConstants.profilePhoto));
       return;
     }
 
     if (_NameController.text.trim().isEmpty) {
       EasyLoading.dismiss();
-      EasyLoading.showError(AlertConstants.userNameBlank);
+      EasyLoading.showError(lngTranslation(AlertConstants.userNameBlank));
       return;
     }
 

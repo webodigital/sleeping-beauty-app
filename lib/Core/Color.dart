@@ -36,4 +36,6 @@ final Color App_sentCode = const Color(0xFF848484);
 final Color App_code = const Color(0xFFA4A4A4);
 final Color App_blue = const Color(0xFF1F3C88);
 final Color App_location = const Color(0xFFA9A9AA);
+final Color App_maproot = const Color.fromRGBO(237, 75, 72, 1);
+
 

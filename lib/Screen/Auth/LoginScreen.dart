@@ -109,6 +109,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 25.0),
                           child: TextFormField(
                             controller: _emailController,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.deny(RegExp(r"\s")),
+                            ],
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -162,6 +165,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: TextFormField(
                             controller: _passwordController,
                             obscureText: !isPasswordVisible,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.deny(RegExp(r"\s")),
+                            ],
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -327,7 +333,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             ],
                           ),
                         ),
-
                         const SizedBox(height: 30),
                       ],
                     ),
@@ -348,13 +353,16 @@ class _LoginScreenState extends State<LoginScreen> {
         r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
     if (email.isEmpty) {
-      EasyLoading.showError(AlertConstants.emailBlank);
+      EasyLoading.showError(lngTranslation(AlertConstants.emailBlank));
       return;
     } else if (!emailRegex.hasMatch(email)) {
-      EasyLoading.showError(AlertConstants.emailInvalid);
+      EasyLoading.showError(lngTranslation(AlertConstants.emailInvalid));
       return;
     } else if (password.isEmpty) {
-      EasyLoading.showError(AlertConstants.passwordBlank);
+      EasyLoading.showError(lngTranslation(AlertConstants.passwordBlank));
+      return;
+    } else if (password.length < 6) {
+      EasyLoading.showError(lngTranslation(AlertConstants.profileValidation));
       return;
     } else {
       print("Login API");
@@ -380,6 +388,8 @@ class _LoginScreenState extends State<LoginScreen> {
         EasyLoading.showSuccess(data['message']);
         final accessToken = data['data']['accessToken'] ?? "";
         await saveToken(accessToken);
+        await updateUserLogin(true);
+
         Future.delayed(const Duration(seconds: 2), () {
           print("Move");
           Navigator.push(
@@ -390,7 +400,6 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         });
       } else  {
-
         String errorMessage = data['message'];
         EasyLoading.showError(errorMessage);
       }
@@ -824,7 +833,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 20),
                     Center(
                       child: Row(

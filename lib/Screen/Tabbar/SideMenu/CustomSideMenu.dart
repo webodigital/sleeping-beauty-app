@@ -11,6 +11,10 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:sleeping_beauty_app/Network/ConstantString.dart';
 import 'package:sleeping_beauty_app/Model/Profile.dart';
 import 'package:sleeping_beauty_app/Screen/Auth/LoginScreen.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:sleeping_beauty_app/Network/ConstantString.dart';
 
 class CustomSideMenu extends StatefulWidget {
   const CustomSideMenu({super.key});
@@ -62,10 +66,9 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
           bottomRight: Radius.circular(12),
         ),
       ),
-
       child: Stack(
         children: [
-          Padding(
+          SingleChildScrollView( // <-- Added scroll
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,6 +111,7 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                 ),
                 const SizedBox(height: 20),
 
+                // Drawer items...
                 DrawerItem(
                   icon: "assets/profile.png",
                   title: lngTranslation("Profile"),
@@ -148,14 +152,13 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                       MaterialPageRoute(builder: (_) => MyFavoriteJourneyScreen()),
                     );
                   },
-
                 ),
                 DrawerItem(
                   icon: "assets/aboutApp.png",
                   title: lngTranslation("About App"),
                   onTap: () {
+                    _openBrowser("https://dornroeschenstadt-hofgeismar.com/");
                     Navigator.pop(context);
-                    Navigator.pushNamed(context, '/aboutApp');
                   },
                 ),
                 DrawerItem(
@@ -173,13 +176,21 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                   icon: "assets/helps.png",
                   title: lngTranslation("Helps & FAQs"),
                   onTap: () {
+                    _openBrowser("https://dornroeschenstadt-hofgeismar.com/");
                     Navigator.pop(context);
-                    Navigator.pushNamed(context, '/helps');
+                  },
+                ),
+                DrawerItem(
+                  icon: "assets/profile.png",
+                  title: lngTranslation("Delete Account"),
+                  onTap: () {
+                    _showDeleteAccoutDialog(context);
                   },
                 ),
 
-                const Spacer(),
+                const SizedBox(height: 30),
 
+                // Language selector
                 Center(
                   child: Container(
                     height: 50,
@@ -231,6 +242,7 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
 
                 const SizedBox(height: 14),
 
+                // Sign out button
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: App_SignOut,
@@ -253,7 +265,6 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
               ],
             ),
           ),
-
           Positioned(
             top: 40,
             right: 4,
@@ -311,13 +322,89 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      isSideMenuOpen = false;
                       Navigator.of(ctx).pop();
+                      await updateUserLogin(false);
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(builder: (_) => LoginScreen()),
                             (route) => false,
                       );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: App_Start_Now,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                    ),
+                    child: Text(
+                      lngTranslation("Yes"),
+                      style: TextStyle(
+                        color: App_BlackColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDeleteAccoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          title: Center(
+            child: Text(
+              lngTranslation("Delete Account"),
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+            ),
+          ),
+          content: Text(
+            lngTranslation("Are you sure you want to delete this account?"),
+            style: TextStyle(fontSize: 15),
+            textAlign: TextAlign.center,
+          ),
+          actionsPadding: const EdgeInsets.only(right: 12, bottom: 8, left: 12),
+          actions: [
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: App_Start_Now, width: 2),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                    ),
+                    child: Text(
+                      lngTranslation("Cancel"),
+                      style: TextStyle(
+                        color: App_BlackColor,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      isSideMenuOpen = false;
+                      Navigator.of(ctx).pop();
+                      deleteUserAccount();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: App_Start_Now,
@@ -376,6 +463,70 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
       EasyLoading.showError(AlertConstants.somethingWrong);
     } finally {
       print("getUsersProfile finished");
+    }
+  }
+
+  void _openBrowser(String url) async {
+    final uri = Uri.parse(url);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication, // opens in browser
+      );
+    } else {
+      print("Could not launch $url");
+    }
+  }
+
+  Future<void> deleteUserAccount() async {
+    EasyLoading.show(status: 'Deleting Account...');
+
+    try {
+      final response = await apiService.deleteRequestWithParam(
+        ApiConstants.users_delete_account,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final success = response.data['success'] ?? false;
+
+        print("success:-- $success");
+
+        if (success) {
+          // Show success message
+          EasyLoading.showSuccess(lngTranslation("Account deleted successfully"));
+
+          await updateUserLogin(false);
+
+          // Allow the success message to be visible
+          Future.delayed(const Duration(seconds: 2), () {
+            EasyLoading.dismiss(); // <-- Correctly dismissed here
+
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => LoginScreen()),
+                  (route) => false,
+            );
+          });
+        } else {
+          final errorMessage = response.data['errors']?['message'] ??
+              response.data['message'] ??
+              "Failed to delete account";
+
+          EasyLoading.showError(errorMessage);
+          EasyLoading.dismiss();
+        }
+      } else {
+        final errorMessage = response.data['errors']?['message'] ??
+            response.data['message'] ??
+            "Failed to delete account";
+
+        EasyLoading.showError(errorMessage);
+        EasyLoading.dismiss();
+      }
+    } catch (e) {
+      EasyLoading.showError(e.toString());
+      EasyLoading.dismiss();
     }
   }
 }

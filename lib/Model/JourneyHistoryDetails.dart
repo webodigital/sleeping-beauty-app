@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 class ApiResponse {
@@ -18,14 +17,15 @@ class ApiResponse {
     this.errors,
   });
 
-  factory ApiResponse.fromRawJson(String str) => ApiResponse.fromJson(json.decode(str));
+  factory ApiResponse.fromRawJson(String str) =>
+      ApiResponse.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
   factory ApiResponse.fromJson(Map<String, dynamic> json) => ApiResponse(
-    success: json["success"],
-    statusCode: json["status_code"],
-    message: json["message"],
+    success: json["success"] ?? false,
+    statusCode: json["status_code"] ?? 0,
+    message: json["message"] ?? "",
     data: json["data"] == null ? null : JourneyData.fromJson(json["data"]),
     pagination: json["pagination"],
     errors: json["errors"],
@@ -44,19 +44,18 @@ class ApiResponse {
 // -------------------------------------------------------------
 // Data Class: JourneyData
 // -------------------------------------------------------------
-
 class JourneyData {
   final String id;
   final String userId;
   final String journeyId;
   final String status;
   final int progress;
-  final DateTime startedAt;
-  final DateTime completedAt;
-  final UserJourney journey;
+  final DateTime? startedAt;
+  final DateTime? completedAt;
+  final UserJourney? journey;
   final List<UserBusiness> businesses;
   final List<ImageDetails> multimedia;
-  final Summary summary;
+  final Summary? summary;
 
   JourneyData({
     required this.id,
@@ -64,26 +63,37 @@ class JourneyData {
     required this.journeyId,
     required this.status,
     required this.progress,
-    required this.startedAt,
-    required this.completedAt,
-    required this.journey,
+    this.startedAt,
+    this.completedAt,
+    this.journey,
     required this.businesses,
     required this.multimedia,
-    required this.summary,
+    this.summary,
   });
 
   factory JourneyData.fromJson(Map<String, dynamic> json) => JourneyData(
-    id: json["id"],
-    userId: json["userId"],
-    journeyId: json["journeyId"],
-    status: json["status"],
-    progress: json["progress"],
-    startedAt: DateTime.parse(json["startedAt"]),
-    completedAt: DateTime.parse(json["completedAt"]),
-    journey: UserJourney.fromJson(json["journey"]),
-    businesses: List<UserBusiness>.from(json["businesses"].map((x) => UserBusiness.fromJson(x))),
-    multimedia: List<ImageDetails>.from(json["multimedia"].map((x) => ImageDetails.fromJson(x))),
-    summary: Summary.fromJson(json["summary"]),
+    id: json["id"] ?? "",
+    userId: json["userId"] ?? "",
+    journeyId: json["journeyId"] ?? "",
+    status: json["status"] ?? "",
+    progress: json["progress"] ?? 0,
+    startedAt:
+    json["startedAt"] != null ? DateTime.tryParse(json["startedAt"]) : null,
+    completedAt:
+    json["completedAt"] != null ? DateTime.tryParse(json["completedAt"]) : null,
+    journey: json["journey"] == null
+        ? null
+        : UserJourney.fromJson(json["journey"]),
+    businesses: json["businesses"] == null
+        ? []
+        : List<UserBusiness>.from(
+        json["businesses"].map((x) => UserBusiness.fromJson(x))),
+    multimedia: json["multimedia"] == null
+        ? []
+        : List<ImageDetails>.from(
+        json["multimedia"].map((x) => ImageDetails.fromJson(x))),
+    summary:
+    json["summary"] == null ? null : Summary.fromJson(json["summary"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -92,63 +102,64 @@ class JourneyData {
     "journeyId": journeyId,
     "status": status,
     "progress": progress,
-    "startedAt": startedAt.toIso8601String(),
-    "completedAt": completedAt.toIso8601String(),
-    "journey": journey.toJson(),
+    "startedAt": startedAt?.toIso8601String(),
+    "completedAt": completedAt?.toIso8601String(),
+    "journey": journey?.toJson(),
     "businesses": List<dynamic>.from(businesses.map((x) => x.toJson())),
     "multimedia": List<dynamic>.from(multimedia.map((x) => x.toJson())),
-    "summary": summary.toJson(),
+    "summary": summary?.toJson(),
   };
 }
 
 // -------------------------------------------------------------
-// Nested Classes
+// UserJourney
 // -------------------------------------------------------------
-
 class UserJourney {
   final String id;
   final String name;
   final String type;
-  final int duration;
-  final String description;
-  final String rewardName;
-  final String rewardType;
+  final int? duration;
+  final String? description;
+  final String? rewardName;
+  final String? rewardType;
   final DateTime? deletedAt;
   final DateTime createdAt;
   final DateTime updatedAt;
   final String? iconUrl;
-  final String backgroundImage;
-  final int totalPoi;
-  final int stops;
+  final String? backgroundImage;
+  final int? totalPoi;
+  final int? stops;
 
   UserJourney({
     required this.id,
     required this.name,
     required this.type,
-    required this.duration,
-    required this.description,
-    required this.rewardName,
-    required this.rewardType,
+    this.duration,
+    this.description,
+    this.rewardName,
+    this.rewardType,
     this.deletedAt,
     required this.createdAt,
     required this.updatedAt,
     this.iconUrl,
-    required this.backgroundImage,
-    required this.totalPoi,
-    required this.stops,
+    this.backgroundImage,
+    this.totalPoi,
+    this.stops,
   });
 
   factory UserJourney.fromJson(Map<String, dynamic> json) => UserJourney(
-    id: json["id"],
-    name: json["name"],
-    type: json["type"],
+    id: json["id"] ?? "",
+    name: json["name"] ?? "",
+    type: json["type"] ?? "",
     duration: json["duration"],
     description: json["description"],
     rewardName: json["rewardName"],
     rewardType: json["rewardType"],
-    deletedAt: json["deletedAt"] == null ? null : DateTime.parse(json["deletedAt"]),
-    createdAt: DateTime.parse(json["createdAt"]),
-    updatedAt: DateTime.parse(json["updatedAt"]),
+    deletedAt: json["deletedAt"] == null
+        ? null
+        : DateTime.tryParse(json["deletedAt"]),
+    createdAt: DateTime.tryParse(json["createdAt"]) ?? DateTime.now(),
+    updatedAt: DateTime.tryParse(json["updatedAt"]) ?? DateTime.now(),
     iconUrl: json["iconUrl"],
     backgroundImage: json["backgroundImage"],
     totalPoi: json["totalPoi"],
@@ -173,263 +184,162 @@ class UserJourney {
   };
 }
 
+// -------------------------------------------------------------
+// UserBusiness
+// -------------------------------------------------------------
 class UserBusiness {
   final String id;
   final String userJourneyId;
   final String businessId;
-  final DateTime visitedAt;
+  final DateTime? visitedAt;
   final DateTime? visitedEndAt;
   final String status;
   final String? mapImage;
-  final dynamic distance; // Type is dynamic because it's null in JSON but named "distance"
-  final BusinessDetails business;
+  final dynamic distance;
+  final GpsCoordinates? sourceGPS;
+  final GpsCoordinates? destinationGPS;
+  final BusinessDetails? business;
 
   UserBusiness({
     required this.id,
     required this.userJourneyId,
     required this.businessId,
-    required this.visitedAt,
+    this.visitedAt,
     this.visitedEndAt,
     required this.status,
     this.mapImage,
     this.distance,
-    required this.business,
+    this.sourceGPS,
+    this.destinationGPS,
+    this.business,
   });
 
   factory UserBusiness.fromJson(Map<String, dynamic> json) => UserBusiness(
-    id: json["id"],
-    userJourneyId: json["userJourneyId"],
-    businessId: json["businessId"],
-    visitedAt: DateTime.parse(json["visitedAt"]),
-    visitedEndAt: json["visitedEndAt"] == null ? null : DateTime.parse(json["visitedEndAt"]),
-    status: json["status"],
+    id: json["id"] ?? "",
+    userJourneyId: json["userJourneyId"] ?? "",
+    businessId: json["businessId"] ?? "",
+    visitedAt: json["visitedAt"] == null
+        ? null
+        : DateTime.tryParse(json["visitedAt"]),
+    visitedEndAt: json["visitedEndAt"] == null
+        ? null
+        : DateTime.tryParse(json["visitedEndAt"]),
+    status: json["status"] ?? "",
     mapImage: json["mapImage"],
     distance: json["distance"],
-    business: BusinessDetails.fromJson(json["business"]),
+    sourceGPS: json["sourceGPS"] == null
+        ? null
+        : GpsCoordinates.fromJson(json["sourceGPS"]),
+    destinationGPS: json["destinationGPS"] == null
+        ? null
+        : GpsCoordinates.fromJson(json["destinationGPS"]),
+    business: json["business"] == null
+        ? null
+        : BusinessDetails.fromJson(json["business"]),
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
     "userJourneyId": userJourneyId,
     "businessId": businessId,
-    "visitedAt": visitedAt.toIso8601String(),
+    "visitedAt": visitedAt?.toIso8601String(),
     "visitedEndAt": visitedEndAt?.toIso8601String(),
     "status": status,
     "mapImage": mapImage,
     "distance": distance,
-    "business": business.toJson(),
+    "sourceGPS": sourceGPS?.toJson(),
+    "destinationGPS": destinationGPS?.toJson(),
+    "business": business?.toJson(),
   };
 }
 
+// -------------------------------------------------------------
+// BusinessDetails
+// -------------------------------------------------------------
 class BusinessDetails {
   final String id;
-  final String ownerId;
-  final String categoryId;
   final String companyName;
-  final String email;
-  final String address;
-  final String googleMapLink;
-  final String shortDescription;
-  final String extendedDescription;
-  final String videoLink;
-  final String regularOpeningHours;
-  final String specialOpeningHours;
-  final String experienceName;
-  final String experienceDescription;
-  final int participantLimit;
-  final String minimumPurchase;
-  final DateTime? deletedAt;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final int participantPreRegisteration;
-  final String socialMediaLink;
-  final int step;
-  final String website;
-  final bool accessible;
+  final String? address;
+  final bool? accessible;
+  final int? pointEarn;
+  final int? pointRedeemType;
   final List<String> discounts;
-  final bool familyFriendly;
-  final bool petsAllowed;
-  final int pointReceive;
-  final int pointRedeemType;
-  final String registerationEmail;
-  final String registerationPhone;
-  final String registerationWebsite;
-  final bool spaceLimitation;
-  final String specialCondition;
-  final List<String> tags;
-  final int experienceAvailable;
-  final GpsCoordinates gpsCoordinates;
-  final Category category;
-  final Owner owner;
+  final GpsCoordinates? gpsCoordinates;
+  final Category? category;
+  final Owner? owner;
   final List<ImageDetails> images;
 
   BusinessDetails({
     required this.id,
-    required this.ownerId,
-    required this.categoryId,
     required this.companyName,
-    required this.email,
-    required this.address,
-    required this.googleMapLink,
-    required this.shortDescription,
-    required this.extendedDescription,
-    required this.videoLink,
-    required this.regularOpeningHours,
-    required this.specialOpeningHours,
-    required this.experienceName,
-    required this.experienceDescription,
-    required this.participantLimit,
-    required this.minimumPurchase,
-    this.deletedAt,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.participantPreRegisteration,
-    required this.socialMediaLink,
-    required this.step,
-    required this.website,
-    required this.accessible,
+    this.address,
+    this.accessible,
+    this.pointEarn,
+    this.pointRedeemType,
     required this.discounts,
-    required this.familyFriendly,
-    required this.petsAllowed,
-    required this.pointReceive,
-    required this.pointRedeemType,
-    required this.registerationEmail,
-    required this.registerationPhone,
-    required this.registerationWebsite,
-    required this.spaceLimitation,
-    required this.specialCondition,
-    required this.tags,
-    required this.experienceAvailable,
-    required this.gpsCoordinates,
-    required this.category,
-    required this.owner,
+    this.gpsCoordinates,
+    this.category,
+    this.owner,
     required this.images,
   });
 
   factory BusinessDetails.fromJson(Map<String, dynamic> json) => BusinessDetails(
-    id: json["id"],
-    ownerId: json["ownerId"],
-    categoryId: json["categoryId"],
-    companyName: json["companyName"],
-    email: json["email"],
+    id: json["id"] ?? "",
+    companyName: json["companyName"] ?? "",
     address: json["address"],
-    googleMapLink: json["googleMapLink"],
-    shortDescription: json["shortDescription"],
-    extendedDescription: json["extendedDescription"],
-    videoLink: json["videoLink"],
-    regularOpeningHours: json["regularOpeningHours"],
-    specialOpeningHours: json["specialOpeningHours"],
-    experienceName: json["experienceName"],
-    experienceDescription: json["experienceDescription"],
-    participantLimit: json["participantLimit"],
-    minimumPurchase: json["minimumPurchase"],
-    deletedAt: json["deletedAt"] == null ? null : DateTime.parse(json["deletedAt"]),
-    createdAt: DateTime.parse(json["createdAt"]),
-    updatedAt: DateTime.parse(json["updatedAt"]),
-    participantPreRegisteration: json["participantPreRegisteration"],
-    socialMediaLink: json["socialMediaLink"],
-    step: json["step"],
-    website: json["website"],
     accessible: json["accessible"],
-    discounts: List<String>.from(json["discounts"].map((x) => x)),
-    familyFriendly: json["familyFriendly"],
-    petsAllowed: json["petsAllowed"],
-    pointReceive: json["pointReceive"],
-    pointRedeemType: json["pointRedeemType"],
-    registerationEmail: json["registerationEmail"],
-    registerationPhone: json["registerationPhone"],
-    registerationWebsite: json["registerationWebsite"],
-    spaceLimitation: json["spaceLimitation"],
-    specialCondition: json["specialCondition"],
-    tags: List<String>.from(json["tags"].map((x) => x)),
-    experienceAvailable: json["experienceAvailable"],
-    gpsCoordinates: GpsCoordinates.fromJson(json["gpsCoordinates"]),
-    category: Category.fromJson(json["category"]),
-    owner: Owner.fromJson(json["owner"]),
-    images: List<ImageDetails>.from(json["images"].map((x) => ImageDetails.fromJson(x))),
+    pointEarn: json["pointEarn"] ?? 0,
+    pointRedeemType: json["pointRedeemType"] ?? 0,
+    discounts: json["discounts"] == null
+        ? []
+        : List<String>.from(json["discounts"].map((x) => x ?? "")),
+    gpsCoordinates: json["gpsCoordinates"] == null
+        ? null
+        : GpsCoordinates.fromJson(json["gpsCoordinates"]),
+    category:
+    json["category"] == null ? null : Category.fromJson(json["category"]),
+    owner: json["owner"] == null ? null : Owner.fromJson(json["owner"]),
+    images: json["images"] == null
+        ? []
+        : List<ImageDetails>.from(
+        json["images"].map((x) => ImageDetails.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
-    "ownerId": ownerId,
-    "categoryId": categoryId,
     "companyName": companyName,
-    "email": email,
     "address": address,
-    "googleMapLink": googleMapLink,
-    "shortDescription": shortDescription,
-    "extendedDescription": extendedDescription,
-    "videoLink": videoLink,
-    "regularOpeningHours": regularOpeningHours,
-    "specialOpeningHours": specialOpeningHours,
-    "experienceName": experienceName,
-    "experienceDescription": experienceDescription,
-    "participantLimit": participantLimit,
-    "minimumPurchase": minimumPurchase,
-    "deletedAt": deletedAt?.toIso8601String(),
-    "createdAt": createdAt.toIso8601String(),
-    "updatedAt": updatedAt.toIso8601String(),
-    "participantPreRegisteration": participantPreRegisteration,
-    "socialMediaLink": socialMediaLink,
-    "step": step,
-    "website": website,
     "accessible": accessible,
-    "discounts": List<dynamic>.from(discounts.map((x) => x)),
-    "familyFriendly": familyFriendly,
-    "petsAllowed": petsAllowed,
-    "pointReceive": pointReceive,
+    "pointEarn": pointEarn,
     "pointRedeemType": pointRedeemType,
-    "registerationEmail": registerationEmail,
-    "registerationPhone": registerationPhone,
-    "registerationWebsite": registerationWebsite,
-    "spaceLimitation": spaceLimitation,
-    "specialCondition": specialCondition,
-    "tags": List<dynamic>.from(tags.map((x) => x)),
-    "experienceAvailable": experienceAvailable,
-    "gpsCoordinates": gpsCoordinates.toJson(),
-    "category": category.toJson(),
-    "owner": owner.toJson(),
+    "discounts": List<dynamic>.from(discounts.map((x) => x)),
+    "gpsCoordinates": gpsCoordinates?.toJson(),
+    "category": category?.toJson(),
+    "owner": owner?.toJson(),
     "images": List<dynamic>.from(images.map((x) => x.toJson())),
   };
 }
 
+// -------------------------------------------------------------
+// Shared Classes
+// -------------------------------------------------------------
 class Category {
   final String id;
   final String name;
-  final String description;
-  final DateTime? deletedAt;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final String categoryTypeId;
 
   Category({
     required this.id,
     required this.name,
-    required this.description,
-    this.deletedAt,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.categoryTypeId,
   });
 
   factory Category.fromJson(Map<String, dynamic> json) => Category(
-    id: json["id"],
-    name: json["name"],
-    description: json["description"],
-    deletedAt: json["deletedAt"] == null ? null : DateTime.parse(json["deletedAt"]),
-    createdAt: DateTime.parse(json["createdAt"]),
-    updatedAt: DateTime.parse(json["updatedAt"]),
-    categoryTypeId: json["categoryTypeId"],
+    id: json["id"] ?? "",
+    name: json["name"] ?? "",
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
     "name": name,
-    "description": description,
-    "deletedAt": deletedAt?.toIso8601String(),
-    "createdAt": createdAt.toIso8601String(),
-    "updatedAt": updatedAt.toIso8601String(),
-    "categoryTypeId": categoryTypeId,
   };
 }
 
@@ -437,64 +347,28 @@ class GpsCoordinates {
   final double lat;
   final double lng;
 
-  GpsCoordinates({
-    required this.lat,
-    required this.lng,
-  });
+  GpsCoordinates({required this.lat, required this.lng});
 
   factory GpsCoordinates.fromJson(Map<String, dynamic> json) => GpsCoordinates(
-    lat: json["lat"].toDouble(),
-    lng: json["lng"].toDouble(),
+    lat: (json["lat"] ?? 0).toDouble(),
+    lng: (json["lng"] ?? 0).toDouble(),
   );
 
-  Map<String, dynamic> toJson() => {
-    "lat": lat,
-    "lng": lng,
-  };
+  Map<String, dynamic> toJson() => {"lat": lat, "lng": lng};
 }
 
 class ImageDetails {
   final int id;
-  final String? userId;
-  final String businessId;
-  final String url;
-  final String fileName;
-  final String fileType;
-  final int fileSize;
-  final DateTime createdAt;
+  final String? url;
 
-  ImageDetails({
-    required this.id,
-    this.userId,
-    required this.businessId,
-    required this.url,
-    required this.fileName,
-    required this.fileType,
-    required this.fileSize,
-    required this.createdAt,
-  });
+  ImageDetails({required this.id, this.url});
 
   factory ImageDetails.fromJson(Map<String, dynamic> json) => ImageDetails(
-    id: json["id"],
-    userId: json["userId"],
-    businessId: json["businessId"],
+    id: json["id"] ?? 0,
     url: json["url"],
-    fileName: json["fileName"],
-    fileType: json["fileType"],
-    fileSize: json["fileSize"],
-    createdAt: DateTime.parse(json["createdAt"]),
   );
 
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "userId": userId,
-    "businessId": businessId,
-    "url": url,
-    "fileName": fileName,
-    "fileType": fileType,
-    "fileSize": fileSize,
-    "createdAt": createdAt.toIso8601String(),
-  };
+  Map<String, dynamic> toJson() => {"id": id, "url": url};
 }
 
 class Owner {
@@ -502,23 +376,16 @@ class Owner {
   final String fullName;
   final String email;
 
-  Owner({
-    required this.id,
-    required this.fullName,
-    required this.email,
-  });
+  Owner({required this.id, required this.fullName, required this.email});
 
   factory Owner.fromJson(Map<String, dynamic> json) => Owner(
-    id: json["id"],
-    fullName: json["fullName"],
-    email: json["email"],
+    id: json["id"] ?? "",
+    fullName: json["fullName"] ?? "",
+    email: json["email"] ?? "",
   );
 
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "fullName": fullName,
-    "email": email,
-  };
+  Map<String, dynamic> toJson() =>
+      {"id": id, "fullName": fullName, "email": email};
 }
 
 class Summary {
@@ -535,10 +402,10 @@ class Summary {
   });
 
   factory Summary.fromJson(Map<String, dynamic> json) => Summary(
-    totalDistanceCovered: json["totalDistanceCovered"],
-    totalTimeSpent: json["totalTimeSpent"],
-    totalPointsEarned: json["totalPointsEarned"],
-    offersRedeemed: json["offersRedeemed"],
+    totalDistanceCovered: json["totalDistanceCovered"] ?? "0 km",
+    totalTimeSpent: json["totalTimeSpent"] ?? "0h 0m",
+    totalPointsEarned: json["totalPointsEarned"] ?? "0",
+    offersRedeemed: json["offersRedeemed"] ?? 0,
   );
 
   Map<String, dynamic> toJson() => {

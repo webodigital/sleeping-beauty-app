@@ -2,7 +2,11 @@ name: sleeping_beauty_app
 description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.0+1
+#iOS
+version: 1.1.0+4
+
+#Android
+#version: 1.0.0+1
 
 environment:
   sdk: ^3.7.2
@@ -13,6 +17,7 @@ dependencies:
 
   # iOS style icons
   cupertino_icons: ^1.0.8
+  rename_app: ^1.6.5
 
 dev_dependencies:
   flutter_test:
@@ -35,6 +40,14 @@ dev_dependencies:
   google_maps_flutter: ^2.6.1
   http: ^1.2.0
   qr_flutter: ^4.1.0
+  transparent_image: ^2.0.0
+  firebase_core: ^3.0.0
+  firebase_messaging: ^15.0.0
+  flutter_local_notifications: ^17.1.0
+  url_launcher: ^6.2.5
+  device_info_plus: 11.1.0
+
+
 
 flutter_icons:
   android: true
@@ -118,8 +131,8 @@ flutter:
     - assets/startLocation.png
     - assets/endLocation.png
     - assets/newDate.png
-
-
+    - assets/greenPin.png
+    - assets/banner.png
 
 
   fonts:

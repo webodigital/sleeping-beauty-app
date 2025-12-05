@@ -167,7 +167,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
                             Positioned(
                               bottom: -14,
                               child: Text(
-                                '100 ${lngTranslation("Pts")}',
+                                '${(userData?.pointEarn ?? 0).toString()} ${lngTranslation("Pts")}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 12,
@@ -210,7 +210,6 @@ class _RewardsScreenState extends State<RewardsScreen> {
                 ],
               ),
             ),
-            /// Points Card
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Container(
@@ -237,7 +236,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "${lngTranslation("You have")} 125 ${lngTranslation("points")}",
+                            "${lngTranslation("You have")} ${(userData?.pointEarn ?? 0).toString()} ${lngTranslation("points")}",
                             style: TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
@@ -278,7 +277,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ListView.builder(
-              itemCount: offers.length,
+              itemCount: 0,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {

@@ -27,8 +27,7 @@ class ApiConstants {
   static const String users_profile_get = "/users/profile";
   static const String my_journeys_history = "/user-journeys/my-journeys";
   static const String my_journeys_history_details = "/user-journeys/journey/";
-
-
+  static const String users_delete_account = "/users/delete-account";
 
   static const String noInterNet = "No internet connection. Please check your network settings and try again.";
 }

@@ -2,6 +2,7 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:sleeping_beauty_app/Helper/Language.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AlertConstants {
 
@@ -13,6 +14,10 @@ class AlertConstants {
   static const String somethingWrong = "Something went wrong";
   static const String profileUploadfailed = "Profile upload failed";
   static const String profilePhoto = "Please select profile photo";
+  static const String profileValidation = "Password must be at least 6 characters long";
+  static const String signUpDoneLogin = "You're in! Time to log in and explore.";
+  static const String noBussiness = "Looks like there are no businesses in this journey yet!";
+
 
   static const String noInterNet = "No internet connection. Please check your network settings and try again.";
 }
@@ -67,4 +72,16 @@ Future<String> getCityName(double latitude, double longitude) async {
   List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
   Placemark place = placemarks.first;
   return place.locality ?? 'Unknown city';
+}
+
+
+Future<bool> getIsUserLogin() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('is_userLogin') ?? false;
+}
+
+
+Future<void> updateUserLogin(bool isUserLogin) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('is_userLogin', isUserLogin);
 }

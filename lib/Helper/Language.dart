@@ -407,6 +407,114 @@ class TranslationManager extends ChangeNotifier {
       {
         "en": "Search by Romantic, Adventure, Family, Cultural etc",
         "gr": "Suchen nach Romantik, Abenteuer, Familie, Kultur usw.",
+      },
+      {
+        "en": "Password must be at least 6 characters long",
+        "gr": "Das Passwort muss mindestens 6 Zeichen lang sein.",
+      },
+       {
+       "en": "You're in! Time to log in and explore.",
+       "gr": "Du bist dabei! Melde dich an und entdecke mehr.",
+      },
+      {
+        "en": "Start exploring — your first journey awaits!",
+        "gr": "Begib dich auf Entdeckungstour – deine erste Reise wartet!"
+      },
+      {
+        "en": "Upload",
+        "gr": "Hochladen"
+      },
+      {
+        "en": "Please select profile photo",
+        "gr": "Bitte wählen Sie ein Profilfoto aus"
+      },
+      {
+        "en": "Uploading...",
+        "gr": "Wird hochgeladen..."
+      },
+      {
+        "en": "Uploading...",
+        "gr": "Wird hochgeladen..."
+      },
+      {
+        "en": "End Journey",
+        "gr": "Reise beenden"
+      },
+      {
+        "en": "Are you sure you want to end this journey?",
+        "gr": "Sind Sie sicher, dass Sie diese Reise beenden möchten?"
+      },
+      {
+        "en": "End Journey",
+        "gr": "Reise beenden"
+      },
+      {
+        "en": "End Visit",
+        "gr": "Besuch beenden"
+      },
+      {
+        "en": "Are you sure you want to end this visit?",
+        "gr": "Sind Sie sicher, dass Sie diesen Besuch beenden möchten?"
+      },
+      {
+        "en": "Your Location",
+        "gr": "Ihr Standort"
+      },
+      {
+        "en": "Fetching current location...",
+        "gr": "Aktueller Standort wird abgerufen..."
+      },
+      {
+        "en": "Destination Location",
+        "gr": "Zielort"
+      },
+      {
+        "en": "Journey Summary",
+        "gr": "Reisezusammenfassung"
+      },
+      {
+        "en": "Total Time Spent",
+        "gr": "Gesamte verbrachte Zeit"
+      },
+      {
+        "en": "Total Points Earned",
+        "gr": "Gesamtpunkte erzielt"
+      },
+      {
+        "en": "Offers Redeemed",
+        "gr": "Eingelöste Angebote"
+      },
+      {
+        "en": "Multimedia",
+        "gr": "Multimedia"
+      },
+      {
+        "en": "Stop",
+        "gr": "Stopp"
+      },
+      {
+        "en": "Total Distance Covered",
+        "gr": "Gesamte zurückgelegte Strecke"
+      },
+      {
+        "en": "Password must be at least 6 characters long and include 1 uppercase letter, 1 lowercase letter, and 1 number.",
+        "gr": "Das Passwort muss mindestens 6 Zeichen lang sein und mindestens 1 Großbuchstaben, 1 Kleinbuchstaben und 1 Zahl enthalten."
+      },
+      {
+        "en": "Signup...",
+        "gr": "Registrieren"
+      },
+      {
+        "en": "Account deleted successfully",
+        "gr": "Konto erfolgreich gelöscht"
+      },
+      {
+        "en": "Delete Account",
+        "gr": "Konto löschen"
+      },
+      {
+        "en": "Are you sure you want to delete this account?",
+        "gr": "Bist du sicher, dass du dieses Konto löschen möchtest?"
       }
 
     ]);
@@ -449,7 +557,7 @@ class TranslationManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Translate a given key, searching the list of translations
+
   String translate(String key) {
     try {
       final entry = _translations.firstWhere(

@@ -143,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Positioned(
                               bottom: -14,
                               child: Text(
-                                '100 ${lngTranslation("Pts")}',
+                                '${(userData?.pointEarn ?? 0).toString()} ${lngTranslation("Pts")}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 12,
@@ -185,67 +185,77 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-
             // Banner
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final double width = constraints.maxWidth;
-                    final double height = width * 0.65;
-                    return Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/bannerImage.png',
-                          width: double.infinity,
-                          height: height,
-                          fit: BoxFit.cover,
-                        ),
-                        Positioned(
-                          bottom: 20,
-                          left: 0,
-                          right: 0,
-                          child: const Text(
-                            'Erwecke die Magie\nvon Dornröschen',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700,
-                              height: 1.3,
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ),
-
-            // Grid Buttons
+            // Scrollable content only for banner + grid
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 25,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 1.05,
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
                   children: [
-                    _buildFeatureCard('assets/hotelViewCard.png', 'Dornröschenschloss', 92),
-                    _buildFeatureCard('assets/mapViewCard.png', 'Wähle deinen Weg', 70),
-                    _buildFeatureCard('assets/roseViewCard.png', 'Geschichte hören', 82),
-                    _buildFeatureCard('assets/calanderViewCard.png', 'Veranstaltungen entdecken', 60),
+                    // Banner
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            final double width = constraints.maxWidth;
+                            final double height = width * 0.65;
+                            return Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/bannerImage.png',
+                                  width: double.infinity,
+                                  height: height,
+                                  fit: BoxFit.cover,
+                                ),
+                                const Positioned(
+                                  bottom: 20,
+                                  left: 0,
+                                  right: 0,
+                                  child: Text(
+                                    'Erwecke die Magie\nvon Dornröschen',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                      height: 1.3,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+
+                    // GRID
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: GridView.count(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 25,
+                        mainAxisSpacing: 16,
+                        childAspectRatio: 1.05,
+                        physics: const NeverScrollableScrollPhysics(), // stop grid scroll
+                        shrinkWrap: true, // allow inside column
+                        children: [
+                          _buildFeatureCard('assets/hotelViewCard.png', 'Dornröschenschloss', 92),
+                          _buildFeatureCard('assets/mapViewCard.png', 'Wähle deinen Weg', 70),
+                          _buildFeatureCard('assets/roseViewCard.png', 'Geschichte hören', 82),
+                          _buildFeatureCard('assets/calanderViewCard.png', 'Veranstaltungen entdecken', 60),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 20)
                   ],
                 ),
               ),
-            ),
+            )
           ],
         ),
       ),

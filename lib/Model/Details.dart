@@ -74,6 +74,8 @@ class Business {
   final Category? category;
   final List<BusinessImage>? images;
   final double? distance;
+  final int? pointEarn;
+
 
   Business({
     required this.id,
@@ -114,6 +116,7 @@ class Business {
     this.category,
     this.images,
     this.distance,
+    this.pointEarn
   });
 
   factory Business.fromJson(Map<String, dynamic> json) {
@@ -164,6 +167,8 @@ class Business {
           .toList()
           : [],
       distance: (json['distance'] ?? 0).toDouble(),
+      pointEarn: (json['pointEarn'] ?? 0),
+
     );
   }
 }

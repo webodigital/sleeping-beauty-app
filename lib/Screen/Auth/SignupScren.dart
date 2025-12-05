@@ -25,6 +25,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   void dispose() {
+    _passwordController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -36,6 +37,17 @@ class _SignupScreenState extends State<SignupScreen> {
     EasyLoading.dismiss();
     Future.delayed(const Duration(seconds: 5), () {
       EasyLoading.dismiss();
+    });
+
+    _NameController.addListener(() {
+      final text = _NameController.text;
+
+      if (text.startsWith(" ")) {
+        _NameController.text = text.trimLeft(); // remove leading spaces
+        _NameController.selection = TextSelection.fromPosition(
+          TextPosition(offset: _NameController.text.length),
+        );
+      }
     });
   }
 
@@ -104,6 +116,9 @@ class _SignupScreenState extends State<SignupScreen> {
                           padding: EdgeInsets.symmetric(horizontal: 25.0),
                           child: TextFormField(
                             controller: _NameController,
+                            inputFormatters: [
+                              SingleSpaceInputFormatter(),
+                            ],
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -151,6 +166,9 @@ class _SignupScreenState extends State<SignupScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 25.0),
                           child: TextFormField(
                             controller: _emailController,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.deny(RegExp(r"\s")),
+                            ],
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -199,6 +217,9 @@ class _SignupScreenState extends State<SignupScreen> {
                           child: TextFormField(
                             controller: _passwordController,
                             obscureText: !isPasswordVisible,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.deny(RegExp(r"\s")),
+                            ],
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -341,13 +362,20 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   Future<void> validate() async {
+    String name = _NameController.text.trim();
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
 
     final emailRegex = RegExp(
-        r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+      r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+    );
 
-    if (_NameController.text.isEmpty) {
+    // Password: 6+ chars, allow special chars, must include upper, lower, number
+    final passwordRegex = RegExp(
+        r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$'
+    );
+
+    if (name.isEmpty) {
       EasyLoading.showError(lngTranslation(AlertConstants.userNameBlank));
       return;
     } else if (email.isEmpty) {
@@ -359,9 +387,14 @@ class _SignupScreenState extends State<SignupScreen> {
     } else if (password.isEmpty) {
       EasyLoading.showError(lngTranslation(AlertConstants.passwordBlank));
       return;
+    } else if (!passwordRegex.hasMatch(password)) {
+      EasyLoading.showError(
+          lngTranslation("Password must be at least 6 characters long and include 1 uppercase letter, 1 lowercase letter, and 1 number.")
+      );
+      return;
     } else {
       print("SignUP API");
-      signUP();
+     signUP();
     }
   }
 
@@ -373,7 +406,8 @@ class _SignupScreenState extends State<SignupScreen> {
         {
           "email": _emailController.text.trim(),
           "password": _passwordController.text.trim(),
-          "fullName": _NameController.text.trim()
+          "fullName": _NameController.text.trim(),
+          "role": "USER"
         },
       );
 
@@ -382,12 +416,12 @@ class _SignupScreenState extends State<SignupScreen> {
       if (response.statusCode == 200 || response.statusCode == 201 && data['success'] == true) {
         //  Signup success
         final userJson = data['user'];
-        EasyLoading.showSuccess(data['message']);
-        Future.delayed(const Duration(seconds: 2), () {
+        EasyLoading.showSuccess(AlertConstants.signUpDoneLogin);
+        Future.delayed(const Duration(seconds: 3), () {
            print("Move");
+           Navigator.pop(context);
         });
       } else  {
-
         String errorMessage = data['message'];
         EasyLoading.showError(errorMessage);
       }
@@ -395,6 +429,27 @@ class _SignupScreenState extends State<SignupScreen> {
       EasyLoading.dismiss();
       EasyLoading.showError(AlertConstants.somethingWrong);
     }
+  }
+}
+
+class SingleSpaceInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue,
+      TextEditingValue newValue,
+      ) {
+    String text = newValue.text;
+
+    // Remove leading spaces
+    text = text.replaceFirst(RegExp(r'^ +'), '');
+
+    // Replace multiple spaces with a single space
+    text = text.replaceAll(RegExp(r' {2,}'), ' ');
+
+    return TextEditingValue(
+      text: text,
+      selection: TextSelection.collapsed(offset: text.length),
+    );
   }
 }
 

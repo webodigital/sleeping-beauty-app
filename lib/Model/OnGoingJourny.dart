@@ -35,6 +35,7 @@ class JourneyData {
   final String status;
   final int progress;
   final String? startedAt;
+  final String? journeyName;
   final String? completedAt;
   final List<JourneyBusiness> businesses;
 
@@ -47,6 +48,7 @@ class JourneyData {
     this.startedAt,
     this.completedAt,
     required this.businesses,
+    this.journeyName,
   });
 
   factory JourneyData.fromJson(Map<String, dynamic> json) {
@@ -54,6 +56,7 @@ class JourneyData {
       id: json['id'] ?? '',
       userId: json['userId'] ?? '',
       journeyId: json['journeyId'] ?? '',
+      journeyName: json['journeyName'] ?? '',
       status: json['status'] ?? '',
       progress: json['progress'] ?? 0,
       startedAt: json['startedAt'],
@@ -73,6 +76,7 @@ class JourneyData {
     'progress': progress,
     'startedAt': startedAt,
     'completedAt': completedAt,
+    'journeyName': journeyName,
     'businesses': businesses.map((e) => e.toJson()).toList(),
   };
 }
