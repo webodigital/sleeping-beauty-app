@@ -13,6 +13,7 @@ import 'package:sleeping_beauty_app/Model/OnGoingJourny.dart';
 import 'package:sleeping_beauty_app/Screen/Tabbar/Journey/VisitJournyMapview.dart';
 import 'package:sleeping_beauty_app/Screen/Tabbar/Journey/JourneyListOnMapView.dart';
 import 'package:sleeping_beauty_app/Model/Profile.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class JourneyScreen extends StatefulWidget {
   final void Function(int tabIndex)? onTabChange;
@@ -326,7 +327,16 @@ class _JourneyScreenState extends State<JourneyScreen> {
   }
 
   Future<void> getJourneyList() async {
+
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+
+    if (!isConnected) {
+      EasyLoading.showError(ApiConstants.noInterNet);
+      return;
+    }
+
     EasyLoading.show(status: lngTranslation('Loading...'));
+
     try {
       final response = await apiService.getRequest(ApiConstants.journeys);
 
@@ -361,6 +371,14 @@ class _JourneyScreenState extends State<JourneyScreen> {
   }
 
   Future<void> getOngoingJourneyList() async {
+
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+
+    if (!isConnected) {
+      EasyLoading.showError(ApiConstants.noInterNet);
+      return;
+    }
+
     EasyLoading.show(status: lngTranslation('Loading...'));
 
     try {
@@ -378,7 +396,6 @@ class _JourneyScreenState extends State<JourneyScreen> {
           print("Journey fetched successfully");
 
           EasyLoading.dismiss();
-
 
           if (ongoingJourneyData?.businesses.isNotEmpty == true) {
             Navigator.push(
@@ -417,7 +434,6 @@ class _JourneyScreenState extends State<JourneyScreen> {
               ),
             );
           }
-
           // Navigator.push(
           //   context,
           //   MaterialPageRoute(
@@ -447,7 +463,16 @@ class _JourneyScreenState extends State<JourneyScreen> {
   }
 
   Future<void> getUsersProfile() async {
+
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+
+    if (!isConnected) {
+      EasyLoading.showError(ApiConstants.noInterNet);
+      return;
+    }
+
     EasyLoading.show(status: lngTranslation('Loading...'));
+
     try {
       final response = await apiService.getRequest(ApiConstants.users_profile_get);
 
@@ -485,18 +510,30 @@ class _JourneyScreenState extends State<JourneyScreen> {
 Widget buildImage(String path) {
   bool isNetwork = path.startsWith('http');
 
-  return isNetwork
-      ? Image.network(
-    path,
-    height: 36,
-    width: 36,
-    fit: BoxFit.cover,
-  )
-      : Image.asset(
-    path,
-    height: 36,
-    width: 36,
-    fit: BoxFit.cover,
-  );
+  if (isNetwork) {
+    return Image.network(
+      path,
+      height: 36,
+      width: 36,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) {
+        return const Icon(Icons.broken_image, size: 36);
+      },
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return const SizedBox(
+          height: 36,
+          width: 36,
+          child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+        );
+      },
+    );
+  } else {
+    return Image.asset(
+      path,
+      height: 36,
+      width: 36,
+      fit: BoxFit.cover,
+    );
+  }
 }
-

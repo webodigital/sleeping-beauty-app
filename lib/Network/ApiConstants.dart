@@ -9,7 +9,8 @@ class ApiConstants {
 
   static const String googleApiKey = "AIzaSyDkelEWkKhlcHPupM7RJfEtZOXHbDQbDYE";
 
-  static const String baseUrl = "http://64.227.123.153:5001";
+  // static const String baseUrl = "http://64.227.123.153:5001";
+  static const String baseUrl = "https://dornroeschenstadt-hofgeismar.com/api/";
 
   static const String users_signUp = "/users/signup";
   static const String users_login = "/users/login";

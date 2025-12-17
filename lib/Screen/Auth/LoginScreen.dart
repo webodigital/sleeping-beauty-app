@@ -11,6 +11,10 @@ import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:sleeping_beauty_app/Helper/Language.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
+import 'dart:convert';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -27,6 +31,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   String otpCode = '';
 
+  String selectedLanguage = "English";
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -37,10 +43,33 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
+
     EasyLoading.dismiss();
     Future.delayed(const Duration(seconds: 5), () {
       EasyLoading.dismiss();
     });
+    updateUserLogin(false);
+    _getDefaultLanguage();
+  }
+
+  Future<void> _getDefaultLanguage() async {
+    final lng = await loadLng(); // Wait for async value
+    setState(() {
+      selectedLanguage = (lng.toLowerCase() == "en") ? "English" : "German";
+    });
+  }
+
+  Future<String> loadLng() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getString('Language') ?? "en"; // default to English
+
+    if (saved.toLowerCase() == "gr") return "gr";
+    return "en";
+  }
+
+  Future<void> saveLngForUser(String typeLng) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('saveLngForUser', typeLng);
   }
 
   @override
@@ -56,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
               'assets/bottomView.png',
               width: double.infinity,
               height: 180,
-              fit: BoxFit.cover,
+              fit: BoxFit.fill,
             ),
           ),
           Column(
@@ -70,6 +99,55 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        Center(
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: App_LangBiew,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.asset("assets/changeLanguage.png",
+                                    width: 24, height: 24),
+                                const SizedBox(width: 16),
+                                DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    value: selectedLanguage,
+                                    dropdownColor: App_WhiteColor,
+                                    icon: const Icon(Icons.keyboard_arrow_down,
+                                        color: Colors.black),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16,
+                                        color: App_BlackColor),
+                                    items: const [
+                                      DropdownMenuItem(
+                                          value: "English", child: Text("English")),
+                                      DropdownMenuItem(
+                                          value: "German", child: Text("German")),
+                                    ],
+                                    onChanged: (value) {
+                                      setState(() => selectedLanguage = value!);
+
+                                      setState(() {
+                                        selectedSavedLanguage = value!;
+                                        selectedLanguage = value;
+                                        final code = value == "English" ? "EN" : "GR";
+                                        TranslationManager().setLanguage(code);
+                                        saveLngForUser(code);
+                                        _getDefaultLanguage();
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
                         Padding(
                           padding: const EdgeInsets.only(top: 40),
                           child: Image.asset(
@@ -80,7 +158,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         const SizedBox(height: 34),
-
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 32),
                           child: Text(
@@ -371,6 +448,14 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> login() async {
+
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+
+    if (!isConnected) {
+      EasyLoading.showError(ApiConstants.noInterNet);
+      return;
+    }
+
     EasyLoading.show(status: lngTranslation('Login...'));
     try {
       final response = await apiService.postWithoutTokenRequest(
@@ -404,8 +489,9 @@ class _LoginScreenState extends State<LoginScreen> {
         EasyLoading.showError(errorMessage);
       }
     } catch (e) {
+      print("e:-- $e");
       EasyLoading.dismiss();
-      EasyLoading.showError(AlertConstants.somethingWrong);
+      EasyLoading.showError(e.toString());
     }
   }
 
@@ -415,12 +501,19 @@ class _LoginScreenState extends State<LoginScreen> {
     await prefs.setString('accessToken', token);
   }
 
-
   //Bottom Sheet for Success
   void showForgotPasswordView(BuildContext context) {
+
     final TextEditingController _emailResetPasswordController = TextEditingController();
 
     Future<void> resendEmailOTP() async {
+      bool isConnected = await InternetConnectionChecker().hasConnection;
+
+      if (!isConnected) {
+        EasyLoading.showError(ApiConstants.noInterNet);
+        return;
+      }
+
       EasyLoading.show(status: lngTranslation('Sending OTP...'));
       try {
         final response = await apiService.postWithoutTokenRequest(
@@ -435,21 +528,32 @@ class _LoginScreenState extends State<LoginScreen> {
         if ((response.statusCode == 200 || response.statusCode == 201) && data['success'] == true) {
           EasyLoading.showSuccess(data['message']);
           Navigator.pop(context);
-          otpCode = "";
+          // otpCode = "";
+          print("showResetPasswordView otpCode:-- $otpCode");
           showResetPasswordView(context, _emailResetPasswordController.text.trim());
         } else {
-          String errorMessage = data['errors']?['message'] ??
+
+          print("Data in Else:- $data");
+
+          String errorMessage = data['message'] ??
               data['message'] ??
               lngTranslation("Resend otp failed");
-          EasyLoading.showError(errorMessage);
+
+          EasyLoading.showSuccess(errorMessage);
+          Navigator.pop(context);
+          // otpCode = "";
+          print("showResetPasswordView otpCode:-- $otpCode");
+          showResetPasswordView(context, _emailResetPasswordController.text.trim());
         }
       } catch (e) {
         EasyLoading.dismiss();
-        EasyLoading.showError(lngTranslation("Resend otp failed"));
+        EasyLoading.showError("${e.toString()}");
       }
-      Navigator.pop(context);
-      otpCode = "";
-      showResetPasswordView(context, _emailResetPasswordController.text.trim());
+
+
+      // Navigator.pop(context);
+      // otpCode = "";
+      // showResetPasswordView(context, _emailResetPasswordController.text.trim());
     }
 
     Future<void> validateResetPasswordEmail() async {
@@ -458,7 +562,6 @@ class _LoginScreenState extends State<LoginScreen> {
       final emailRegex = RegExp(
         r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
       );
-
       if (email.isEmpty) {
         EasyLoading.showError(lngTranslation("Please enter your email"));
         return;
@@ -519,15 +622,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Text(
-                      lngTranslation("Dont’ worry we will send you reset Instructions"),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: App_BlackColor,
-                        fontWeight: FontWeight.w400,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                      child: Text(
+                        lngTranslation("Don’t worry, we will send you reset instructions"),
+                        textAlign: TextAlign.center,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style:  TextStyle(
+                          fontSize: 16,
+                          color: App_BlackColor,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
-                    ),
+                    )
+                    ,
                     const SizedBox(height: 42),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -666,13 +775,20 @@ class _LoginScreenState extends State<LoginScreen> {
   void showResetPasswordView(BuildContext context, String emailID) {
 
     Future<void> emailOTPVerify() async {
+      bool isConnected = await InternetConnectionChecker().hasConnection;
+
+      if (!isConnected) {
+        EasyLoading.showError(ApiConstants.noInterNet);
+        return;
+      }
+
       EasyLoading.show(status: lngTranslation('OTP Verify...'));
       try {
         final response = await apiService.postWithoutTokenRequest(
           ApiConstants.users_password_otp_verify,
           {
             "email": emailID,
-            "otp": "",
+            "otp": otpCode,
           },
         );
 
@@ -681,7 +797,14 @@ class _LoginScreenState extends State<LoginScreen> {
         if ((response.statusCode == 200 || response.statusCode == 201) && data['success'] == true) {
           EasyLoading.showSuccess(lngTranslation("OTP verify successful!"));
           Navigator.pop(context);
-          showNewPasswordView(context, emailID);
+
+          final accessToken = data['data']['token'] ?? "";
+
+          print("accessToken showResetPasswordView:-- $accessToken");
+
+          await saveToken(accessToken);
+
+          showNewPasswordView(context, emailID, accessToken);
         } else {
           String errorMessage = data['message'] ?? lngTranslation("Something went wrong please try again");
           EasyLoading.showError(errorMessage);
@@ -690,12 +813,21 @@ class _LoginScreenState extends State<LoginScreen> {
         EasyLoading.dismiss();
         EasyLoading.showError("${e.toString()}");
       }
-      Navigator.pop(context);
-      showNewPasswordView(context, emailID);
+      // Navigator.pop(context);
+      // showNewPasswordView(context, emailID);
     }
 
     Future<void> resendEmailOTP() async {
+
+      bool isConnected = await InternetConnectionChecker().hasConnection;
+
+      if (!isConnected) {
+        EasyLoading.showError(ApiConstants.noInterNet);
+        return;
+      }
+
       EasyLoading.show(status: lngTranslation('Sending OTP...'));
+
       try {
         final response = await apiService.postWithoutTokenRequest(
           ApiConstants.resend_email_otp,
@@ -709,10 +841,15 @@ class _LoginScreenState extends State<LoginScreen> {
         if ((response.statusCode == 200 || response.statusCode == 201) && data['success'] == true) {
           EasyLoading.showSuccess(data['message']);
         } else {
-          String errorMessage = data['errors']?['message'] ??
+          // String errorMessage = data['errors']?['message'] ??
+          //     data['message'] ??
+          //     lngTranslation("Resend otp failed");
+
+          String errorMessage = data['message'] ??
               data['message'] ??
               lngTranslation("Resend otp failed");
-          EasyLoading.showError(errorMessage);
+
+          EasyLoading.showSuccess(errorMessage);
         }
       } catch (e) {
         EasyLoading.dismiss();
@@ -759,7 +896,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 18),
                     Text(
-                      lngTranslation("Reset Password?"),
+                      lngTranslation("Reset Password"),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 18,
@@ -789,7 +926,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 35),
                     _buildOtpFields(),
                     const SizedBox(height: 10),
-
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: SizedBox(
@@ -938,6 +1074,7 @@ class _LoginScreenState extends State<LoginScreen> {
         onChanged: (value) {
           setState(() {
             otpCode = value;
+            print("otpCode = value:- $otpCode");
           });
         },
         appContext: context,
@@ -945,27 +1082,39 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void showNewPasswordView(BuildContext context, String emailID) {
+  void showNewPasswordView(BuildContext context, String emailID, String token) {
+
     final TextEditingController _passwordResetPasswordController = TextEditingController();
+
     bool isPasswordVisibleResetPasswprd = false;
 
     Future<void> resetPasswprd() async {
+
+      bool isConnected = await InternetConnectionChecker().hasConnection;
+
+      if (!isConnected) {
+        EasyLoading.showError(ApiConstants.noInterNet);
+        return;
+      }
+
       EasyLoading.show(status: lngTranslation('Loading...'));
+
       try {
-        final response = await apiService.postWithoutTokenRequest(
+        final response = await apiService.postRequest(
           ApiConstants.users_reset_password,
           {
-            "email": emailID,
+            "token": token,
             "newPassword": _passwordResetPasswordController.text.trim(),
           },
         );
 
         final data = response.data;
         EasyLoading.dismiss();
-        showAllDoneView(context);
         if ((response.statusCode == 200 || response.statusCode == 201) && data['success'] == true) {
+
           Navigator.pop(context);
           showAllDoneView(context);
+
         } else {
           String errorMessage = data['errors']?['message'] ??
               data['message'] ??
@@ -981,7 +1130,6 @@ class _LoginScreenState extends State<LoginScreen> {
     Future<void> validatePassword() async {
 
       String password = _passwordResetPasswordController.text.trim();
-
 
       // Password rules
       final hasMinLength = password.length >= 8;

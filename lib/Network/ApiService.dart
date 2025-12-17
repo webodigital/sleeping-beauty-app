@@ -1,25 +1,20 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:dio/io.dart';
 import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
 import 'package:sleeping_beauty_app/Network/Gloabal.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'dart:async';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
 
-
-// Dummy current location values
 String currentLat = "0.0";
 String currentLong = "0.0";
 
 class ApiService {
   final Dio _dio;
-
 
   ApiService()
       : _dio = Dio(
@@ -29,6 +24,14 @@ class ApiService {
       receiveTimeout: const Duration(seconds: 30),
     ),
   ) {
+    // SSL bypass (for development only!)
+    (_dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+      final client = HttpClient();
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+      return client;
+    };
+
     // Add logging interceptor
     _dio.interceptors.add(LogInterceptor(
       request: true,
@@ -37,36 +40,14 @@ class ApiService {
       error: true,
     ));
 
-    // // Add error interceptor to handle 401 globally
-    // _dio.interceptors.add(InterceptorsWrapper(
-    //   onResponse: (response, handler) {
-    //     handler.next(response);
-    //   },
-    //   onError: (DioError e, handler) async {
-    //     if (e.response?.statusCode == 401 || (e.response?.statusCode == 403)) {
-    //       EasyLoading.dismiss();
-    //       await clearToken();
-    //       // Redirect to login screen
-    //       navigatorKey.currentState?.pushNamedAndRemoveUntil(
-    //         '/login',
-    //             (route) => false,
-    //       );
-    //       EasyLoading.dismiss();
-    //     }
-    //     handler.next(e);
-    //   },
-    // ));
-
-
+    // Error interceptor for 401 / 403
     _dio.interceptors.add(
       InterceptorsWrapper(
         onResponse: (response, handler) {
-          return handler.next(response);
+          handler.next(response);
         },
         onError: (DioException e, handler) async {
-
           if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
-
             await clearToken();
             EasyLoading.dismiss();
 
@@ -79,45 +60,12 @@ class ApiService {
               '/login',
                   (route) => false,
             );
-
-            return;
+            return; // stop further propagation
           }
-
-          return handler.next(e);
+          handler.next(e);
         },
       ),
     );
-
-    _dio.interceptors.add(
-      InterceptorsWrapper(
-        onResponse: (response, handler) {
-          return handler.next(response);
-        },
-        onError: (DioException e, handler) async {
-
-          if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
-
-            await clearToken();
-            EasyLoading.dismiss();
-
-            // Avoid multiple redirects
-            if (navigatorKey.currentState?.canPop() == true) {
-              navigatorKey.currentState?.popUntil((route) => route.isFirst);
-            }
-
-            navigatorKey.currentState?.pushNamedAndRemoveUntil(
-              '/login',
-                  (route) => false,
-            );
-
-            return; // prevent sending error forward
-          }
-
-          return handler.next(e);
-        },
-      ),
-    );
-
   }
 
   // PUT request with optional params and data
@@ -249,32 +197,55 @@ class ApiService {
   }
 
   // POST request without token
-  Future<Response> postWithoutTokenRequest(String endpoint, Map<String, dynamic> data) async {
-
+  Future<Response> postWithoutTokenRequest(
+      String endpoint, Map<String, dynamic> data) async {
     bool isConnected = await InternetConnectionChecker().hasConnection;
     if (!isConnected) {
-      throw ApiConstants.noInterNet;
+      throw ApiException(ApiConstants.noInterNet);
     }
+
     final lang = await loadLng();
+
     try {
       final headers = {
         HttpHeaders.contentTypeHeader: "application/json",
         "lat": currentLat,
         "long": currentLong,
-        "languageType": lang
+        "languageType": lang,
       };
+
       final response = await _dio.post(
         endpoint,
         data: data,
         options: Options(headers: headers),
       );
+
       return response;
+
+    } on DioException catch (e) {
+      print("Dio Error: ${e.response?.data}");
+
+      String errorMessage = "Something went wrong";
+      final data = e.response?.data;
+
+      if (data is Map<String, dynamic>) {
+        // Handle 'message' key
+        final msg = data['message'] ?? data['errors']?['message'];
+
+        if (msg is String) {
+          errorMessage = msg;
+        } else if (msg is List && msg.isNotEmpty) {
+          // Join list elements into a single string
+          errorMessage = msg.join("\n");
+        }
+      }
+
+      throw ApiException(errorMessage);
+
     } on SocketException {
-      throw Exception("No internet connection");
-    } on DioError catch (e) {
-      throw Exception("POST request failed: ${e.message}");
+      throw ApiException("No internet connection");
     } catch (e) {
-      throw Exception("Unexpected error: $e");
+      throw ApiException("Unexpected error occurred");
     }
   }
 
@@ -590,4 +561,12 @@ class ApiService {
       EasyLoading.dismiss();
     }
   }
+}
+
+class ApiException implements Exception {
+  final String message;
+  ApiException(this.message);
+
+  @override
+  String toString() => message;
 }

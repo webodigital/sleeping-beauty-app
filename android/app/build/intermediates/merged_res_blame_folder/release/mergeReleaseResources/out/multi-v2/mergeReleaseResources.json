@@ -8305,25 +8305,6 @@
                     }
                 },
                 {
-                    "source": "/Users/mahadev/Development/SleepingBeauty/GitProject/sleeping-beauty-app/android/app/src/main/res/values/styles.xml",
-                    "from": {
-                        "startLines": "3,14",
-                        "startColumns": "4,4",
-                        "startOffsets": "173,818",
-                        "endLines": "7,16",
-                        "endColumns": "12,12",
-                        "endOffsets": "476,982"
-                    },
-                    "to": {
-                        "startLines": "1539,1543",
-                        "startColumns": "4,4",
-                        "startOffsets": "98401,98582",
-                        "endLines": "1542,1545",
-                        "endColumns": "12,12",
-                        "endOffsets": "98577,98746"
-                    }
-                },
-                {
                     "source": "/Users/mahadev/.gradle/caches/8.9/transforms/39e275a5c72ecf7dc3f2589b517256b4/transformed/jetified-appcompat-resources-1.1.0/res/values/values.xml",
                     "from": {
                         "startLines": "2,29,36,47,74",
@@ -8430,6 +8411,25 @@
                     }
                 },
                 {
+                    "source": "/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/res/values/styles.xml",
+                    "from": {
+                        "startLines": "3,14",
+                        "startColumns": "4,4",
+                        "startOffsets": "173,818",
+                        "endLines": "7,16",
+                        "endColumns": "12,12",
+                        "endOffsets": "476,982"
+                    },
+                    "to": {
+                        "startLines": "1539,1543",
+                        "startColumns": "4,4",
+                        "startOffsets": "98401,98582",
+                        "endLines": "1542,1545",
+                        "endColumns": "12,12",
+                        "endOffsets": "98577,98746"
+                    }
+                },
+                {
                     "source": "/Users/mahadev/.gradle/caches/8.9/transforms/a95b35ffcc16131d6eb0f53621fd42ea/transformed/core-1.13.1/res/values/values.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,98,99,103,104,105,106,112,122,155,176,209",
@@ -8463,6 +8463,23 @@
                         "startOffsets": "21778",
                         "endColumns": "49",
                         "endOffsets": "21823"
+                    }
+                },
+                {
+                    "source": "/Users/mahadev/Desktop/sleeping-beauty-app/android/app/build/generated/res/google-services/release/values/values.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7",
+                        "startColumns": "4,4,4,4,4,4",
+                        "startOffsets": "55,137,241,350,470,582",
+                        "endColumns": "81,103,108,119,111,80",
+                        "endOffsets": "132,236,345,465,577,658"
+                    },
+                    "to": {
+                        "startLines": "435,436,437,438,439,444",
+                        "startColumns": "4,4,4,4,4,4",
+                        "startOffsets": "27652,27734,27838,27947,28067,28363",
+                        "endColumns": "81,103,108,119,111,80",
+                        "endOffsets": "27729,27833,27942,28062,28174,28439"
                     }
                 },
                 {
@@ -8573,23 +8590,6 @@
                         "startOffsets": "27570",
                         "endColumns": "81",
                         "endOffsets": "27647"
-                    }
-                },
-                {
-                    "source": "/Users/mahadev/Development/SleepingBeauty/GitProject/sleeping-beauty-app/android/app/build/generated/res/google-services/release/values/values.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7",
-                        "startColumns": "4,4,4,4,4,4",
-                        "startOffsets": "55,137,241,350,470,582",
-                        "endColumns": "81,103,108,119,111,80",
-                        "endOffsets": "132,236,345,465,577,658"
-                    },
-                    "to": {
-                        "startLines": "435,436,437,438,439,444",
-                        "startColumns": "4,4,4,4,4,4",
-                        "startOffsets": "27652,27734,27838,27947,28067,28363",
-                        "endColumns": "81,103,108,119,111,80",
-                        "endOffsets": "27729,27833,27942,28062,28174,28439"
                     }
                 },
                 {
@@ -9076,7 +9076,7 @@
                     }
                 },
                 {
-                    "source": "/Users/mahadev/Development/SleepingBeauty/GitProject/sleeping-beauty-app/android/app/src/main/res/values-night/styles.xml",
+                    "source": "/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/res/values-night/styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",

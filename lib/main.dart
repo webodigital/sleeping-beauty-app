@@ -12,7 +12,8 @@ import 'package:sleeping_beauty_app/Network/firebase_notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:sleeping_beauty_app/Screen/Auth/LoginScreen.dart';
-
+import 'dart:io';
+import 'package:flutter/material.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -22,18 +23,23 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
+  HttpOverrides.global = MyHttpOverrides();
+
+
   await Firebase.initializeApp();
 
-  // Initialize translation manager
   final translationManager = TranslationManager();
   await translationManager.init();
 
-  // Initialize FireBase Notification
-  await FirebaseNotificationService.init();
-
   // Background Notification Handler
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // Initialize Firebase Notification safelya
+  try {
+    await FirebaseNotificationService.init();
+  } catch (e) {
+    print("🔥 FirebaseNotificationService init error: $e");
+  }
 
   bool isUserFirstTime = await LocalStorageHelper.getFlag();
 
@@ -42,9 +48,13 @@ Future<void> main() async {
     await translationManager.setLanguage('GR');
   }
 
-  FirebaseMessaging.instance.getToken().then((token) {
+  // Safe getToken
+  try {
+    String? token = await FirebaseMessaging.instance.getToken();
     print("FCM Token: $token");
-  });
+  } catch (e) {
+    print("🔥 getToken error: $e");
+  }
 
   runApp(
     ChangeNotifierProvider<TranslationManager>.value(
@@ -53,6 +63,52 @@ Future<void> main() async {
     ),
   );
 }
+
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
+
+
+// Future<void> main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//
+//   // Initialize Firebase
+//   await Firebase.initializeApp();
+//
+//   // Initialize translation manager
+//   final translationManager = TranslationManager();
+//   await translationManager.init();
+//
+//   // Initialize FireBase Notification
+//   await FirebaseNotificationService.init();
+//
+//   // Background Notification Handler
+//   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+//
+//   bool isUserFirstTime = await LocalStorageHelper.getFlag();
+//
+//   if (isUserFirstTime == false) {
+//     LocalStorageHelper.saveFlag(true);
+//     await translationManager.setLanguage('GR');
+//   }
+//
+//   FirebaseMessaging.instance.getToken().then((token) {
+//     print("FCM Token: $token");
+//   });
+//
+//   runApp(
+//     ChangeNotifierProvider<TranslationManager>.value(
+//       value: translationManager,
+//       child: const MyApp(),
+//     ),
+//   );
+// }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

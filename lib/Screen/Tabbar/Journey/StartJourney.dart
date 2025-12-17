@@ -167,7 +167,6 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 20), // Extra bottom spacing
             ],
           ),

@@ -4,7 +4,7 @@ import 'package:sleeping_beauty_app/Helper/Language.dart';
 import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:sleeping_beauty_app/Network/ConstantString.dart';
-
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:sleeping_beauty_app/Model/Details.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
@@ -399,6 +399,13 @@ class _JourneyDetailsScreenState extends State<JourneyDetailsScreen> {
   }
 
   Future<void> getJourneyDetails() async {
+
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+
+    if (!isConnected) {
+      EasyLoading.showError(ApiConstants.noInterNet);
+      return;
+    }
 
     EasyLoading.show(status: lngTranslation('Loading...'));
 

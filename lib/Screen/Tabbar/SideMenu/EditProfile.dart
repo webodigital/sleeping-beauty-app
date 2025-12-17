@@ -8,6 +8,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:sleeping_beauty_app/Network/ConstantString.dart';
 import 'package:sleeping_beauty_app/Model/Profile.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class EditprofileScreen extends StatefulWidget {
   @override
@@ -271,7 +272,7 @@ class _EditprofileScreenState extends State<EditprofileScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          lngTranslation("Upload"),
+                          lngTranslation("Update"),
                           style: TextStyle(
                             color: App_BlackColor,
                             fontSize: 16,
@@ -317,6 +318,14 @@ class _EditprofileScreenState extends State<EditprofileScreen> {
   }
 
   void _uploadImage() async {
+
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+
+    if (!isConnected) {
+      EasyLoading.showError(ApiConstants.noInterNet);
+      return;
+    }
+
     EasyLoading.show(status: lngTranslation('Uploading...'));
 
     print("isFileSelected:-- $_selectedImage");
@@ -371,7 +380,16 @@ class _EditprofileScreenState extends State<EditprofileScreen> {
   }
 
   Future<void> getUsersProfile() async {
+
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+
+    if (!isConnected) {
+      EasyLoading.showError(ApiConstants.noInterNet);
+      return;
+    }
+
     EasyLoading.show(status: lngTranslation('Loading...'));
+
     try {
       final response = await apiService.getRequest(ApiConstants.users_profile_get);
 

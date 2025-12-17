@@ -12,6 +12,7 @@ import 'dart:convert';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:sleeping_beauty_app/Helper/Language.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class HistorydetailsScreen extends StatefulWidget {
   final String id;
@@ -259,7 +260,6 @@ class _HistorydetailsScreennState extends State<HistorydetailsScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 itemBuilder: (context, index) {
                   final item = _journeyDetails!.businesses[index];
-
                   final imageUrl = (item.business!.images.isNotEmpty)
                       ? item.business?.images.first.url
                       : 'https://placehold.co/600x400.png?text=No+Image';
@@ -271,7 +271,6 @@ class _HistorydetailsScreennState extends State<HistorydetailsScreen> {
 
                   return GestureDetector(
                     onTap: () {
-
                       setState(() {
                         currentSelectedBusinessIndex = index;
                         mapRefreshKey++;
@@ -518,6 +517,14 @@ class _HistorydetailsScreennState extends State<HistorydetailsScreen> {
   }
 
   Future<void> getJourneyDetails() async {
+
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+
+    if (!isConnected) {
+      EasyLoading.showError(ApiConstants.noInterNet);
+      return;
+    }
+
     EasyLoading.show(status: lngTranslation('Loading...'));
     try {
       final response = await apiService.getRequestWithParam(

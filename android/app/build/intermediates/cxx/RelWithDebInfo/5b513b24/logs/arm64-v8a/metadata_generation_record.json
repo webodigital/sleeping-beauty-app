@@ -14,7 +14,7 @@
   },
   {
     "level_": 0,
-    "message_": "JSON \u0027/Users/mahadev/Development/SleepingBeauty/GitProject/sleeping-beauty-app/android/app/.cxx/RelWithDebInfo/5b513b24/arm64-v8a/android_gradle_build.json\u0027 was up-to-date",
+    "message_": "JSON \u0027/Users/mahadev/Desktop/sleeping-beauty-app/android/app/.cxx/RelWithDebInfo/5b513b24/arm64-v8a/android_gradle_build.json\u0027 was up-to-date",
     "file_": "/Users/mahadev/Development/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt",
     "tag_": "release|arm64-v8a",
     "diagnosticCode_": 0,

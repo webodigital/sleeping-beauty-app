@@ -16,6 +16,7 @@ import 'package:sleeping_beauty_app/Helper/Language.dart';
 import 'package:sleeping_beauty_app/Model/BussinesListOfJourney.dart';
 import 'package:sleeping_beauty_app/Model/OnGoingJourny.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class JourneyListOnMapViewScreen extends StatefulWidget {
   final Journey? journey;
@@ -43,15 +44,31 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
 
   List<MapMarker> markers = [];
 
+  LatLng? _currentPosition;
+
   @override
   void initState() {
     super.initState();
-    print('Current city: _JourneyListOnMapViewState ${widget.journeyID}');
+
+    _fetchCurrentLocation();
     getOngoingJourneyList();
+  }
+
+  Future<void> _fetchCurrentLocation() async {
+    Position position = await getCurrentLocation(); // your async function
+    setState(() {
+      _currentPosition = LatLng(position.latitude, position.longitude);
+      print('_fetchCurrentLocation: latitude ${_currentPosition?.latitude}');
+      print('_fetchCurrentLocation: longitude ${_currentPosition?.longitude}');
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_currentPosition == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
@@ -59,8 +76,8 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
           // Fullscreen Map View
           CustomMapWidget(
             markers: markers,
-            zoom: 6.5,
-            initialCenter: const LatLng(21.3012, 70.2499),
+            zoom: 10,
+            initialCenter: _currentPosition,
             onPinTap: (markerId) {
               debugPrint("Tapped marker: $markerId");
 
@@ -405,6 +422,14 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
   }
 
   Future<void> getBusinessList() async {
+
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+
+    if (!isConnected) {
+      EasyLoading.showError(ApiConstants.noInterNet);
+      return;
+    }
+
     EasyLoading.show(status: lngTranslation('Loading...'));
     Position currentPosition = await getCurrentLocation();
 
@@ -478,6 +503,14 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
   }
 
   Future<void> startBusinessJourny(String businessId, Business business) async {
+
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+
+    if (!isConnected) {
+      EasyLoading.showError(ApiConstants.noInterNet);
+      return;
+    }
+
     EasyLoading.show(status: 'Loading...');
     Position currentPosition = await getCurrentLocation();
 
@@ -533,6 +566,14 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
   }
 
   Future<void> completeJourney(String journeyID) async {
+
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+
+    if (!isConnected) {
+      EasyLoading.showError(ApiConstants.noInterNet);
+      return;
+    }
+
     EasyLoading.show(status: 'Loading...');
 
     print("journeyID:- $journeyID");
@@ -570,6 +611,14 @@ class _JourneyListOnMapViewState extends State<JourneyListOnMapViewScreen> {
   }
 
   Future<void> getOngoingJourneyList() async {
+
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+
+    if (!isConnected) {
+      EasyLoading.showError(ApiConstants.noInterNet);
+
+      return;
+    }
     EasyLoading.show(status: lngTranslation('Loading...'));
 
     try {

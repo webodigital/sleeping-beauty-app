@@ -74,12 +74,10 @@ Future<String> getCityName(double latitude, double longitude) async {
   return place.locality ?? 'Unknown city';
 }
 
-
 Future<bool> getIsUserLogin() async {
   final prefs = await SharedPreferences.getInstance();
   return prefs.getBool('is_userLogin') ?? false;
 }
-
 
 Future<void> updateUserLogin(bool isUserLogin) async {
   final prefs = await SharedPreferences.getInstance();

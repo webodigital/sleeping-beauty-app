@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sleepingbeauty.app"
-    android:versionCode="1"
-    android:versionName="1.0.0" >
+    android:versionCode="15"
+    android:versionName="3.0.0" >
 
     <uses-sdk
         android:minSdkVersion="21"
@@ -12,6 +12,9 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- Add this line for Internet access -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- Required for text processing (Flutter engine) -->
     <queries>
@@ -24,7 +27,6 @@
         <package android:name="com.google.android.apps.maps" />
     </queries>
 
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -44,7 +46,9 @@
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:extractNativeLibs="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="Dornröschen" >
+        android:label="Dornröschen"
+        android:usesCleartextTraffic="true" > <!-- optional: allow HTTP if needed -->
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDkelEWkKhlcHPupM7RJfEtZOXHbDQbDYE" />

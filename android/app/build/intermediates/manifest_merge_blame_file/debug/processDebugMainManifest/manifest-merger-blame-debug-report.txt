@@ -1,0 +1,494 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.sleepingbeauty.app"
+4    android:versionCode="2"
+5    android:versionName="2.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="21"
+9        android:targetSdkVersion="35" />
+10    <!--
+11         The INTERNET permission is required for development. Specifically,
+12         the Flutter tool needs it to communicate with the running application
+13         to allow setting breakpoints, to provide hot reload, etc.
+14    -->
+15    <uses-permission android:name="android.permission.INTERNET" />
+15-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:11:5-66
+15-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:11:22-64
+16    <!-- Notification permission for Android 13+ -->
+17    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+17-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:5:5-77
+17-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:5:22-74
+18    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+18-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:7:5-78
+18-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:7:22-76
+19    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- Required for text processing (Flutter engine) -->
+19-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:8:5-80
+19-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:8:22-78
+20    <queries>
+20-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:49:5-54:15
+21        <intent>
+21-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:50:9-53:18
+22            <action android:name="android.intent.action.PROCESS_TEXT" />
+22-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:51:13-72
+22-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:51:21-70
+23
+24            <data android:mimeType="text/plain" />
+24-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:52:13-50
+24-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:52:19-48
+25        </intent>
+26        <!-- Needs to be explicitly declared on Android R+ -->
+27        <package android:name="com.google.android.apps.maps" />
+27-->[com.google.android.gms:play-services-maps:19.2.0] /Users/mahadev/.gradle/caches/8.9/transforms/15748ec6034e3a4160477b26e77ae528/transformed/jetified-play-services-maps-19.2.0/AndroidManifest.xml:29:7-61
+27-->[com.google.android.gms:play-services-maps:19.2.0] /Users/mahadev/.gradle/caches/8.9/transforms/15748ec6034e3a4160477b26e77ae528/transformed/jetified-play-services-maps-19.2.0/AndroidManifest.xml:29:16-59
+28    </queries>
+29
+30    <uses-permission android:name="android.permission.WAKE_LOCK" />
+30-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:5-68
+30-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:22-65
+31    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+31-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:5-79
+31-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:22-76
+32    <uses-permission android:name="android.permission.VIBRATE" />
+32-->[:flutter_local_notifications] /Users/mahadev/.pub-cache/hosted/pub.dev/flutter_local_notifications-17.2.4/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:7:5-66
+32-->[:flutter_local_notifications] /Users/mahadev/.pub-cache/hosted/pub.dev/flutter_local_notifications-17.2.4/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:7:22-63
+33
+34    <uses-feature
+34-->[com.google.android.gms:play-services-maps:19.2.0] /Users/mahadev/.gradle/caches/8.9/transforms/15748ec6034e3a4160477b26e77ae528/transformed/jetified-play-services-maps-19.2.0/AndroidManifest.xml:22:5-24:33
+35        android:glEsVersion="0x00020000"
+35-->[com.google.android.gms:play-services-maps:19.2.0] /Users/mahadev/.gradle/caches/8.9/transforms/15748ec6034e3a4160477b26e77ae528/transformed/jetified-play-services-maps-19.2.0/AndroidManifest.xml:23:8-40
+36        android:required="true" /> <!-- Required by older versions of Google Play services to create IID tokens -->
+36-->[com.google.android.gms:play-services-maps:19.2.0] /Users/mahadev/.gradle/caches/8.9/transforms/15748ec6034e3a4160477b26e77ae528/transformed/jetified-play-services-maps-19.2.0/AndroidManifest.xml:24:8-31
+37    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+37-->[com.google.firebase:firebase-messaging:24.1.2] /Users/mahadev/.gradle/caches/8.9/transforms/2321c9f6eceb8a8f9f9c3efbbc3ef8a9/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:26:5-82
+37-->[com.google.firebase:firebase-messaging:24.1.2] /Users/mahadev/.gradle/caches/8.9/transforms/2321c9f6eceb8a8f9f9c3efbbc3ef8a9/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:26:22-79
+38
+39    <permission
+39-->[androidx.core:core:1.13.1] /Users/mahadev/.gradle/caches/8.9/transforms/a95b35ffcc16131d6eb0f53621fd42ea/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
+40        android:name="com.sleepingbeauty.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+40-->[androidx.core:core:1.13.1] /Users/mahadev/.gradle/caches/8.9/transforms/a95b35ffcc16131d6eb0f53621fd42ea/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
+41        android:protectionLevel="signature" />
+41-->[androidx.core:core:1.13.1] /Users/mahadev/.gradle/caches/8.9/transforms/a95b35ffcc16131d6eb0f53621fd42ea/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
+42
+43    <uses-permission android:name="com.sleepingbeauty.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+43-->[androidx.core:core:1.13.1] /Users/mahadev/.gradle/caches/8.9/transforms/a95b35ffcc16131d6eb0f53621fd42ea/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+43-->[androidx.core:core:1.13.1] /Users/mahadev/.gradle/caches/8.9/transforms/a95b35ffcc16131d6eb0f53621fd42ea/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
+44
+45    <application
+45-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:13:5-46:19
+46        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+46-->[androidx.core:core:1.13.1] /Users/mahadev/.gradle/caches/8.9/transforms/a95b35ffcc16131d6eb0f53621fd42ea/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
+47        android:debuggable="true"
+48        android:extractNativeLibs="true"
+49        android:icon="@mipmap/ic_launcher"
+49-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:15:9-43
+50        android:label="Dornröschen"
+50-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:14:9-36
+51        android:usesCleartextTraffic="true" > <!-- optional: allow HTTP if needed -->
+51-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:16:9-44
+52
+53        <meta-data
+53-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:18:9-20:71
+54            android:name="com.google.android.geo.API_KEY"
+54-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:19:13-58
+55            android:value="AIzaSyDkelEWkKhlcHPupM7RJfEtZOXHbDQbDYE" />
+55-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:20:13-68
+56
+57        <activity
+57-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:22:9-41:20
+58            android:name="com.sleepingbeauty.app.MainActivity"
+58-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:23:13-41
+59            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+59-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:27:13-163
+60            android:exported="true"
+60-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:24:13-36
+61            android:hardwareAccelerated="true"
+61-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:28:13-47
+62            android:launchMode="singleTop"
+62-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:25:13-43
+63            android:theme="@style/LaunchTheme"
+63-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:26:13-47
+64            android:windowSoftInputMode="adjustResize" >
+64-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:29:13-55
+65
+66            <!-- Activity visible while Flutter loads -->
+67            <meta-data
+67-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:32:13-34:57
+68                android:name="io.flutter.embedding.android.NormalTheme"
+68-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:33:17-72
+69                android:resource="@style/NormalTheme" />
+69-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:34:17-54
+70
+71            <intent-filter>
+71-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:36:13-39:29
+72                <action android:name="android.intent.action.MAIN" />
+72-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:37:17-69
+72-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:37:25-66
+73
+74                <category android:name="android.intent.category.LAUNCHER" />
+74-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:38:17-77
+74-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:38:27-74
+75            </intent-filter>
+76        </activity>
+77
+78        <!-- Required for Flutter -->
+79        <meta-data
+79-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:44:9-72
+80            android:name="flutterEmbedding"
+80-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:44:20-51
+81            android:value="2" />
+81-->/Users/mahadev/Desktop/sleeping-beauty-app/android/app/src/main/AndroidManifest.xml:44:52-69
+82
+83        <service
+83-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:14:9-17:72
+84            android:name="io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingBackgroundService"
+84-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:15:13-107
+85            android:exported="false"
+85-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:16:13-37
+86            android:permission="android.permission.BIND_JOB_SERVICE" />
+86-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:17:13-69
+87        <service
+87-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:18:9-24:19
+88            android:name="io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingService"
+88-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:19:13-97
+89            android:exported="false" >
+89-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:20:13-37
+90            <intent-filter>
+90-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:21:13-23:29
+91                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+91-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:22:17-78
+91-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:22:25-75
+92            </intent-filter>
+93        </service>
+94
+95        <receiver
+95-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:26:9-33:20
+96            android:name="io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingReceiver"
+96-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:27:13-98
+97            android:exported="true"
+97-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:28:13-36
+98            android:permission="com.google.android.c2dm.permission.SEND" >
+98-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:29:13-73
+99            <intent-filter>
+99-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:30:13-32:29
+100                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+100-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:31:17-81
+100-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:31:25-78
+101            </intent-filter>
+102        </receiver>
+103
+104        <service
+104-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:35:9-39:19
+105            android:name="com.google.firebase.components.ComponentDiscoveryService"
+105-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:35:18-89
+106            android:directBootAware="true"
+106-->[com.google.firebase:firebase-common:21.0.0] /Users/mahadev/.gradle/caches/8.9/transforms/abcc12a0f56c56c84f9c2b86b271b9cc/transformed/jetified-firebase-common-21.0.0/AndroidManifest.xml:32:13-43
+107            android:exported="false" >
+107-->[com.google.firebase:firebase-messaging:24.1.2] /Users/mahadev/.gradle/caches/8.9/transforms/2321c9f6eceb8a8f9f9c3efbbc3ef8a9/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:56:13-37
+108            <meta-data
+108-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:36:13-38:85
+109                android:name="com.google.firebase.components:io.flutter.plugins.firebase.messaging.FlutterFirebaseAppRegistrar"
+109-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:37:17-128
+110                android:value="com.google.firebase.components.ComponentRegistrar" />
+110-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:38:17-82
+111            <meta-data
+111-->[:firebase_core] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_core-3.15.2/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:13-11:85
+112                android:name="com.google.firebase.components:io.flutter.plugins.firebase.core.FlutterFirebaseCoreRegistrar"
+112-->[:firebase_core] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_core-3.15.2/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:10:17-124
+113                android:value="com.google.firebase.components.ComponentRegistrar" />
+113-->[:firebase_core] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_core-3.15.2/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:11:17-82
+114            <meta-data
+114-->[com.google.firebase:firebase-messaging:24.1.2] /Users/mahadev/.gradle/caches/8.9/transforms/2321c9f6eceb8a8f9f9c3efbbc3ef8a9/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:57:13-59:85
+115                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingKtxRegistrar"
+115-->[com.google.firebase:firebase-messaging:24.1.2] /Users/mahadev/.gradle/caches/8.9/transforms/2321c9f6eceb8a8f9f9c3efbbc3ef8a9/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:58:17-122
+116                android:value="com.google.firebase.components.ComponentRegistrar" />
+116-->[com.google.firebase:firebase-messaging:24.1.2] /Users/mahadev/.gradle/caches/8.9/transforms/2321c9f6eceb8a8f9f9c3efbbc3ef8a9/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:59:17-82
+117            <meta-data
+117-->[com.google.firebase:firebase-messaging:24.1.2] /Users/mahadev/.gradle/caches/8.9/transforms/2321c9f6eceb8a8f9f9c3efbbc3ef8a9/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:60:13-62:85
+118                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingRegistrar"
+118-->[com.google.firebase:firebase-messaging:24.1.2] /Users/mahadev/.gradle/caches/8.9/transforms/2321c9f6eceb8a8f9f9c3efbbc3ef8a9/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:61:17-119
+119                android:value="com.google.firebase.components.ComponentRegistrar" />
+119-->[com.google.firebase:firebase-messaging:24.1.2] /Users/mahadev/.gradle/caches/8.9/transforms/2321c9f6eceb8a8f9f9c3efbbc3ef8a9/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:62:17-82
+120            <meta-data
+120-->[com.google.firebase:firebase-installations:18.0.0] /Users/mahadev/.gradle/caches/8.9/transforms/808bab0e39339d96e0e70e39e672b559/transformed/jetified-firebase-installations-18.0.0/AndroidManifest.xml:15:13-17:85
+121                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsKtxRegistrar"
+121-->[com.google.firebase:firebase-installations:18.0.0] /Users/mahadev/.gradle/caches/8.9/transforms/808bab0e39339d96e0e70e39e672b559/transformed/jetified-firebase-installations-18.0.0/AndroidManifest.xml:16:17-130
+122                android:value="com.google.firebase.components.ComponentRegistrar" />
+122-->[com.google.firebase:firebase-installations:18.0.0] /Users/mahadev/.gradle/caches/8.9/transforms/808bab0e39339d96e0e70e39e672b559/transformed/jetified-firebase-installations-18.0.0/AndroidManifest.xml:17:17-82
+123            <meta-data
+123-->[com.google.firebase:firebase-installations:18.0.0] /Users/mahadev/.gradle/caches/8.9/transforms/808bab0e39339d96e0e70e39e672b559/transformed/jetified-firebase-installations-18.0.0/AndroidManifest.xml:18:13-20:85
+124                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsRegistrar"
+124-->[com.google.firebase:firebase-installations:18.0.0] /Users/mahadev/.gradle/caches/8.9/transforms/808bab0e39339d96e0e70e39e672b559/transformed/jetified-firebase-installations-18.0.0/AndroidManifest.xml:19:17-127
+125                android:value="com.google.firebase.components.ComponentRegistrar" />
+125-->[com.google.firebase:firebase-installations:18.0.0] /Users/mahadev/.gradle/caches/8.9/transforms/808bab0e39339d96e0e70e39e672b559/transformed/jetified-firebase-installations-18.0.0/AndroidManifest.xml:20:17-82
+126            <meta-data
+126-->[com.google.firebase:firebase-common-ktx:21.0.0] /Users/mahadev/.gradle/caches/8.9/transforms/2216d0c7058b9291c8b45e19a94104de/transformed/jetified-firebase-common-ktx-21.0.0/AndroidManifest.xml:12:13-14:85
+127                android:name="com.google.firebase.components:com.google.firebase.ktx.FirebaseCommonLegacyRegistrar"
+127-->[com.google.firebase:firebase-common-ktx:21.0.0] /Users/mahadev/.gradle/caches/8.9/transforms/2216d0c7058b9291c8b45e19a94104de/transformed/jetified-firebase-common-ktx-21.0.0/AndroidManifest.xml:13:17-116
+128                android:value="com.google.firebase.components.ComponentRegistrar" />
+128-->[com.google.firebase:firebase-common-ktx:21.0.0] /Users/mahadev/.gradle/caches/8.9/transforms/2216d0c7058b9291c8b45e19a94104de/transformed/jetified-firebase-common-ktx-21.0.0/AndroidManifest.xml:14:17-82
+129            <meta-data
+129-->[com.google.firebase:firebase-common:21.0.0] /Users/mahadev/.gradle/caches/8.9/transforms/abcc12a0f56c56c84f9c2b86b271b9cc/transformed/jetified-firebase-common-21.0.0/AndroidManifest.xml:35:13-37:85
+130                android:name="com.google.firebase.components:com.google.firebase.FirebaseCommonKtxRegistrar"
+130-->[com.google.firebase:firebase-common:21.0.0] /Users/mahadev/.gradle/caches/8.9/transforms/abcc12a0f56c56c84f9c2b86b271b9cc/transformed/jetified-firebase-common-21.0.0/AndroidManifest.xml:36:17-109
+131                android:value="com.google.firebase.components.ComponentRegistrar" />
+131-->[com.google.firebase:firebase-common:21.0.0] /Users/mahadev/.gradle/caches/8.9/transforms/abcc12a0f56c56c84f9c2b86b271b9cc/transformed/jetified-firebase-common-21.0.0/AndroidManifest.xml:37:17-82
+132            <meta-data
+132-->[com.google.firebase:firebase-datatransport:18.2.0] /Users/mahadev/.gradle/caches/8.9/transforms/a4a322ecd26a33e91633445ef879d768/transformed/jetified-firebase-datatransport-18.2.0/AndroidManifest.xml:25:13-27:85
+133                android:name="com.google.firebase.components:com.google.firebase.datatransport.TransportRegistrar"
+133-->[com.google.firebase:firebase-datatransport:18.2.0] /Users/mahadev/.gradle/caches/8.9/transforms/a4a322ecd26a33e91633445ef879d768/transformed/jetified-firebase-datatransport-18.2.0/AndroidManifest.xml:26:17-115
+134                android:value="com.google.firebase.components.ComponentRegistrar" />
+134-->[com.google.firebase:firebase-datatransport:18.2.0] /Users/mahadev/.gradle/caches/8.9/transforms/a4a322ecd26a33e91633445ef879d768/transformed/jetified-firebase-datatransport-18.2.0/AndroidManifest.xml:27:17-82
+135        </service>
+136
+137        <provider
+137-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:41:9-45:38
+138            android:name="io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingInitProvider"
+138-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:42:13-102
+139            android:authorities="com.sleepingbeauty.app.flutterfirebasemessaginginitprovider"
+139-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:43:13-88
+140            android:exported="false"
+140-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:44:13-37
+141            android:initOrder="99" />
+141-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:45:13-35
+142        <provider
+142-->[:image_picker_android] /Users/mahadev/.pub-cache/hosted/pub.dev/image_picker_android-0.8.13+1/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:9-17:20
+143            android:name="io.flutter.plugins.imagepicker.ImagePickerFileProvider"
+143-->[:image_picker_android] /Users/mahadev/.pub-cache/hosted/pub.dev/image_picker_android-0.8.13+1/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:10:13-82
+144            android:authorities="com.sleepingbeauty.app.flutter.image_provider"
+144-->[:image_picker_android] /Users/mahadev/.pub-cache/hosted/pub.dev/image_picker_android-0.8.13+1/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:11:13-74
+145            android:exported="false"
+145-->[:image_picker_android] /Users/mahadev/.pub-cache/hosted/pub.dev/image_picker_android-0.8.13+1/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:12:13-37
+146            android:grantUriPermissions="true" >
+146-->[:image_picker_android] /Users/mahadev/.pub-cache/hosted/pub.dev/image_picker_android-0.8.13+1/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:13:13-47
+147            <meta-data
+147-->[:image_picker_android] /Users/mahadev/.pub-cache/hosted/pub.dev/image_picker_android-0.8.13+1/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:14:13-16:75
+148                android:name="android.support.FILE_PROVIDER_PATHS"
+148-->[:image_picker_android] /Users/mahadev/.pub-cache/hosted/pub.dev/image_picker_android-0.8.13+1/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:15:17-67
+149                android:resource="@xml/flutter_image_picker_file_paths" />
+149-->[:image_picker_android] /Users/mahadev/.pub-cache/hosted/pub.dev/image_picker_android-0.8.13+1/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:16:17-72
+150        </provider> <!-- Trigger Google Play services to install the backported photo picker module. -->
+151        <service
+151-->[:image_picker_android] /Users/mahadev/.pub-cache/hosted/pub.dev/image_picker_android-0.8.13+1/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:19:9-31:19
+152            android:name="com.google.android.gms.metadata.ModuleDependencies"
+152-->[:image_picker_android] /Users/mahadev/.pub-cache/hosted/pub.dev/image_picker_android-0.8.13+1/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:20:13-78
+153            android:enabled="false"
+153-->[:image_picker_android] /Users/mahadev/.pub-cache/hosted/pub.dev/image_picker_android-0.8.13+1/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:21:13-36
+154            android:exported="false" >
+154-->[:image_picker_android] /Users/mahadev/.pub-cache/hosted/pub.dev/image_picker_android-0.8.13+1/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:22:13-37
+155            <intent-filter>
+155-->[:image_picker_android] /Users/mahadev/.pub-cache/hosted/pub.dev/image_picker_android-0.8.13+1/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:24:13-26:29
+156                <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
+156-->[:image_picker_android] /Users/mahadev/.pub-cache/hosted/pub.dev/image_picker_android-0.8.13+1/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:25:17-94
+156-->[:image_picker_android] /Users/mahadev/.pub-cache/hosted/pub.dev/image_picker_android-0.8.13+1/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:25:25-91
+157            </intent-filter>
+158
+159            <meta-data
+159-->[:image_picker_android] /Users/mahadev/.pub-cache/hosted/pub.dev/image_picker_android-0.8.13+1/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:28:13-30:36
+160                android:name="photopicker_activity:0:required"
+160-->[:image_picker_android] /Users/mahadev/.pub-cache/hosted/pub.dev/image_picker_android-0.8.13+1/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:29:17-63
+161                android:value="" />
+161-->[:image_picker_android] /Users/mahadev/.pub-cache/hosted/pub.dev/image_picker_android-0.8.13+1/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:30:17-33
+162        </service>
+163        <service
+163-->[:geolocator_android] /Users/mahadev/.pub-cache/hosted/pub.dev/geolocator_android-4.6.2/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:9-12:56
+164            android:name="com.baseflow.geolocator.GeolocatorLocationService"
+164-->[:geolocator_android] /Users/mahadev/.pub-cache/hosted/pub.dev/geolocator_android-4.6.2/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:13-77
+165            android:enabled="true"
+165-->[:geolocator_android] /Users/mahadev/.pub-cache/hosted/pub.dev/geolocator_android-4.6.2/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:10:13-35
+166            android:exported="false"
+166-->[:geolocator_android] /Users/mahadev/.pub-cache/hosted/pub.dev/geolocator_android-4.6.2/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:11:13-37
+167            android:foregroundServiceType="location" />
+167-->[:geolocator_android] /Users/mahadev/.pub-cache/hosted/pub.dev/geolocator_android-4.6.2/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:12:13-53
+168
+169        <activity
+169-->[:url_launcher_android] /Users/mahadev/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.20/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:9-11:74
+170            android:name="io.flutter.plugins.urllauncher.WebViewActivity"
+170-->[:url_launcher_android] /Users/mahadev/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.20/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:13-74
+171            android:exported="false"
+171-->[:url_launcher_android] /Users/mahadev/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.20/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:10:13-37
+172            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" /> <!-- Needs to be explicitly declared on P+ -->
+172-->[:url_launcher_android] /Users/mahadev/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.20/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:11:13-71
+173        <uses-library
+173-->[com.google.android.gms:play-services-maps:19.2.0] /Users/mahadev/.gradle/caches/8.9/transforms/15748ec6034e3a4160477b26e77ae528/transformed/jetified-play-services-maps-19.2.0/AndroidManifest.xml:33:7-86
+174            android:name="org.apache.http.legacy"
+174-->[com.google.android.gms:play-services-maps:19.2.0] /Users/mahadev/.gradle/caches/8.9/transforms/15748ec6034e3a4160477b26e77ae528/transformed/jetified-play-services-maps-19.2.0/AndroidManifest.xml:33:21-58
+175            android:required="false" />
+175-->[com.google.android.gms:play-services-maps:19.2.0] /Users/mahadev/.gradle/caches/8.9/transforms/15748ec6034e3a4160477b26e77ae528/transformed/jetified-play-services-maps-19.2.0/AndroidManifest.xml:33:59-83
+176
+177        <receiver
+177-->[com.google.firebase:firebase-messaging:24.1.2] /Users/mahadev/.gradle/caches/8.9/transforms/2321c9f6eceb8a8f9f9c3efbbc3ef8a9/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:29:9-40:20
+178            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
+178-->[com.google.firebase:firebase-messaging:24.1.2] /Users/mahadev/.gradle/caches/8.9/transforms/2321c9f6eceb8a8f9f9c3efbbc3ef8a9/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:30:13-78
+179            android:exported="true"
+179-->[com.google.firebase:firebase-messaging:24.1.2] /Users/mahadev/.gradle/caches/8.9/transforms/2321c9f6eceb8a8f9f9c3efbbc3ef8a9/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:31:13-36
+180            android:permission="com.google.android.c2dm.permission.SEND" >
+180-->[com.google.firebase:firebase-messaging:24.1.2] /Users/mahadev/.gradle/caches/8.9/transforms/2321c9f6eceb8a8f9f9c3efbbc3ef8a9/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:32:13-73
+181            <intent-filter>
+181-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:30:13-32:29
+182                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+182-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:31:17-81
+182-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:31:25-78
+183            </intent-filter>
+184
+185            <meta-data
+185-->[com.google.firebase:firebase-messaging:24.1.2] /Users/mahadev/.gradle/caches/8.9/transforms/2321c9f6eceb8a8f9f9c3efbbc3ef8a9/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:37:13-39:40
+186                android:name="com.google.android.gms.cloudmessaging.FINISHED_AFTER_HANDLED"
+186-->[com.google.firebase:firebase-messaging:24.1.2] /Users/mahadev/.gradle/caches/8.9/transforms/2321c9f6eceb8a8f9f9c3efbbc3ef8a9/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:38:17-92
+187                android:value="true" />
+187-->[com.google.firebase:firebase-messaging:24.1.2] /Users/mahadev/.gradle/caches/8.9/transforms/2321c9f6eceb8a8f9f9c3efbbc3ef8a9/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:39:17-37
+188        </receiver>
+189        <!--
+190             FirebaseMessagingService performs security checks at runtime,
+191             but set to not exported to explicitly avoid allowing another app to call it.
+192        -->
+193        <service
+193-->[com.google.firebase:firebase-messaging:24.1.2] /Users/mahadev/.gradle/caches/8.9/transforms/2321c9f6eceb8a8f9f9c3efbbc3ef8a9/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:46:9-53:19
+194            android:name="com.google.firebase.messaging.FirebaseMessagingService"
+194-->[com.google.firebase:firebase-messaging:24.1.2] /Users/mahadev/.gradle/caches/8.9/transforms/2321c9f6eceb8a8f9f9c3efbbc3ef8a9/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:47:13-82
+195            android:directBootAware="true"
+195-->[com.google.firebase:firebase-messaging:24.1.2] /Users/mahadev/.gradle/caches/8.9/transforms/2321c9f6eceb8a8f9f9c3efbbc3ef8a9/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:48:13-43
+196            android:exported="false" >
+196-->[com.google.firebase:firebase-messaging:24.1.2] /Users/mahadev/.gradle/caches/8.9/transforms/2321c9f6eceb8a8f9f9c3efbbc3ef8a9/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:49:13-37
+197            <intent-filter android:priority="-500" >
+197-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:21:13-23:29
+198                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+198-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:22:17-78
+198-->[:firebase_messaging] /Users/mahadev/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:22:25-75
+199            </intent-filter>
+200        </service>
+201
+202        <activity
+202-->[com.google.android.gms:play-services-base:18.5.0] /Users/mahadev/.gradle/caches/8.9/transforms/f7f12a64af079e8966034650e0b82670/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:5:9-173
+203            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+203-->[com.google.android.gms:play-services-base:18.5.0] /Users/mahadev/.gradle/caches/8.9/transforms/f7f12a64af079e8966034650e0b82670/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:5:19-85
+204            android:exported="false"
+204-->[com.google.android.gms:play-services-base:18.5.0] /Users/mahadev/.gradle/caches/8.9/transforms/f7f12a64af079e8966034650e0b82670/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:5:146-170
+205            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+205-->[com.google.android.gms:play-services-base:18.5.0] /Users/mahadev/.gradle/caches/8.9/transforms/f7f12a64af079e8966034650e0b82670/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:5:86-145
+206
+207        <provider
+207-->[com.google.firebase:firebase-common:21.0.0] /Users/mahadev/.gradle/caches/8.9/transforms/abcc12a0f56c56c84f9c2b86b271b9cc/transformed/jetified-firebase-common-21.0.0/AndroidManifest.xml:23:9-28:39
+208            android:name="com.google.firebase.provider.FirebaseInitProvider"
+208-->[com.google.firebase:firebase-common:21.0.0] /Users/mahadev/.gradle/caches/8.9/transforms/abcc12a0f56c56c84f9c2b86b271b9cc/transformed/jetified-firebase-common-21.0.0/AndroidManifest.xml:24:13-77
+209            android:authorities="com.sleepingbeauty.app.firebaseinitprovider"
+209-->[com.google.firebase:firebase-common:21.0.0] /Users/mahadev/.gradle/caches/8.9/transforms/abcc12a0f56c56c84f9c2b86b271b9cc/transformed/jetified-firebase-common-21.0.0/AndroidManifest.xml:25:13-72
+210            android:directBootAware="true"
+210-->[com.google.firebase:firebase-common:21.0.0] /Users/mahadev/.gradle/caches/8.9/transforms/abcc12a0f56c56c84f9c2b86b271b9cc/transformed/jetified-firebase-common-21.0.0/AndroidManifest.xml:26:13-43
+211            android:exported="false"
+211-->[com.google.firebase:firebase-common:21.0.0] /Users/mahadev/.gradle/caches/8.9/transforms/abcc12a0f56c56c84f9c2b86b271b9cc/transformed/jetified-firebase-common-21.0.0/AndroidManifest.xml:27:13-37
+212            android:initOrder="100" />
+212-->[com.google.firebase:firebase-common:21.0.0] /Users/mahadev/.gradle/caches/8.9/transforms/abcc12a0f56c56c84f9c2b86b271b9cc/transformed/jetified-firebase-common-21.0.0/AndroidManifest.xml:28:13-36
+213
+214        <uses-library
+214-->[androidx.window:window:1.2.0] /Users/mahadev/.gradle/caches/8.9/transforms/07910edb084fc20e290e0ba92e565abf/transformed/jetified-window-1.2.0/AndroidManifest.xml:23:9-25:40
+215            android:name="androidx.window.extensions"
+215-->[androidx.window:window:1.2.0] /Users/mahadev/.gradle/caches/8.9/transforms/07910edb084fc20e290e0ba92e565abf/transformed/jetified-window-1.2.0/AndroidManifest.xml:24:13-54
+216            android:required="false" />
+216-->[androidx.window:window:1.2.0] /Users/mahadev/.gradle/caches/8.9/transforms/07910edb084fc20e290e0ba92e565abf/transformed/jetified-window-1.2.0/AndroidManifest.xml:25:13-37
+217        <uses-library
+217-->[androidx.window:window:1.2.0] /Users/mahadev/.gradle/caches/8.9/transforms/07910edb084fc20e290e0ba92e565abf/transformed/jetified-window-1.2.0/AndroidManifest.xml:26:9-28:40
+218            android:name="androidx.window.sidecar"
+218-->[androidx.window:window:1.2.0] /Users/mahadev/.gradle/caches/8.9/transforms/07910edb084fc20e290e0ba92e565abf/transformed/jetified-window-1.2.0/AndroidManifest.xml:27:13-51
+219            android:required="false" />
+219-->[androidx.window:window:1.2.0] /Users/mahadev/.gradle/caches/8.9/transforms/07910edb084fc20e290e0ba92e565abf/transformed/jetified-window-1.2.0/AndroidManifest.xml:28:13-37
+220
+221        <provider
+221-->[androidx.lifecycle:lifecycle-process:2.7.0] /Users/mahadev/.gradle/caches/8.9/transforms/bb0455ac380de84579c432522ce63f02/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:24:9-32:20
+222            android:name="androidx.startup.InitializationProvider"
+222-->[androidx.lifecycle:lifecycle-process:2.7.0] /Users/mahadev/.gradle/caches/8.9/transforms/bb0455ac380de84579c432522ce63f02/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:25:13-67
+223            android:authorities="com.sleepingbeauty.app.androidx-startup"
+223-->[androidx.lifecycle:lifecycle-process:2.7.0] /Users/mahadev/.gradle/caches/8.9/transforms/bb0455ac380de84579c432522ce63f02/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:26:13-68
+224            android:exported="false" >
+224-->[androidx.lifecycle:lifecycle-process:2.7.0] /Users/mahadev/.gradle/caches/8.9/transforms/bb0455ac380de84579c432522ce63f02/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:27:13-37
+225            <meta-data
+225-->[androidx.lifecycle:lifecycle-process:2.7.0] /Users/mahadev/.gradle/caches/8.9/transforms/bb0455ac380de84579c432522ce63f02/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:29:13-31:52
+226                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+226-->[androidx.lifecycle:lifecycle-process:2.7.0] /Users/mahadev/.gradle/caches/8.9/transforms/bb0455ac380de84579c432522ce63f02/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:30:17-78
+227                android:value="androidx.startup" />
+227-->[androidx.lifecycle:lifecycle-process:2.7.0] /Users/mahadev/.gradle/caches/8.9/transforms/bb0455ac380de84579c432522ce63f02/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:31:17-49
+228            <meta-data
+228-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:29:13-31:52
+229                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+229-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:30:17-85
+230                android:value="androidx.startup" />
+230-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:31:17-49
+231        </provider>
+232
+233        <meta-data
+233-->[com.google.android.gms:play-services-basement:18.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/a8d37dd19249e006de0aec0d72848bea/transformed/jetified-play-services-basement-18.4.0/AndroidManifest.xml:6:9-122
+234            android:name="com.google.android.gms.version"
+234-->[com.google.android.gms:play-services-basement:18.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/a8d37dd19249e006de0aec0d72848bea/transformed/jetified-play-services-basement-18.4.0/AndroidManifest.xml:6:20-65
+235            android:value="@integer/google_play_services_version" />
+235-->[com.google.android.gms:play-services-basement:18.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/a8d37dd19249e006de0aec0d72848bea/transformed/jetified-play-services-basement-18.4.0/AndroidManifest.xml:6:66-119
+236
+237        <receiver
+237-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:34:9-52:20
+238            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+238-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:35:13-76
+239            android:directBootAware="false"
+239-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:36:13-44
+240            android:enabled="true"
+240-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:37:13-35
+241            android:exported="true"
+241-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:38:13-36
+242            android:permission="android.permission.DUMP" >
+242-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:39:13-57
+243            <intent-filter>
+243-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:40:13-42:29
+244                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+244-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:41:17-91
+244-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:41:25-88
+245            </intent-filter>
+246            <intent-filter>
+246-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:43:13-45:29
+247                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+247-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:44:17-85
+247-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:44:25-82
+248            </intent-filter>
+249            <intent-filter>
+249-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:46:13-48:29
+250                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+250-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:47:17-88
+250-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:47:25-85
+251            </intent-filter>
+252            <intent-filter>
+252-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:49:13-51:29
+253                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+253-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:50:17-95
+253-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/mahadev/.gradle/caches/8.9/transforms/1ca1dec6082c1f69c132363d903b284e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:50:25-92
+254            </intent-filter>
+255        </receiver>
+256
+257        <service
+257-->[com.google.android.datatransport:transport-backend-cct:3.1.9] /Users/mahadev/.gradle/caches/8.9/transforms/d4dcd298514d31c36db0a7a227ae8496/transformed/jetified-transport-backend-cct-3.1.9/AndroidManifest.xml:28:9-34:19
+258            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+258-->[com.google.android.datatransport:transport-backend-cct:3.1.9] /Users/mahadev/.gradle/caches/8.9/transforms/d4dcd298514d31c36db0a7a227ae8496/transformed/jetified-transport-backend-cct-3.1.9/AndroidManifest.xml:29:13-103
+259            android:exported="false" >
+259-->[com.google.android.datatransport:transport-backend-cct:3.1.9] /Users/mahadev/.gradle/caches/8.9/transforms/d4dcd298514d31c36db0a7a227ae8496/transformed/jetified-transport-backend-cct-3.1.9/AndroidManifest.xml:30:13-37
+260            <meta-data
+260-->[com.google.android.datatransport:transport-backend-cct:3.1.9] /Users/mahadev/.gradle/caches/8.9/transforms/d4dcd298514d31c36db0a7a227ae8496/transformed/jetified-transport-backend-cct-3.1.9/AndroidManifest.xml:31:13-33:39
+261                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
+261-->[com.google.android.datatransport:transport-backend-cct:3.1.9] /Users/mahadev/.gradle/caches/8.9/transforms/d4dcd298514d31c36db0a7a227ae8496/transformed/jetified-transport-backend-cct-3.1.9/AndroidManifest.xml:32:17-94
+262                android:value="cct" />
+262-->[com.google.android.datatransport:transport-backend-cct:3.1.9] /Users/mahadev/.gradle/caches/8.9/transforms/d4dcd298514d31c36db0a7a227ae8496/transformed/jetified-transport-backend-cct-3.1.9/AndroidManifest.xml:33:17-36
+263        </service>
+264        <service
+264-->[com.google.android.datatransport:transport-runtime:3.1.9] /Users/mahadev/.gradle/caches/8.9/transforms/c34f5101170734e85828260c3b27550e/transformed/jetified-transport-runtime-3.1.9/AndroidManifest.xml:26:9-30:19
+265            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+265-->[com.google.android.datatransport:transport-runtime:3.1.9] /Users/mahadev/.gradle/caches/8.9/transforms/c34f5101170734e85828260c3b27550e/transformed/jetified-transport-runtime-3.1.9/AndroidManifest.xml:27:13-117
+266            android:exported="false"
+266-->[com.google.android.datatransport:transport-runtime:3.1.9] /Users/mahadev/.gradle/caches/8.9/transforms/c34f5101170734e85828260c3b27550e/transformed/jetified-transport-runtime-3.1.9/AndroidManifest.xml:28:13-37
+267            android:permission="android.permission.BIND_JOB_SERVICE" >
+267-->[com.google.android.datatransport:transport-runtime:3.1.9] /Users/mahadev/.gradle/caches/8.9/transforms/c34f5101170734e85828260c3b27550e/transformed/jetified-transport-runtime-3.1.9/AndroidManifest.xml:29:13-69
+268        </service>
+269
+270        <receiver
+270-->[com.google.android.datatransport:transport-runtime:3.1.9] /Users/mahadev/.gradle/caches/8.9/transforms/c34f5101170734e85828260c3b27550e/transformed/jetified-transport-runtime-3.1.9/AndroidManifest.xml:32:9-34:40
+271            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+271-->[com.google.android.datatransport:transport-runtime:3.1.9] /Users/mahadev/.gradle/caches/8.9/transforms/c34f5101170734e85828260c3b27550e/transformed/jetified-transport-runtime-3.1.9/AndroidManifest.xml:33:13-132
+272            android:exported="false" />
+272-->[com.google.android.datatransport:transport-runtime:3.1.9] /Users/mahadev/.gradle/caches/8.9/transforms/c34f5101170734e85828260c3b27550e/transformed/jetified-transport-runtime-3.1.9/AndroidManifest.xml:34:13-37
+273    </application>
+274
+275</manifest>

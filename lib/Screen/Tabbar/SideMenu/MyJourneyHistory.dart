@@ -8,7 +8,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:sleeping_beauty_app/Network/ConstantString.dart';
 import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
 import 'package:intl/intl.dart';
-
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class MyjourneyhistoryScreen extends StatefulWidget {
   const MyjourneyhistoryScreen({Key? key}) : super(key: key);
@@ -243,6 +243,14 @@ class _MyjourneyhistoryScreenState extends State<MyjourneyhistoryScreen> {
 
 
   Future<void> getJourneyList() async {
+
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+
+    if (!isConnected) {
+      EasyLoading.showError(ApiConstants.noInterNet);
+      return;
+    }
+
     EasyLoading.show(status: lngTranslation('Loading...'));
     try {
       final response = await apiService.getRequestWithParam(

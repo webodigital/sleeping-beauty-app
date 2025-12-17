@@ -7,6 +7,7 @@ import 'package:sleeping_beauty_app/Model/Profile.dart';
 import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:sleeping_beauty_app/Network/ConstantString.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class RewardsScreen extends StatefulWidget {
   final void Function(int tabIndex)? onTabChange;
@@ -401,6 +402,14 @@ class _RewardsScreenState extends State<RewardsScreen> {
   }
 
   Future<void> getUsersProfile() async {
+
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+
+    if (!isConnected) {
+      EasyLoading.showError(ApiConstants.noInterNet);
+      return;
+    }
+
     EasyLoading.show(status: lngTranslation('Loading...'));
     try {
       final response = await apiService.getRequest(ApiConstants.users_profile_get);

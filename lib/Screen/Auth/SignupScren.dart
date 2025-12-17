@@ -6,6 +6,7 @@ import 'package:sleeping_beauty_app/Network/ConstantString.dart';
 import 'package:sleeping_beauty_app/Network/ApiService.dart';
 import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
 import 'package:sleeping_beauty_app/Helper/Language.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -64,7 +65,7 @@ class _SignupScreenState extends State<SignupScreen> {
               'assets/bottomView.png',
               width: double.infinity,
               height: 180,
-              fit: BoxFit.cover,
+              fit: BoxFit.fill,
             ),
           ),
           Column(
@@ -399,6 +400,14 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   Future<void> signUP() async {
+
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+
+    if (!isConnected) {
+      EasyLoading.showError(ApiConstants.noInterNet);
+        return;
+    }
+
     EasyLoading.show(status: lngTranslation('Signup...'));
     try {
       final response = await apiService.postWithoutTokenRequest(

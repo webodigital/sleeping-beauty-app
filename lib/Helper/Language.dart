@@ -138,7 +138,7 @@ class TranslationManager extends ChangeNotifier {
       },
       {
         "en": "Click to resend",
-        "gr": "Klicken Sie hier, um erneut zu senden",
+        "gr": "Erneut senden",
       },
       {
         "en": "Loading...",
@@ -421,8 +421,8 @@ class TranslationManager extends ChangeNotifier {
         "gr": "Begib dich auf Entdeckungstour – deine erste Reise wartet!"
       },
       {
-        "en": "Upload",
-        "gr": "Hochladen"
+        "en": "Update",
+        "gr": "Ενημέρωση"
       },
       {
         "en": "Please select profile photo",
@@ -515,7 +515,13 @@ class TranslationManager extends ChangeNotifier {
       {
         "en": "Are you sure you want to delete this account?",
         "gr": "Bist du sicher, dass du dieses Konto löschen möchtest?"
+      },
+      {
+        "en": "Don’t worry, we will send you reset instructions",
+        "gr": "Keine Sorge, wir senden Ihnen Anweisungen zum Zurücksetzen."
       }
+
+
 
     ]);
   }

@@ -11,7 +11,7 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "outputFile": "../../../../../release/app-release.aab"
+      "outputFile": "../../../../../../../../../Development/SleepingBeauty/GitProject/sleeping-beauty-app/android/app/release/app-release.aab"
     }
   ],
   "elementType": "File"

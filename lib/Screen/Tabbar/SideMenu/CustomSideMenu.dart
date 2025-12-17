@@ -15,6 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:sleeping_beauty_app/Network/ConstantString.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class CustomSideMenu extends StatefulWidget {
   const CustomSideMenu({super.key});
@@ -432,6 +433,13 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
   }
 
   Future<void> getUsersProfile() async {
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+
+    if (!isConnected) {
+      EasyLoading.showError(ApiConstants.noInterNet);
+      return;
+    }
+
     EasyLoading.show(status: lngTranslation('Loading...'));
     try {
       final response = await apiService.getRequest(ApiConstants.users_profile_get);
@@ -480,6 +488,13 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
   }
 
   Future<void> deleteUserAccount() async {
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+
+    if (!isConnected) {
+      EasyLoading.showError(ApiConstants.noInterNet);
+      return;
+    }
+
     EasyLoading.show(status: 'Deleting Account...');
 
     try {

@@ -12,6 +12,7 @@ import 'package:sleeping_beauty_app/Network/ApiConstants.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:sleeping_beauty_app/Model/BussinesListOfJourney.dart';
 import 'package:sleeping_beauty_app/Network/ConstantString.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class JourneyVisitRootOnMapScreen extends StatefulWidget {
   final bool isFromJourneyScreen;
@@ -547,6 +548,14 @@ class _JourneyVisitRootOnMapScreenState
 
   Future<void> completeVisit(
       String businessID) async {
+
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+
+    if (!isConnected) {
+      EasyLoading.showError(ApiConstants.noInterNet);
+      return;
+    }
+
     EasyLoading.show(status: lngTranslation('Loading...'));
 
     try {
